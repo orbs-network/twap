@@ -1,0 +1,24 @@
+{
+  "name": "dotc",
+  "version": "0.0.1",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/defi-org-code/dotc.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@defi.org/web3-candies": "3.x"
+  },
+  "scripts": {
+    "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
+    "typechain": "npx hardhat typechain",
+    "prebuild": "rm -rf artifacts typechain-hardhat typechain-abi && npm run prettier && npm run typechain",
+    "build": "npx hardhat compile && npx solhint 'contracts/**/*.sol'",
+    "test": "DEBUG=web3-candies npx hardhat test --logs",
+    "test:poly": "NETWORK=poly DEBUG=web3-candies npx hardhat test --logs"
+  },
+  "prettier": {
+    "printWidth": 180
+  }
+}
