@@ -32,7 +32,7 @@ export default {
       },
       blockGasLimit: 10e6,
       accounts: {
-        accountsBalance: bn18("1,000,000").toString(),
+        accountsBalance: bn18(10e6).toString(),
       },
     },
     eth: {

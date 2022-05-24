@@ -4,6 +4,14 @@ pragma solidity 0.8.10;
 
 import "./Interfaces.sol";
 
+struct RFQ {
+    address sender;
+    address fromToken;
+    address toToken;
+    uint256 fromAmount;
+    uint256 minPrice;
+}
+
 contract Quoter {
     IRouter public immutable ROUTER;
     address[][] public paths;
