@@ -33,9 +33,7 @@ contract Keeper is Ownable {
     function executeSwapCallback(uint256 index) external {
         // TODO access
         Order memory o = ORDER_BOOK.order(index);
-        console.log("executeSwapCallback", index, o.bid.amount);
         ERC20(o.bid.toToken).safeTransferFrom(owner(), address(this), o.bid.amount);
         ERC20(o.bid.toToken).safeIncreaseAllowance(address(ORDER_BOOK), o.bid.amount);
-        console.log("owner()", owner());
     }
 }

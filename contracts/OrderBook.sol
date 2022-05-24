@@ -66,10 +66,6 @@ contract OrderBook is ReentrancyGuard {
 
         ERC20(o.ask.fromToken).safeTransferFrom(o.ask.sender, o.bid.sender, o.ask.fromAmount); // ERC20 verifies address(this) allowance
         Address.functionCall(msg.sender, callbackSig); // flashloan fromAmount of fromToken to bidder
-        console.log("----------------------------------");
-        console.log("o.bid.sender", o.bid.sender);
-        console.log("o.ask.sender", o.ask.sender);
-        console.log("o.bid.amount", o.bid.amount);
         ERC20(o.ask.toToken).safeTransferFrom(o.bid.sender, o.ask.sender, o.bid.amount); // ERC20 verifies address(this) allowance
     }
 
