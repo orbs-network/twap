@@ -11,26 +11,17 @@ import "./Interfaces.sol";
 
 import "hardhat/console.sol";
 
-struct Ask {
-    address sender;
+struct Order {
+    uint256 id;
+    uint256 createdAt;
+    uint256 expiresAt;
+    address maker;
     address fromToken;
     address toToken;
     uint256 fromAmount;
     uint256 minToAmount;
-    uint256 expiresAt;
-}
-
-struct Bid {
-    address sender;
-    address fromToken;
-    address toToken;
-    uint256 amount;
-}
-
-struct Order {
-    uint256 createdAt;
-    Ask ask;
-    Bid bid;
+    address taker;
+    uint256 bid;
 }
 
 contract OrderBook is ReentrancyGuard {
@@ -41,42 +32,42 @@ contract OrderBook is ReentrancyGuard {
     Order[] public book;
 
     // 1. user registers a new order
-    function ask(Ask calldata a) external returns (uint256 index) {
-        require(msg.sender == a.sender, "E5");
-        book.push(Order(block.timestamp, a, Bid(address(0), address(0), address(0), 0)));
-        return length() - 1;
+    function ask(
+        address fromToken,
+        address toToken,
+        uint256 fromAmount,
+        uint256 minToAmount,
+        uint256 expiresAt
+    ) external returns (uint256 id) {
+        Order memory o = Order(length(), block.timestamp, expiresAt, msg.sender, fromToken, toToken, fromAmount, minToAmount, address(0), 0);
+        book.push(o);
+        return o.id;
     }
 
     // 2. keeper offers matching bid, only if higher than current bid
-    function bid(uint256 index, Bid calldata b) external {
-        require(msg.sender == b.sender, "E8");
-        Order memory o = book[index];
-        verifyMatch(o.ask, b);
-        require(o.bid.amount < b.amount, "E4");
-        o.bid = b;
-        book[index] = o;
+    function bid(uint256 id, uint256 amount) external {
+        Order memory o = book[id];
+        require(amount > o.bid && amount >= o.minToAmount, "low bid");
+        require(block.timestamp < o.expiresAt, "expired");
+        o.taker = msg.sender;
+        o.bid = amount;
+        book[id] = o;
     }
 
     // 3. winning bid is executed by the winning bidder, fromToken is flashloaned from user then amount is returned to user
-    function execute(uint256 index, bytes calldata callbackSig) external nonReentrant {
-        require(length() > index, "E6");
-        Order memory o = book[index];
-        require(msg.sender == o.bid.sender, "E7");
-        verifyMatch(o.ask, o.bid);
+    function execute(uint256 id, bytes calldata callbackData) external nonReentrant {
+        require(length() > id, "invalid index");
+        Order memory o = book[id];
+        require(msg.sender == o.taker, "different taker");
+        require(block.timestamp < o.expiresAt, "expired");
 
-        ERC20(o.ask.fromToken).safeTransferFrom(o.ask.sender, o.bid.sender, o.ask.fromAmount); // ERC20 verifies address(this) allowance
-        Address.functionCall(msg.sender, callbackSig); // flashloan fromAmount of fromToken to bidder
-        ERC20(o.ask.toToken).safeTransferFrom(o.bid.sender, o.ask.sender, o.bid.amount); // ERC20 verifies address(this) allowance
+        ERC20(o.fromToken).safeTransferFrom(o.maker, o.taker, o.fromAmount);
+        Address.functionCall(msg.sender, callbackData);
+        ERC20(o.toToken).safeTransferFrom(o.taker, o.maker, o.bid);
     }
 
-    function verifyMatch(Ask memory a, Bid memory b) internal view {
-        require(a.fromToken == b.fromToken && a.toToken == b.toToken, "E1");
-        require(b.amount >= a.minToAmount, "E2");
-        require(a.expiresAt > block.timestamp, "E3");
-    }
-
-    function order(uint256 index) public view returns (Order memory) {
-        return book[index];
+    function order(uint256 id) public view returns (Order memory) {
+        return book[id];
     }
 
     function length() public view returns (uint256) {

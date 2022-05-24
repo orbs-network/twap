@@ -22,18 +22,21 @@ contract Keeper is Ownable {
         transferOwnership(owner);
     }
 
-    function bid(uint256 index, Bid calldata b) external onlyOwner {
-        ORDER_BOOK.bid(index, b);
+    function bid(uint256 id, uint256 b) external onlyOwner {
+        ORDER_BOOK.bid(id, b);
     }
 
-    function execute(uint256 index) external onlyOwner {
-        ORDER_BOOK.execute(index, abi.encodeWithSelector(this.executeSwapCallback.selector, index));
+    function execute(uint256 id) external onlyOwner {
+        ORDER_BOOK.execute(id, abi.encodeWithSelector(this.executeSwapCallback.selector, id));
     }
 
-    function executeSwapCallback(uint256 index) external {
+    /**
+     * executes the swap, in this simple case just pull the token from owner (assumes for example owner does arb with cefi)
+     */
+    function executeSwapCallback(uint256 id) external {
         // TODO access
-        Order memory o = ORDER_BOOK.order(index);
-        ERC20(o.bid.toToken).safeTransferFrom(owner(), address(this), o.bid.amount);
-        ERC20(o.bid.toToken).safeIncreaseAllowance(address(ORDER_BOOK), o.bid.amount);
+        Order memory o = ORDER_BOOK.order(id);
+        ERC20(o.toToken).safeTransferFrom(owner(), address(this), o.bid);
+        ERC20(o.toToken).safeIncreaseAllowance(address(ORDER_BOOK), o.bid);
     }
 }

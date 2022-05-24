@@ -27,12 +27,12 @@ describe("Decentralized OTC OrderBook", async () => {
     const fromAmount = await fromToken.amount(10_000);
     const minToAmount = await toToken.amount(5);
     await fromToken.methods.approve(orderbook.options.address, fromAmount).send({ from: user });
-    await orderbook.methods.ask([user, fromToken.address, toToken.address, fromAmount.toString(), minToAmount.toString(), Math.round(Date.now() / 1000 + 60)]).send({ from: user });
+    await orderbook.methods.ask(fromToken.address, toToken.address, fromAmount, minToAmount, Math.round(Date.now() / 1000 + 60)).send({ from: user });
   }
 
-  async function bid(index: number) {
+  async function bid(id: number) {
     const amount = await toToken.amount(5);
     await toToken.methods.approve(keeper.options.address, amount).send({ from: keeperOwner });
-    await keeper.methods.bid(index, [keeper.options.address, fromToken.address, toToken.address, amount.toString()]).send({ from: keeperOwner });
+    await keeper.methods.bid(id, amount).send({ from: keeperOwner });
   }
 });
