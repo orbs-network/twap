@@ -23,6 +23,7 @@ struct Order {
     uint256 srcRate;
     uint256 dstRate;
     uint256 filled;
+    uint256 filledTime;
     address taker;
     uint256 bid;
     uint256 bidTime;
@@ -34,7 +35,8 @@ contract OrderBook is ReentrancyGuard {
     event OrderCreated(uint256 indexed id, address indexed maker);
     event OrderFilled(uint256 indexed id, address indexed taker, uint256 srcAmount, uint256 dstAmount);
 
-    uint256 public constant BID_DURATION_SEC = 10;
+    uint256 public constant BID_DELAY_SEC = 10;
+    uint256 public constant FILL_DELAY_SEC = 60;
 
     Order[] public book;
 
@@ -66,6 +68,7 @@ contract OrderBook is ReentrancyGuard {
             srcRate,
             dstRate,
             0,
+            0,
             address(0),
             0,
             0
@@ -80,6 +83,7 @@ contract OrderBook is ReentrancyGuard {
         require(length() > id, "invalid id");
         Order memory o = book[id];
         require(amount > o.bid, "low bid");
+        require(block.timestamp > o.filledTime + FILL_DELAY_SEC, "recently filled");
         require(block.timestamp < o.deadline, "expired");
 
         uint256 dstRate = Math.min(o.dstRate, (o.dstRate * (o.srcAmount - o.filled)) / o.srcRate);
@@ -96,7 +100,7 @@ contract OrderBook is ReentrancyGuard {
         require(length() > id, "invalid id");
         Order memory o = book[id];
         require(msg.sender == o.taker, "invalid taker");
-        require(block.timestamp > o.bidTime + BID_DURATION_SEC, "pending bid");
+        require(block.timestamp > o.bidTime + BID_DELAY_SEC, "pending bid");
         require(block.timestamp < o.deadline, "expired");
 
         uint256 amount = Math.min(o.srcRate, o.srcAmount - o.filled);
@@ -107,6 +111,7 @@ contract OrderBook is ReentrancyGuard {
 
         emit OrderFilled(id, o.taker, amount, o.bid);
         o.filled += amount;
+        o.filledTime = block.timestamp;
         o.taker = address(0);
         o.bid = 0;
         o.bidTime = 0;

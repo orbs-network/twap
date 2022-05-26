@@ -1,17 +1,8 @@
-import {
-  deployArtifact,
-  getNetworkForkingBlockNumber,
-  impersonate,
-  resetNetworkFork,
-  setBalance,
-  tag,
-} from "@defi.org/web3-candies/dist/hardhat";
-import { account, bn, bn18, erc20, erc20s, ether, Token } from "@defi.org/web3-candies";
+import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
+import { account, bn18, erc20s, Token } from "@defi.org/web3-candies";
 import { Quoter } from "../typechain-hardhat/Quoter";
 import { OrderBook } from "../typechain-hardhat/OrderBook";
 import { Keeper } from "../typechain-hardhat/Keeper";
-import BN from "bn.js";
-import _ from "lodash";
 import { expect } from "chai";
 
 export const ethUniswapV2Router = "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a";
