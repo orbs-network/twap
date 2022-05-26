@@ -19,6 +19,6 @@
     "test:poly": "NETWORK=poly DEBUG=web3-candies npx hardhat test --logs"
   },
   "prettier": {
-    "printWidth": 180
+    "printWidth": 120
   }
 }

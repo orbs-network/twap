@@ -1,38 +1,108 @@
-import { deployer, fromToken, keeper, keeperOwner, orderbook, toToken, user } from "./base.test";
+import {
+  deployer,
+  srcToken,
+  keeper,
+  keeperOwner,
+  orderbook,
+  dstToken,
+  user,
+  now,
+  userSrcTokenStartBalance,
+  ask,
+  bid,
+  execute,
+  order,
+  expectFilled,
+} from "./base.test";
 import { expect } from "chai";
-import { account, bn, erc20s, Token, useChaiBN, web3 } from "@defi.org/web3-candies";
+import {
+  account,
+  bn,
+  bn18,
+  convertDecimals,
+  erc20s,
+  ether,
+  parseEvents,
+  Token,
+  useChaiBN,
+  web3,
+  zeroAddress,
+} from "@defi.org/web3-candies";
 import BN from "bn.js";
 import _ from "lodash";
-import { deployArtifact } from "@defi.org/web3-candies/dist/hardhat";
+import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { Keeper } from "../typechain-hardhat/Keeper";
 
 useChaiBN();
 
-describe("Decentralized OTC OrderBook", async () => {
+describe.only("Decentralized OTC OrderBook", async () => {
   beforeEach(async () => {});
 
-  it("maker creates ask, adds to order book", async () => {
-    expect(await orderbook.methods.length().call()).bignumber.zero;
-    await ask();
-    expect(await orderbook.methods.length().call()).bignumber.eq("1");
+  it("single chunk", async () => {
+    await ask(10_000, 10_000, 5);
+    await bid(0, 5);
+    await mineBlock(60);
+    await execute(0);
+
+    await expectFilled(0, 10_000, 5);
+
+    expect((await order(0)).taker).eq(zeroAddress);
+    expect((await order(0)).bid).eq("0");
   });
 
-  it.only("e2e", async () => {
-    await ask();
-    await bid(0);
-    await keeper.methods.execute(0).send({ from: keeperOwner });
+  it("mutiple chunks", async () => {
+    await ask(10_000, 2500, 1.25);
+
+    await bid(0, 1.25);
+    await mineBlock(60);
+    await execute(0);
+    await expectFilled(0, 2500, 1.25);
+
+    await bid(0, 1.25);
+    await mineBlock(60);
+    await execute(0);
+    await expectFilled(0, 5000, 2.5);
   });
 
-  async function ask() {
-    const fromAmount = await fromToken.amount(10_000);
-    const minToAmount = await toToken.amount(5);
-    await fromToken.methods.approve(orderbook.options.address, fromAmount).send({ from: user });
-    await orderbook.methods.ask(fromToken.address, toToken.address, fromAmount, minToAmount, Math.round(Date.now() / 1000 + 60)).send({ from: user });
-  }
+  it("all chunks", async () => {
+    await ask(10_000, 2500, 1.25);
 
-  async function bid(id: number) {
-    const amount = await toToken.amount(5);
-    await toToken.methods.approve(keeper.options.address, amount).send({ from: keeperOwner });
-    await keeper.methods.bid(id, amount).send({ from: keeperOwner });
-  }
+    for (let i = 1; i <= 4; i++) {
+      await bid(0, 1.25);
+      await mineBlock(60);
+      await execute(0);
+      await expectFilled(0, 2500 * i, 1.25 * i);
+    }
+
+    await expectFilled(0, 10_000, 5);
+  });
+
+  it("last chunk partial amount", async () => {
+    await ask(10_000, 4000, 2);
+
+    await bid(0, 2);
+    await mineBlock(60);
+    await execute(0);
+    await bid(0, 2);
+    await mineBlock(60);
+    await execute(0);
+    await expectFilled(0, 8000, 4);
+
+    await bid(0, 1);
+    await mineBlock(60);
+    await execute(0);
+    await expectFilled(0, 10_000, 5);
+  });
+
+  it("outbid current bid within pending period", async () => {
+    await ask(10_000, 4000, 2);
+
+    await bid(0, 2);
+    await mineBlock(5);
+    await bid(0, 2.1);
+    await mineBlock(10);
+
+    await execute(0);
+    await expectFilled(0, 4000, 2.1);
+  });
 });

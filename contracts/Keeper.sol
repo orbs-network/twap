@@ -22,8 +22,8 @@ contract Keeper is Ownable {
         transferOwnership(owner);
     }
 
-    function bid(uint256 id, uint256 b) external onlyOwner {
-        ORDER_BOOK.bid(id, b);
+    function bid(uint256 id, uint256 amount) external onlyOwner {
+        ORDER_BOOK.bid(id, amount);
     }
 
     function execute(uint256 id) external onlyOwner {
@@ -36,7 +36,7 @@ contract Keeper is Ownable {
     function executeSwapCallback(uint256 id) external {
         // TODO access
         Order memory o = ORDER_BOOK.order(id);
-        ERC20(o.toToken).safeTransferFrom(owner(), address(this), o.bid);
-        ERC20(o.toToken).safeIncreaseAllowance(address(ORDER_BOOK), o.bid);
+        ERC20(o.dstToken).safeTransferFrom(owner(), address(this), o.bid);
+        ERC20(o.dstToken).safeIncreaseAllowance(address(ORDER_BOOK), o.bid);
     }
 }
