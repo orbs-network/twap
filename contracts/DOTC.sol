@@ -41,13 +41,13 @@ contract DOTC is ReentrancyGuard {
         uint256 id,
         address exchange,
         address[] calldata path
-    ) public view returns (OrderLib.Order memory o, uint256 amountOut) {
+    ) public view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
 
-        amountOut = IExchange(exchange).getAmountOut(o.ask.srcBidAmount, path);
-        require(amountOut > o.ask.dstMinAmount, "low rate");
-        require(amountOut > o.bid.amount, "low bid");
+        dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcBidAmount, path);
+        require(dstAmountOut > o.ask.dstMinAmount, "low rate");
+        require(dstAmountOut > o.bid.amount, "low bid");
 
         require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
         //
@@ -55,7 +55,7 @@ contract DOTC is ReentrancyGuard {
         //        require(amount >= dstMinAmount, "low rate");
     }
 
-    function verifyFill(uint256 id) public view returns (OrderLib.Order memory o, uint256 amountOut) {
+    function verifyFill(uint256 id) public view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
         //        require(msg.sender == o.taker, "invalid taker");
         //        require(block.timestamp < o.deadline, "expired");
@@ -66,7 +66,7 @@ contract DOTC is ReentrancyGuard {
         //
         //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
 
-        amountOut = IExchange(o.bid.exchange).getAmountOut(o.ask.srcBidAmount, o.bid.path);
+        dstAmountOut = IExchange(o.bid.exchange).getAmountOut(o.ask.srcBidAmount, o.bid.path);
     }
 
     /**
@@ -102,18 +102,18 @@ contract DOTC is ReentrancyGuard {
         address exchange,
         address[] calldata path
     ) external nonReentrant {
-        (OrderLib.Order memory o, uint256 amountOut) = verifyBid(id, exchange, path);
+        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path);
         o.bid.time = block.timestamp;
         o.bid.taker = msg.sender;
         o.bid.exchange = exchange;
         o.bid.path = path;
-        o.bid.amount = amountOut;
+        o.bid.amount = dstAmountOut;
         book[id] = o;
     }
 
     // 3. winning bid is executed by the taker, only if after bidding window
     function fill(uint256 id) external nonReentrant {
-        (OrderLib.Order memory o, uint256 amountOut) = verifyFill(id);
+        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyFill(id);
         //        {
         //            ERC20(o.srcToken).safeTransferFrom(o.maker, o.taker, amount);
         //            IBidder bidder = IBidder(msg.sender);
@@ -124,7 +124,7 @@ contract DOTC is ReentrancyGuard {
         //        emit OrderFilled(id, o.taker, amount, o.bid);
         o.filled.time = block.timestamp;
         o.filled.amount += o.ask.srcBidAmount;
-        o.clearBid();
+        o.bid = OrderLib.createBid();
         book[id] = o;
     }
 }

@@ -46,13 +46,7 @@ library OrderLib {
             Order(
                 id,
                 Ask(block.timestamp, deadline, msg.sender, srcToken, dstToken, srcAmount, srcBidAmount, dstMinAmount),
-                Bid(
-                    0, // time
-                    address(0), // taker
-                    address(0), // exchange
-                    new address[](0), // path
-                    0 // amount
-                ),
+                createBid(),
                 Fill(
                     0, // time
                     0 // amount
@@ -60,11 +54,14 @@ library OrderLib {
             );
     }
 
-    function clearBid(Order memory self) internal {
-        self.bid.time = 0;
-        self.bid.taker = address(0);
-        self.bid.exchange = address(0);
-        self.bid.path = new address[](0);
-        self.bid.amount = 0;
+    function createBid() internal view returns (Bid memory) {
+        return
+            Bid(
+                0, // time
+                address(0), // taker
+                address(0), // exchange
+                new address[](0), // path
+                0 // amount
+            );
     }
 }
