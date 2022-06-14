@@ -1,8 +1,6 @@
-.config.json
+.env
 artifacts/
 cache/
-typechain/
-typechain-abi/
 typechain-hardhat/
 
 

@@ -11,12 +11,12 @@
     "@defi.org/web3-candies": "3.x"
   },
   "scripts": {
+    "clean": "rm -rf artifacts cache",
     "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
-    "typechain": "npx hardhat typechain",
-    "prebuild": "rm -rf artifacts typechain-hardhat typechain-abi && npm run prettier && npm run typechain",
-    "build": "npx hardhat compile && npx solhint 'contracts/**/*.sol'",
-    "test": "DEBUG=web3-candies npx hardhat test --logs",
-    "test:poly": "NETWORK=poly DEBUG=web3-candies npx hardhat test --logs"
+    "typechain": "hardhat typechain",
+    "prebuild": "npm run prettier && npm run typechain",
+    "build": "hardhat compile && solhint 'contracts/**/*.sol'",
+    "test": "BLOCK=14800000 DEBUG=web3-candies hardhat test --logs"
   },
   "prettier": {
     "printWidth": 120

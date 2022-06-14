@@ -1,0 +1,82 @@
+import { expect } from "chai";
+import {
+  ask,
+  bid,
+  describeOnETH,
+  dotc,
+  dstToken,
+  exchange,
+  fill,
+  order,
+  srcToken,
+  taker,
+  time,
+  user,
+} from "./base.test";
+import { parseEvents, zeroAddress } from "@defi.org/web3-candies";
+
+describeOnETH("Sanity", () => {
+  it("maker creates ask order", async () => {
+    expect(await dotc.methods.length().call()).bignumber.zero;
+
+    const deadline = (await time()) + 100;
+    const tx = await ask(3, 2, 1, deadline);
+    const blockTimeAtCreation = await time();
+
+    const events = parseEvents(tx, dotc);
+    expect(events[0].event).eq("OrderCreated");
+    expect(events[0].returnValues.maker).eq(user);
+    expect(events[0].returnValues.id).eq("0");
+    expect(await dotc.methods.length().call()).bignumber.eq("1");
+
+    const o = await order(0);
+    expect(o.id).bignumber.zero;
+
+    expect(o.ask.time).bignumber.eq(blockTimeAtCreation.toString());
+    expect(o.ask.deadline).bignumber.eq(deadline.toString());
+    expect(o.ask.maker).eq(user);
+    expect(o.ask.srcToken).eq(srcToken.address);
+    expect(o.ask.dstToken).eq(dstToken.address);
+    expect(o.ask.srcAmount).bignumber.eq(await srcToken.amount(3));
+    expect(o.ask.srcRate).bignumber.eq(await srcToken.amount(2));
+    expect(o.ask.dstRate).bignumber.eq(await dstToken.amount(1));
+
+    expect(o.bid.time).bignumber.zero;
+    expect(o.bid.taker).eq(zeroAddress);
+    expect(o.bid.exchange).eq(zeroAddress);
+    expect(o.bid.path).empty;
+    expect(o.bid.amount).bignumber.zero;
+
+    expect(o.filled.time).bignumber.zero;
+    expect(o.filled.amount).bignumber.zero;
+  });
+
+  it("bid sets Bid fields", async () => {
+    await ask(2000, 2000, 1);
+    await bid(0);
+    const o = await order(0);
+    expect(o.bid.taker).eq(taker.options.address);
+    expect(o.bid.exchange).eq(exchange.options.address);
+    expect(o.bid.path).deep.eq([srcToken.address, dstToken.address]);
+    expect(o.bid.amount)
+      .bignumber.gte(await dstToken.amount(1))
+      .closeTo(await dstToken.amount(1), await dstToken.amount(0.1));
+    expect(o.bid.time).bignumber.eq((await time()).toString());
+  });
+
+  it("fill sets Fill fields and clears the Bid", async () => {
+    await ask(2000, 1000, 0.5);
+    await bid(0);
+    await fill(0);
+
+    const o = await order(0);
+    expect(o.filled.time).bignumber.eq((await time()).toString());
+    expect(o.filled.amount).bignumber.eq(await srcToken.amount(1000));
+
+    expect(o.bid.taker).eq(zeroAddress);
+    expect(o.bid.exchange).eq(zeroAddress);
+    expect(o.bid.path).empty;
+    expect(o.bid.amount).bignumber.zero;
+    expect(o.bid.time).bignumber.zero;
+  });
+});

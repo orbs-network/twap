@@ -7,28 +7,28 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "./Interfaces.sol";
-import "./OrderBook.sol";
+import "../Interfaces.sol";
+import "../DOTC.sol";
 
 import "hardhat/console.sol";
 
 contract MockVault {
-    OrderBook public orderbook;
+    DOTC public dotc;
 
     ERC20 public srcToken;
     ERC20 public dstToken;
 
     constructor(
-        address _orderbook,
+        address _dotc,
         address _srcToken,
         address _dstToken
     ) {
-        orderbook = OrderBook(_orderbook);
+        dotc = DOTC(_dotc);
         srcToken = ERC20(_srcToken);
         dstToken = ERC20(_dstToken);
     }
 
     function doHardWork() external {
-        //        orderbook.ask(srcToken, dstToken, srcToken.balanceOf(address(this)));
+        //        dotc.ask(srcToken, dstToken, srcToken.balanceOf(address(this)));
     }
 }
