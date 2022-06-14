@@ -38,8 +38,8 @@ describeOnETH("Sanity", () => {
     expect(o.ask.srcToken).eq(srcToken.address);
     expect(o.ask.dstToken).eq(dstToken.address);
     expect(o.ask.srcAmount).bignumber.eq(await srcToken.amount(3));
-    expect(o.ask.srcRate).bignumber.eq(await srcToken.amount(2));
-    expect(o.ask.dstRate).bignumber.eq(await dstToken.amount(1));
+    expect(o.ask.srcBidAmount).bignumber.eq(await srcToken.amount(2));
+    expect(o.ask.dstMinAmount).bignumber.eq(await dstToken.amount(1));
 
     expect(o.bid.time).bignumber.zero;
     expect(o.bid.taker).eq(zeroAddress);

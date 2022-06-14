@@ -9,8 +9,8 @@ library OrderLib {
         address srcToken;
         address dstToken;
         uint256 srcAmount;
-        uint256 srcRate;
-        uint256 dstRate;
+        uint256 srcBidAmount;
+        uint256 dstMinAmount;
     }
 
     struct Bid {
@@ -38,14 +38,14 @@ library OrderLib {
         address srcToken,
         address dstToken,
         uint256 srcAmount,
-        uint256 srcRate,
-        uint256 dstRate,
+        uint256 srcBidAmount,
+        uint256 dstMinAmount,
         uint256 deadline
     ) internal view returns (Order memory) {
         return
             Order(
                 id,
-                Ask(block.timestamp, deadline, msg.sender, srcToken, dstToken, srcAmount, srcRate, dstRate),
+                Ask(block.timestamp, deadline, msg.sender, srcToken, dstToken, srcAmount, srcBidAmount, dstMinAmount),
                 Bid(
                     0, // time
                     address(0), // taker

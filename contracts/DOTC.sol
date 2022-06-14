@@ -45,14 +45,14 @@ contract DOTC is ReentrancyGuard {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
 
-        amountOut = IExchange(exchange).getAmountOut(o.ask.srcRate, path);
-        require(amountOut > o.ask.dstRate, "low rate");
+        amountOut = IExchange(exchange).getAmountOut(o.ask.srcBidAmount, path);
+        require(amountOut > o.ask.dstMinAmount, "low rate");
         require(amountOut > o.bid.amount, "low bid");
 
         require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
         //
-        //        uint256 dstRate = Math.min(o.dstRate, (o.dstRate * (o.srcAmount - o.filled)) / o.srcRate);
-        //        require(amount >= dstRate, "low rate");
+        //        uint256 dstMinAmount = Math.min(o.dstMinAmount, (o.dstMinAmount * (o.srcAmount - o.filled)) / o.srcBidAmount);
+        //        require(amount >= dstMinAmount, "low rate");
     }
 
     function verifyFill(uint256 id) public view returns (OrderLib.Order memory o, uint256 amountOut) {
@@ -64,9 +64,9 @@ contract DOTC is ReentrancyGuard {
         //            "pending bid"
         //        );
         //
-        //        amount = Math.min(o.srcRate, o.srcAmount - o.filled);
+        //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
 
-        amountOut = IExchange(o.bid.exchange).getAmountOut(o.ask.srcRate, o.bid.path);
+        amountOut = IExchange(o.bid.exchange).getAmountOut(o.ask.srcBidAmount, o.bid.path);
     }
 
     /**
@@ -78,8 +78,8 @@ contract DOTC is ReentrancyGuard {
         address srcToken,
         address dstToken,
         uint256 srcAmount,
-        uint256 srcRate,
-        uint256 dstRate,
+        uint256 srcBidAmount,
+        uint256 dstMinAmount,
         uint256 deadline
     ) external nonReentrant returns (uint256 id) {
         OrderLib.Order memory o = OrderLib.createOrder(
@@ -87,8 +87,8 @@ contract DOTC is ReentrancyGuard {
             srcToken,
             dstToken,
             srcAmount,
-            srcRate,
-            dstRate,
+            srcBidAmount,
+            dstMinAmount,
             deadline
         );
         book.push(o);
@@ -123,7 +123,7 @@ contract DOTC is ReentrancyGuard {
         //        }
         //        emit OrderFilled(id, o.taker, amount, o.bid);
         o.filled.time = block.timestamp;
-        o.filled.amount += o.ask.srcRate;
+        o.filled.amount += o.ask.srcBidAmount;
         o.clearBid();
         book[id] = o;
     }
