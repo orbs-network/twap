@@ -33,7 +33,7 @@ library OrderLib {
         Fill filled;
     }
 
-    function createOrder(
+    function newOrder(
         uint256 id,
         address srcToken,
         address dstToken,
@@ -46,7 +46,7 @@ library OrderLib {
             Order(
                 id,
                 Ask(block.timestamp, deadline, msg.sender, srcToken, dstToken, srcAmount, srcBidAmount, dstMinAmount),
-                createBid(),
+                newBid(),
                 Fill(
                     0, // time
                     0 // amount
@@ -54,7 +54,7 @@ library OrderLib {
             );
     }
 
-    function createBid() internal view returns (Bid memory) {
+    function newBid() internal view returns (Bid memory) {
         return
             Bid(
                 0, // time

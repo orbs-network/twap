@@ -1,6 +1,7 @@
-import { ask, bid, describeOnETH, dotc, fill, time } from "./base.test";
-import { expectRevert } from "@defi.org/web3-candies";
+import { ask, bid, describeOnETH, dotc, fill, taker, takerOwner, time } from "./base.test";
+import { account, expectRevert } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { expect } from "chai";
 
 describe("Errors", () => {
   describe("order", async () => {
@@ -10,7 +11,7 @@ describe("Errors", () => {
     });
   });
 
-  describeOnETH("verifyBid", async () => {
+  describeOnETH("verify bid", async () => {
     it("expired", async () => {
       await ask(2000, 2000, 1, (await time()) - 1);
       await expectRevert(() => bid(0), "expired");
@@ -31,6 +32,7 @@ describe("Errors", () => {
     it("recently filled", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
+      await mineBlock(30);
       await fill(0);
 
       await expectRevert(() => bid(0), "recently filled");
@@ -39,9 +41,37 @@ describe("Errors", () => {
       await bid(0);
     });
 
-    it("low rate", async () => {
+    it("low bid dst amount out", async () => {
       await ask(2000, 1000, 2);
-      await expectRevert(() => bid(0), "low rate");
+      await expectRevert(() => bid(0), "dstMinAmount");
+    });
+  });
+
+  describeOnETH("verify fill", async () => {
+    it("expired", async () => {
+      await ask(2000, 1000, 0.5);
+      await bid(0);
+      await mineBlock(1000);
+      await expectRevert(() => fill(0), "expired");
+    });
+
+    it("invalid taker when no existing bid", async () => {
+      await ask(2000, 1000, 0.5);
+      await expectRevert(() => fill(0), "invalid taker");
+    });
+
+    it("invalid taker when not the winning taker", async () => {
+      await ask(2000, 1000, 0.5);
+      await bid(0);
+      const otherTaker = await account(9);
+      expect(otherTaker).not.eq(takerOwner).not.eq(taker.options.address);
+      await expectRevert(() => dotc.methods.fill(0).send({ from: otherTaker }), "invalid taker");
+    });
+
+    it("pending bid when still in bidding window", async () => {
+      await ask(2000, 1000, 0.5);
+      await bid(0);
+      await expectRevert(() => fill(0), "pending bid");
     });
   });
 

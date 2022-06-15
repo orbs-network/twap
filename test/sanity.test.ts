@@ -14,9 +14,10 @@ import {
   user,
 } from "./base.test";
 import { parseEvents, zeroAddress } from "@defi.org/web3-candies";
+import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
 describeOnETH("Sanity", () => {
-  it("maker creates ask order", async () => {
+  it("maker creates ask order, emits event", async () => {
     expect(await dotc.methods.length().call()).bignumber.zero;
 
     const deadline = (await time()) + 100;
@@ -25,8 +26,8 @@ describeOnETH("Sanity", () => {
 
     const events = parseEvents(tx, dotc);
     expect(events[0].event).eq("OrderCreated");
-    expect(events[0].returnValues.maker).eq(user);
     expect(events[0].returnValues.id).eq("0");
+    expect(events[0].returnValues.maker).eq(user);
     expect(await dotc.methods.length().call()).bignumber.eq("1");
 
     const o = await order(0);
@@ -64,10 +65,11 @@ describeOnETH("Sanity", () => {
     expect(o.bid.time).bignumber.eq((await time()).toString());
   });
 
-  it("fill sets Fill fields and clears the Bid", async () => {
+  it("fill sets Fill fields and clears the Bid, emits event", async () => {
     await ask(2000, 1000, 0.5);
     await bid(0);
-    await fill(0);
+    await mineBlock(30);
+    const tx = await fill(0);
 
     const o = await order(0);
     expect(o.filled.time).bignumber.eq((await time()).toString());
@@ -78,5 +80,14 @@ describeOnETH("Sanity", () => {
     expect(o.bid.path).empty;
     expect(o.bid.amount).bignumber.zero;
     expect(o.bid.time).bignumber.zero;
+
+    const events = parseEvents(tx, dotc);
+    expect(events[0].event).eq("OrderFilled");
+    expect(events[0].returnValues.id).eq("0");
+    expect(events[0].returnValues.taker).eq(taker.options.address);
+    expect(events[0].returnValues.srcAmountIn).bignumber.eq(await srcToken.amount(1000));
+    expect(events[0].returnValues.dstAmountOut)
+      .bignumber.gte(await dstToken.amount(0.5))
+      .closeTo(await dstToken.amount(0.5), await dstToken.amount(0.1));
   });
 });

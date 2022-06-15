@@ -16,10 +16,9 @@ contract DOTC is ReentrancyGuard {
     using OrderLib for OrderLib.Order;
 
     event OrderCreated(uint256 indexed id, address indexed maker);
-    event OrderFilled(uint256 indexed id, address indexed taker, uint256 srcAmount, uint256 dstAmount);
+    event OrderFilled(uint256 indexed id, address indexed taker, uint256 srcAmountIn, uint256 dstAmountOut);
 
-    uint256 public constant BID_WINDOW_MIN_SEC = 10;
-    uint256 public constant BID_WINDOW_MAX_SEC = 60;
+    uint256 public constant BID_DELAY_SEC = 10;
     uint256 public constant FILL_DELAY_SEC = 60;
 
     OrderLib.Order[] public book;
@@ -46,24 +45,22 @@ contract DOTC is ReentrancyGuard {
         require(block.timestamp < o.ask.deadline, "expired");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcBidAmount, path);
-        require(dstAmountOut > o.ask.dstMinAmount, "low rate");
+        require(dstAmountOut > o.ask.dstMinAmount, "dstMinAmount");
         require(dstAmountOut > o.bid.amount, "low bid");
 
         require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
-        //
+
         //        uint256 dstMinAmount = Math.min(o.dstMinAmount, (o.dstMinAmount * (o.srcAmount - o.filled)) / o.srcBidAmount);
         //        require(amount >= dstMinAmount, "low rate");
     }
 
     function verifyFill(uint256 id) public view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
-        //        require(msg.sender == o.taker, "invalid taker");
-        //        require(block.timestamp < o.deadline, "expired");
-        //        require(
-        //            block.timestamp > o.bidTime + BID_WINDOW_MIN_SEC || block.timestamp > o.filledTime + BID_WINDOW_MAX_SEC,
-        //            "pending bid"
-        //        );
-        //
+        require(block.timestamp < o.ask.deadline, "expired");
+        require(msg.sender == o.bid.taker, "invalid taker");
+
+        require(block.timestamp > o.bid.time + BID_DELAY_SEC, "pending bid");
+
         //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
 
         dstAmountOut = IExchange(o.bid.exchange).getAmountOut(o.ask.srcBidAmount, o.bid.path);
@@ -82,7 +79,7 @@ contract DOTC is ReentrancyGuard {
         uint256 dstMinAmount,
         uint256 deadline
     ) external nonReentrant returns (uint256 id) {
-        OrderLib.Order memory o = OrderLib.createOrder(
+        OrderLib.Order memory o = OrderLib.newOrder(
             length(),
             srcToken,
             dstToken,
@@ -103,11 +100,7 @@ contract DOTC is ReentrancyGuard {
         address[] calldata path
     ) external nonReentrant {
         (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path);
-        o.bid.time = block.timestamp;
-        o.bid.taker = msg.sender;
-        o.bid.exchange = exchange;
-        o.bid.path = path;
-        o.bid.amount = dstAmountOut;
+        o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, path, dstAmountOut);
         book[id] = o;
     }
 
@@ -121,10 +114,11 @@ contract DOTC is ReentrancyGuard {
         //            ERC20(o.dstToken).safeTransferFrom(o.taker, o.maker, o.bid);
         //            // TODO user callback
         //        }
-        //        emit OrderFilled(id, o.taker, amount, o.bid);
+
+        emit OrderFilled(id, o.bid.taker, o.ask.srcBidAmount, dstAmountOut);
+        o.bid = OrderLib.newBid();
         o.filled.time = block.timestamp;
         o.filled.amount += o.ask.srcBidAmount;
-        o.bid = OrderLib.createBid();
         book[id] = o;
     }
 }

@@ -79,11 +79,11 @@ export async function ask(srcAmount: number, srcRate: number, dstRate: number, d
 }
 
 export async function bid(id: number) {
-  await taker.methods.bid(id, [srcToken.options.address, dstToken.options.address]).send({ from: takerOwner });
+  return taker.methods.bid(id, [srcToken.options.address, dstToken.options.address]).send({ from: takerOwner });
 }
 
 export async function fill(id: number) {
-  await taker.methods.fill(id).send({ from: takerOwner });
+  return taker.methods.fill(id).send({ from: takerOwner });
 }
 
 export async function order(id: number): Promise<any> {
