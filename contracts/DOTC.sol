@@ -54,7 +54,7 @@ contract DOTC is ReentrancyGuard {
         //        require(amount >= dstMinAmount, "low rate");
     }
 
-    function verifyFill(uint256 id) public view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
+    function verifyFill(uint256 id) public returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
         require(msg.sender == o.bid.taker, "invalid taker");
@@ -107,18 +107,31 @@ contract DOTC is ReentrancyGuard {
     // 3. winning bid is executed by the taker, only if after bidding window
     function fill(uint256 id) external nonReentrant {
         (OrderLib.Order memory o, uint256 dstAmountOut) = verifyFill(id);
-        //        {
-        //            ERC20(o.srcToken).safeTransferFrom(o.maker, o.taker, amount);
-        //            IBidder bidder = IBidder(msg.sender);
-        //            Address.functionCall(msg.sender, abi.encodeWithSelector(bidder.executeCallback.selector, id, data));
-        //            ERC20(o.dstToken).safeTransferFrom(o.taker, o.maker, o.bid);
-        //            // TODO user callback
-        //        }
+
+        performFill(o);
+        dstToken.safeTransfer(o.ask.maker, dstActualOut);
 
         emit OrderFilled(id, o.bid.taker, o.ask.srcBidAmount, dstAmountOut);
         o.bid = OrderLib.newBid();
         o.filled.time = block.timestamp;
         o.filled.amount += o.ask.srcBidAmount;
         book[id] = o;
+    }
+
+    function performFill(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
+        ERC20 srcToken = ERC20(o.ask.srcToken);
+        ERC20 dstToken = ERC20(o.ask.dstToken);
+        IExchange exchange = IExchange(o.bid.exchange);
+
+        srcAmountIn = o.ask.srcBidAmount;
+
+        srcToken.transferFrom(o.ask.maker, address(this), srcAmountIn);
+        srcToken.safeIncreaseAllowance(exchange.getSwapTarget(), srcAmountIn);
+
+        bytes memory out = Address.functionDelegateCall(
+            address(exchange),
+            abi.encodeWithSelector(exchange.swap.selector, srcAmountIn, o.bid.path)
+        );
+        dstAmountOut = abi.decode(out, (uint256));
     }
 }

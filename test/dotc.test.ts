@@ -1,51 +1,32 @@
 import { useChaiBN } from "@defi.org/web3-candies";
-import { ask, bid } from "./base.test";
+import { ask, bid, describeOnETH, expectFilled, fill } from "./base.test";
+import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
 useChaiBN();
 
-describe("DOTC", async () => {
+describeOnETH("DOTC", async () => {
   it("single chunk", async () => {
-    await ask(10_000, 10_000, 5);
+    await ask(2000, 2000, 1);
     await bid(0);
-    // TODO
-    // await mineBlock(10);
-    // await fill(0);
-    //
-    // await expectFilled(0, 10_000, 5);
-    //
-    // expect((await order(0)).taker).eq(zeroAddress);
-    // expect((await order(0)).bid).eq("0");
+    await mineBlock(10);
+    await fill(0);
+
+    await expectFilled(0, 2000, 1);
   });
 
-  xit("mutiple chunks", async () => {
-    // TODO
-    // await ask(10_000, 2500, 1.25);
-    //
-    // await bid(0, 1.25);
-    // await mineBlock(10);
-    // await fill(0);
-    // await expectFilled(0, 2500, 1.25);
-    //
-    // await mineBlock(60);
-    // await bid(0, 1.25);
-    // await mineBlock(10);
-    // await fill(0);
-    // await expectFilled(0, 5000, 2.5);
-  });
+  it("mutiple chunks", async () => {
+    await ask(10_000, 2500, 1.25);
 
-  xit("all chunks", async () => {
-    // TODO
-    // await ask(10_000, 2500, 1.25);
-    //
-    // for (let i = 1; i <= 4; i++) {
-    //   await bid(0, 1.25);
-    //   await mineBlock(10);
-    //   await fill(0);
-    //   await mineBlock(60);
-    //   await expectFilled(0, 2500 * i, 1.25 * i);
-    // }
-    //
-    // await expectFilled(0, 10_000, 5);
+    for (let i = 1; i <= 4; i++) {
+      await bid(0);
+      await mineBlock(10);
+      await fill(0);
+      await expectFilled(0, 2500 * i, 1.25 * i);
+
+      await mineBlock(60);
+    }
+
+    await expectFilled(0, 10_000, 5);
   });
 
   xit("last chunk partial amount", async () => {
@@ -79,5 +60,9 @@ describe("DOTC", async () => {
     //
     // await fill(0);
     // await expectFilled(0, 4000, 2.1);
+  });
+
+  xit("maker callback on each fill", async () => {
+    // TODO
   });
 });

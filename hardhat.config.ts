@@ -14,6 +14,10 @@ task("deploy").setAction(async () => {
 
 export default _.merge(hardhatDefaultConfig(), {
   networks: {
-    hardhat: {},
+    hardhat: {
+      accounts: {
+        passphrase: "dotc", // empty accounts
+      },
+    },
   },
 } as HardhatUserConfig);

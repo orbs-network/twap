@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./Interfaces.sol";
 import "./DOTC.sol";
+import "./OrderLib.sol";
 
 contract Taker is Ownable {
     using SafeERC20 for ERC20;
@@ -31,6 +32,8 @@ contract Taker is Ownable {
     }
 
     function fill(uint256 id) external onlyOwner {
+        //        Order memory o = dotc.order(id);
+        //        ERC20(o.ask.srcToken).safeIncreaseAllo;
         dotc.fill(id);
     }
 

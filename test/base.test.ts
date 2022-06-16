@@ -60,15 +60,11 @@ async function initExternals() {
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
   await srcToken.methods.transfer(user, await srcToken.amount(userSrcTokenStartBalance)).send({ from: srcTokenWhale });
-
-  // await erc20s.eth
-  //   .WETH()
-  //   .methods.deposit()
-  //   .send({ from: takerOwner, value: bn18(1e6) });
+  expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(await srcToken.amount(userSrcTokenStartBalance));
 }
 
 export async function ask(srcAmount: number, srcRate: number, dstRate: number, deadline: number = 0) {
-  deadline = deadline || (await time()) + 100;
+  deadline = deadline || (await time()) + 1000;
   const _srcAmount = await srcToken.amount(srcAmount);
   const _srcRate = await srcToken.amount(srcRate);
   const _dstRate = await dstToken.amount(dstRate);
@@ -90,16 +86,16 @@ export async function order(id: number): Promise<any> {
   return dotc.methods.order(id).call();
 }
 
-export async function expectFilled(id: number, srcAmount: number, dstAmount: number) {
-  expect((await order(id)).filled).bignumber.eq(await srcToken.amount(srcAmount));
-  expect(await srcToken.methods.balanceOf(user).call()).bignumber.closeTo(
-    await srcToken.amount(userSrcTokenStartBalance - srcAmount),
-    await srcToken.amount(srcAmount * 0.001)
+export async function expectFilled(id: number, srcExactAmount: number, dstMinAmount: number) {
+  expect((await order(id)).filled.amount).bignumber.eq(await srcToken.amount(srcExactAmount));
+
+  expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
+    await srcToken.amount(userSrcTokenStartBalance - srcExactAmount)
   );
-  expect(await dstToken.methods.balanceOf(user).call()).bignumber.closeTo(
-    await dstToken.amount(dstAmount),
-    await dstToken.amount(dstAmount * 0.001)
-  );
+
+  expect(await dstToken.methods.balanceOf(user).call())
+    .bignumber.gte(await dstToken.amount(dstMinAmount))
+    .closeTo(await dstToken.amount(dstMinAmount), await dstToken.amount(dstMinAmount * 0.1));
 }
 
 export const describeOnETH = process.env.NETWORK == "ETH" ? describe : xdescribe;
