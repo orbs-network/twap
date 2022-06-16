@@ -29,6 +29,13 @@ contract MockVault {
     }
 
     function doHardWork() external {
-        //        dotc.ask(srcToken, dstToken, srcToken.balanceOf(address(this)));
+        dotc.ask(
+            address(srcToken),
+            address(dstToken),
+            srcToken.balanceOf(address(this)),
+            srcToken.balanceOf(address(this)),
+            1,
+            block.timestamp
+        );
     }
 }

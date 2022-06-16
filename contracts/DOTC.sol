@@ -36,36 +36,6 @@ contract DOTC is ReentrancyGuard {
         return book.length;
     }
 
-    function verifyBid(
-        uint256 id,
-        address exchange,
-        address[] calldata path
-    ) public view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
-        o = order(id);
-        require(block.timestamp < o.ask.deadline, "expired");
-
-        dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcBidAmount, path);
-        require(dstAmountOut > o.ask.dstMinAmount, "dstMinAmount");
-        require(dstAmountOut > o.bid.amount, "low bid");
-
-        require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
-
-        //        uint256 dstMinAmount = Math.min(o.dstMinAmount, (o.dstMinAmount * (o.srcAmount - o.filled)) / o.srcBidAmount);
-        //        require(amount >= dstMinAmount, "low rate");
-    }
-
-    function verifyFill(uint256 id) public returns (OrderLib.Order memory o, uint256 dstAmountOut) {
-        o = order(id);
-        require(block.timestamp < o.ask.deadline, "expired");
-        require(msg.sender == o.bid.taker, "invalid taker");
-
-        require(block.timestamp > o.bid.time + BID_DELAY_SEC, "pending bid");
-
-        //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
-
-        dstAmountOut = IExchange(o.bid.exchange).getAmountOut(o.ask.srcBidAmount, o.bid.path);
-    }
-
     /**
      * ---- actions ----
      */
@@ -106,32 +76,64 @@ contract DOTC is ReentrancyGuard {
 
     // 3. winning bid is executed by the taker, only if after bidding window
     function fill(uint256 id) external nonReentrant {
-        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyFill(id);
+        (OrderLib.Order memory o, uint256 srcAmountIn, uint256 dstAmountOut) = performFill(id);
 
-        performFill(o);
-        dstToken.safeTransfer(o.ask.maker, dstActualOut);
-
-        emit OrderFilled(id, o.bid.taker, o.ask.srcBidAmount, dstAmountOut);
+        emit OrderFilled(id, o.bid.taker, srcAmountIn, dstAmountOut);
         o.bid = OrderLib.newBid();
         o.filled.time = block.timestamp;
-        o.filled.amount += o.ask.srcBidAmount;
+        o.filled.amount += srcAmountIn;
         book[id] = o;
     }
 
-    function performFill(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
-        ERC20 srcToken = ERC20(o.ask.srcToken);
-        ERC20 dstToken = ERC20(o.ask.dstToken);
-        IExchange exchange = IExchange(o.bid.exchange);
+    /**
+     * ---- internals ----
+     */
+
+    function verifyBid(
+        uint256 id,
+        address exchange,
+        address[] calldata path
+    ) private view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
+        o = order(id);
+        require(block.timestamp < o.ask.deadline, "expired");
+        require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
+
+        uint256 srcAmountIn = o.ask.srcBidAmount;
+
+        dstAmountOut = IExchange(exchange).getAmountOut(srcAmountIn, path);
+        require(dstAmountOut > o.ask.dstMinAmount, "insufficient out");
+        require(dstAmountOut > o.bid.amount, "low bid");
+
+        //        uint256 dstMinAmount = Math.min(o.dstMinAmount, (o.dstMinAmount * (o.srcAmount - o.filled)) / o.srcBidAmount);
+    }
+
+    function performFill(uint256 id)
+        private
+        returns (
+            OrderLib.Order memory o,
+            uint256 srcAmountIn,
+            uint256 dstAmountOut
+        )
+    {
+        o = order(id);
+        require(msg.sender == o.bid.taker, "invalid taker");
+        require(block.timestamp < o.ask.deadline, "expired");
+        require(block.timestamp > o.bid.time + BID_DELAY_SEC, "pending bid");
+
+        //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
 
         srcAmountIn = o.ask.srcBidAmount;
 
-        srcToken.transferFrom(o.ask.maker, address(this), srcAmountIn);
-        srcToken.safeIncreaseAllowance(exchange.getSwapTarget(), srcAmountIn);
+        ERC20(o.ask.srcToken).transferFrom(o.ask.maker, address(this), srcAmountIn);
+        ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getSwapTarget(), srcAmountIn);
 
         bytes memory out = Address.functionDelegateCall(
-            address(exchange),
-            abi.encodeWithSelector(exchange.swap.selector, srcAmountIn, o.bid.path)
+            o.bid.exchange,
+            abi.encodeWithSelector(IExchange(o.bid.exchange).swap.selector, srcAmountIn, o.bid.path)
         );
         dstAmountOut = abi.decode(out, (uint256));
+
+        require(dstAmountOut > o.ask.dstMinAmount, "insufficient out");
+        ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
     }
 }

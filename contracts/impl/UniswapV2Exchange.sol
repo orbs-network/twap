@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// solhint-disable not-rely-on-time
 pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -29,18 +30,8 @@ contract UniswapV2Exchange is IExchange {
     }
 
     function swap(uint256 amountIn, address[] calldata path) public returns (uint256 amountOut) {
-        ERC20 srcToken = ERC20(path[0]);
-
-        //        srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
-        //        srcToken.safeIncreaseAllowance(address(uniswap), amountIn);
-
         amountOut = uniswap.swapExactTokensForTokens(amountIn, 1, path, address(this), block.timestamp)[
             path.length - 1
         ];
-
-        //        require(srcToken.balanceOf(address(this)) == 0, "dust");
-
-        //        ERC20 dstToken = ERC20(path[path.length - 1]);
-        //        dstToken.safeTransfer(msg.sender, dstToken.balanceOf(address(this)));
     }
 }

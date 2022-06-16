@@ -43,7 +43,7 @@ describe("Errors", () => {
 
     it("low bid dst amount out", async () => {
       await ask(2000, 1000, 2);
-      await expectRevert(() => bid(0), "dstMinAmount");
+      await expectRevert(() => bid(0), "insufficient out");
     });
   });
 
@@ -51,7 +51,7 @@ describe("Errors", () => {
     it("expired", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
-      await mineBlock(1000);
+      await mineBlock(10000);
       await expectRevert(() => fill(0), "expired");
     });
 
@@ -72,6 +72,13 @@ describe("Errors", () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
       await expectRevert(() => fill(0), "pending bid");
+    });
+
+    it.only("insufficient out", async () => {
+      await ask(2000, 1000, 0.5);
+      await bid(0);
+      // await increasePrice();
+      await expectRevert(() => fill(0), "insufficient out");
     });
   });
 

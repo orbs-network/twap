@@ -74,8 +74,8 @@ export async function ask(srcAmount: number, srcRate: number, dstRate: number, d
     .send({ from: user });
 }
 
-export async function bid(id: number) {
-  return taker.methods.bid(id, [srcToken.options.address, dstToken.options.address]).send({ from: takerOwner });
+export async function bid(id: number, path: string[] = [srcToken.options.address, dstToken.options.address]) {
+  return taker.methods.bid(id, path).send({ from: takerOwner });
 }
 
 export async function fill(id: number) {

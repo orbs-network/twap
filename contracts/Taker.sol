@@ -32,14 +32,6 @@ contract Taker is Ownable {
     }
 
     function fill(uint256 id) external onlyOwner {
-        //        Order memory o = dotc.order(id);
-        //        ERC20(o.ask.srcToken).safeIncreaseAllo;
         dotc.fill(id);
     }
-
-    //    function executeCallback(uint256 id, bytes calldata data) external {
-    //        Order memory o = DOTC.order(id);
-    //        // swap
-    //        ERC20(o.dstToken).safeIncreaseAllowance(address(dotc), o.bid);
-    //    }
 }

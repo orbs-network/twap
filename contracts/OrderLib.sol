@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// solhint-disable not-rely-on-time
 pragma solidity 0.8.10;
 
 library OrderLib {
@@ -54,7 +55,7 @@ library OrderLib {
             );
     }
 
-    function newBid() internal view returns (Bid memory) {
+    function newBid() internal pure returns (Bid memory) {
         return
             Bid(
                 0, // time
