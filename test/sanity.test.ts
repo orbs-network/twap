@@ -56,7 +56,7 @@ describeOnETH("Sanity", () => {
     await ask(2000, 2000, 1);
     await bid(0);
     const o = await order(0);
-    expect(o.bid.taker).eq(taker.options.address);
+    expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
     expect(o.bid.path).deep.eq([srcToken.address, dstToken.address]);
     expect(o.bid.amount)
@@ -84,7 +84,7 @@ describeOnETH("Sanity", () => {
     const events = parseEvents(tx, dotc);
     expect(events[0].event).eq("OrderFilled");
     expect(events[0].returnValues.id).eq("0");
-    expect(events[0].returnValues.taker).eq(taker.options.address);
+    expect(events[0].returnValues.taker).eq(taker);
     expect(events[0].returnValues.srcAmountIn).bignumber.eq(await srcToken.amount(1000));
     expect(events[0].returnValues.dstAmountOut)
       .bignumber.gte(await dstToken.amount(0.5))

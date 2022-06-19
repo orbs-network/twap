@@ -1,48 +1,42 @@
 import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
 import { account, block, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { DOTC, Quoter, Taker } from "../typechain-hardhat/contracts";
+import { DOTC, Quoter } from "../typechain-hardhat/contracts";
 import { IExchange } from "../typechain-hardhat/contracts/Interfaces.sol";
+import { MockExchange } from "../typechain-hardhat/contracts/test";
 
 useChaiBN();
 
-export let user: string;
-export let takerOwner: string;
-
 export let deployer: string;
+export let user: string;
+export let taker: string;
 export let quoter: Quoter;
 export let dotc: DOTC;
-export let taker: Taker;
 export let exchange: IExchange;
 
 export let srcToken: Token;
 export let dstToken: Token;
 let router: string;
+let srcTokenWhale: string;
 
 const userSrcTokenStartBalance = 1_000_000;
 
 beforeEach(async () => {
   await resetNetworkFork();
-
   await initAccounts();
   await initExternals();
 
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [router]);
   quoter = await deployArtifact<Quoter>("Quoter", { from: deployer }, [exchange.options.address]);
   dotc = await deployArtifact<DOTC>("DOTC", { from: deployer });
-  taker = await deployArtifact<Taker>("Taker", { from: deployer }, [
-    takerOwner,
-    dotc.options.address,
-    exchange.options.address,
-  ]);
 });
 
 async function initAccounts() {
   user = await account(1);
-  takerOwner = await account(2);
+  taker = await account(2);
   deployer = await account(3);
   tag(user, "user");
-  tag(takerOwner, "takerOwner");
+  tag(taker, "taker");
   tag(deployer, "deployer");
 }
 
@@ -56,8 +50,9 @@ async function initExternals() {
 
   router = ethUniswapV2Router;
 
-  const srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
+  srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
   tag(srcTokenWhale, "srcTokenWhale");
+
   await impersonate(srcTokenWhale);
   await srcToken.methods.transfer(user, await srcToken.amount(userSrcTokenStartBalance)).send({ from: srcTokenWhale });
   expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(await srcToken.amount(userSrcTokenStartBalance));
@@ -74,12 +69,12 @@ export async function ask(srcAmount: number, srcRate: number, dstRate: number, d
     .send({ from: user });
 }
 
-export async function bid(id: number, path: string[] = [srcToken.options.address, dstToken.options.address]) {
-  return taker.methods.bid(id, path).send({ from: takerOwner });
+export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address]) {
+  return dotc.methods.bid(id, exchange.options.address, path).send({ from: taker });
 }
 
 export async function fill(id: number) {
-  return taker.methods.fill(id).send({ from: takerOwner });
+  return dotc.methods.fill(id).send({ from: taker });
 }
 
 export async function order(id: number): Promise<any> {
@@ -102,4 +97,20 @@ export const describeOnETH = process.env.NETWORK == "ETH" ? describe : xdescribe
 
 export async function time() {
   return (await block()).timestamp;
+}
+
+export async function increasePrice() {
+  console.log("📈 increasing price...");
+  const amount = await srcToken.amount(10e6);
+  await srcToken.methods.approve(exchange.options.address, amount).send({ from: srcTokenWhale });
+  await exchange.methods.swap(amount, 1, [srcToken.address, dstToken.address]).send({ from: srcTokenWhale });
+}
+
+export async function withMockExchange(amountOut: number) {
+  exchange = await deployArtifact("MockExchange", { from: deployer });
+  await setMockExchangeAmountOut(amountOut);
+}
+
+export async function setMockExchangeAmountOut(amountOut: number) {
+  await (exchange as MockExchange).methods.setAmounts([0, await dstToken.amount(amountOut)]).send({ from: deployer });
 }

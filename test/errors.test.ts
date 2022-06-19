@@ -1,4 +1,14 @@
-import { ask, bid, describeOnETH, dotc, fill, taker, takerOwner, time } from "./base.test";
+import {
+  ask,
+  bid,
+  describeOnETH,
+  dotc,
+  fill,
+  setMockExchangeAmountOut,
+  taker,
+  time,
+  withMockExchange,
+} from "./base.test";
 import { account, expectRevert } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
@@ -45,9 +55,13 @@ describe("Errors", () => {
       await ask(2000, 1000, 2);
       await expectRevert(() => bid(0), "insufficient out");
     });
+
+    xit("check balanceOf in the bid?", async () => {
+      // TODO
+    });
   });
 
-  describeOnETH("verify fill", async () => {
+  describeOnETH("perform fill", async () => {
     it("expired", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
@@ -64,7 +78,7 @@ describe("Errors", () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
       const otherTaker = await account(9);
-      expect(otherTaker).not.eq(takerOwner).not.eq(taker.options.address);
+      expect(otherTaker).not.eq(taker);
       await expectRevert(() => dotc.methods.fill(0).send({ from: otherTaker }), "invalid taker");
     });
 
@@ -74,15 +88,16 @@ describe("Errors", () => {
       await expectRevert(() => fill(0), "pending bid");
     });
 
-    it.only("insufficient out", async () => {
+    it("insufficient out", async () => {
       await ask(2000, 1000, 0.5);
+
+      await withMockExchange(1);
+
       await bid(0);
-      // await increasePrice();
+      await mineBlock(10);
+
+      await setMockExchangeAmountOut(0.1);
       await expectRevert(() => fill(0), "insufficient out");
     });
-  });
-
-  xit("check balanceOf in the bid?", async () => {
-    // TODO
   });
 });

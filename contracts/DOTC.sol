@@ -11,6 +11,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Interfaces.sol";
 import "./OrderLib.sol";
 
+import "hardhat/console.sol";
+
 contract DOTC is ReentrancyGuard {
     using SafeERC20 for ERC20;
     using OrderLib for OrderLib.Order;
@@ -123,17 +125,20 @@ contract DOTC is ReentrancyGuard {
         //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
 
         srcAmountIn = o.ask.srcBidAmount;
+        dstAmountOut = performFillSwap(o, srcAmountIn);
 
-        ERC20(o.ask.srcToken).transferFrom(o.ask.maker, address(this), srcAmountIn);
-        ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getSwapTarget(), srcAmountIn);
+        require(dstAmountOut >= o.ask.dstMinAmount, "insufficient out");
+        ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
+    }
+
+    function performFillSwap(OrderLib.Order memory o, uint256 srcAmountIn) private returns (uint256 dstAmountOut) {
+        ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
+        ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getAllowanceTarget(), srcAmountIn);
 
         bytes memory out = Address.functionDelegateCall(
             o.bid.exchange,
-            abi.encodeWithSelector(IExchange(o.bid.exchange).swap.selector, srcAmountIn, o.bid.path)
+            abi.encodeWithSelector(IExchange(o.bid.exchange).swap.selector, srcAmountIn, o.ask.dstMinAmount, o.bid.path)
         );
-        dstAmountOut = abi.decode(out, (uint256));
-
-        require(dstAmountOut > o.ask.dstMinAmount, "insufficient out");
-        ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
+        return abi.decode(out, (uint256));
     }
 }

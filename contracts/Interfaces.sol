@@ -2,11 +2,15 @@
 pragma solidity 0.8.10;
 
 interface IExchange {
-    function getSwapTarget() external view returns (address);
+    function getAllowanceTarget() external view returns (address);
 
-    function getAmountOut(uint256 amountIn, address[] calldata path) external view returns (uint256 amount);
+    function getAmountOut(uint256 amountIn, address[] calldata path) external view returns (uint256 amountOut);
 
     function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);
 
-    function swap(uint256 amountIn, address[] calldata path) external returns (uint256 amount);
+    function swap(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path
+    ) external returns (uint256 amountOut);
 }
