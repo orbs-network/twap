@@ -106,11 +106,13 @@ export async function increasePrice() {
   await exchange.methods.swap(amount, 1, [srcToken.address, dstToken.address]).send({ from: srcTokenWhale });
 }
 
-export async function withMockExchange(amountOut: number) {
+export async function withMockExchange(dstAmountOut: number) {
   exchange = await deployArtifact("MockExchange", { from: deployer });
-  await setMockExchangeAmountOut(amountOut);
+  await setMockExchangeAmountOut(dstAmountOut);
 }
 
-export async function setMockExchangeAmountOut(amountOut: number) {
-  await (exchange as MockExchange).methods.setAmounts([0, await dstToken.amount(amountOut)]).send({ from: deployer });
+export async function setMockExchangeAmountOut(dstAmountOut: number) {
+  await (exchange as MockExchange).methods
+    .setAmounts([0, await dstToken.amount(dstAmountOut)])
+    .send({ from: deployer });
 }

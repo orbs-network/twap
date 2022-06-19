@@ -8,8 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../Interfaces.sol";
 import "./IUniswapV2.sol";
 
-import "hardhat/console.sol";
-
 contract UniswapV2Exchange is IExchange {
     using SafeERC20 for ERC20;
 
@@ -19,7 +17,7 @@ contract UniswapV2Exchange is IExchange {
         uniswap = IUniswapV2(_uniswap);
     }
 
-    function getAllowanceTarget() public view returns (address) {
+    function getAllowanceSpender() public view returns (address) {
         return address(uniswap);
     }
 

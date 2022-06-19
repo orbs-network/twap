@@ -40,6 +40,7 @@ describe("Errors", () => {
     });
 
     it("recently filled", async () => {
+      // TODO
       await ask(2000, 1000, 0.5);
       await bid(0);
       await mineBlock(30);
@@ -51,8 +52,20 @@ describe("Errors", () => {
       await bid(0);
     });
 
-    it("low bid dst amount out", async () => {
+    it("insufficient amount out", async () => {
       await ask(2000, 1000, 2);
+      await expectRevert(() => bid(0), "insufficient out");
+    });
+
+    it("insufficient amount out when last partial fill", async () => {
+      await ask(2000, 1500, 1);
+      await bid(0);
+      await mineBlock(10);
+      await fill(0);
+      await mineBlock(60);
+
+      await withMockExchange(0.1);
+
       await expectRevert(() => bid(0), "insufficient out");
     });
 

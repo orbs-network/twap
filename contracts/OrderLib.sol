@@ -2,6 +2,8 @@
 // solhint-disable not-rely-on-time
 pragma solidity 0.8.10;
 
+import "@openzeppelin/contracts/utils/math/Math.sol";
+
 library OrderLib {
     struct Ask {
         uint256 time;
@@ -64,5 +66,16 @@ library OrderLib {
                 new address[](0), // path
                 0 // amount
             );
+    }
+
+    function srcBidAmountNext(Order memory self) internal pure returns (uint256) {
+        return Math.min(self.ask.srcBidAmount, self.ask.srcAmount - self.filled.amount);
+    }
+
+    function dstMinAmountNext(Order memory self) internal pure returns (uint256) {
+        return
+            self.ask.srcBidAmount <= self.ask.srcAmount - self.filled.amount
+                ? self.ask.dstMinAmount
+                : (self.ask.dstMinAmount * (self.ask.srcAmount - self.filled.amount)) / self.ask.srcBidAmount;
     }
 }

@@ -5,13 +5,10 @@ pragma solidity 0.8.10;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "./Interfaces.sol";
 import "./OrderLib.sol";
-
-import "hardhat/console.sol";
 
 contract DOTC is ReentrancyGuard {
     using SafeERC20 for ERC20;
@@ -100,13 +97,9 @@ contract DOTC is ReentrancyGuard {
         require(block.timestamp < o.ask.deadline, "expired");
         require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
 
-        uint256 srcAmountIn = o.ask.srcBidAmount;
-
-        dstAmountOut = IExchange(exchange).getAmountOut(srcAmountIn, path);
-        require(dstAmountOut > o.ask.dstMinAmount, "insufficient out");
+        dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), path);
         require(dstAmountOut > o.bid.amount, "low bid");
-
-        //        uint256 dstMinAmount = Math.min(o.dstMinAmount, (o.dstMinAmount * (o.srcAmount - o.filled)) / o.srcBidAmount);
+        require(dstAmountOut > o.dstMinAmountNext(), "insufficient out");
     }
 
     function performFill(uint256 id)
@@ -122,23 +115,26 @@ contract DOTC is ReentrancyGuard {
         require(block.timestamp < o.ask.deadline, "expired");
         require(block.timestamp > o.bid.time + BID_DELAY_SEC, "pending bid");
 
-        //        amount = Math.min(o.srcBidAmount, o.srcAmount - o.filled);
+        (srcAmountIn, dstAmountOut) = performFillSwap(o);
 
-        srcAmountIn = o.ask.srcBidAmount;
-        dstAmountOut = performFillSwap(o, srcAmountIn);
-
-        require(dstAmountOut >= o.ask.dstMinAmount, "insufficient out");
+        require(dstAmountOut >= o.dstMinAmountNext(), "insufficient out");
         ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
     }
 
-    function performFillSwap(OrderLib.Order memory o, uint256 srcAmountIn) private returns (uint256 dstAmountOut) {
+    function performFillSwap(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
+        srcAmountIn = o.srcBidAmountNext();
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
-        ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getAllowanceTarget(), srcAmountIn);
+        ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getAllowanceSpender(), srcAmountIn);
 
         bytes memory out = Address.functionDelegateCall(
             o.bid.exchange,
-            abi.encodeWithSelector(IExchange(o.bid.exchange).swap.selector, srcAmountIn, o.ask.dstMinAmount, o.bid.path)
+            abi.encodeWithSelector(
+                IExchange(o.bid.exchange).swap.selector,
+                srcAmountIn,
+                o.dstMinAmountNext(),
+                o.bid.path
+            )
         );
-        return abi.decode(out, (uint256));
+        dstAmountOut = abi.decode(out, (uint256));
     }
 }

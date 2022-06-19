@@ -29,24 +29,25 @@ describeOnETH("DOTC", async () => {
     await expectFilled(0, 10_000, 5);
   });
 
-  xit("last chunk partial amount", async () => {
-    // TODO
-    // await ask(10_000, 4000, 2);
-    //
-    // await bid(0, 2);
-    // await mineBlock(10);
-    // await fill(0);
-    // await mineBlock(60);
-    // await bid(0, 2);
-    // await mineBlock(10);
-    // await fill(0);
-    // await mineBlock(60);
-    // await expectFilled(0, 8000, 4);
-    //
-    // await bid(0, 1);
-    // await mineBlock(10);
-    // await fill(0);
-    // await expectFilled(0, 10_000, 5);
+  it("last chunk may be partial amount", async () => {
+    await ask(10_000, 4000, 2);
+
+    await bid(0);
+    await mineBlock(10);
+    await fill(0);
+    await mineBlock(60);
+
+    await bid(0);
+    await mineBlock(10);
+    await fill(0);
+    await mineBlock(60);
+
+    await expectFilled(0, 8000, 4);
+
+    await bid(0);
+    await mineBlock(10);
+    await fill(0);
+    await expectFilled(0, 10_000, 5);
   });
 
   xit("outbid current bid within pending period", async () => {

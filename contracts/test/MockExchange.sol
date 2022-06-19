@@ -13,7 +13,7 @@ contract MockExchange is IExchange {
         amounts = _amounts;
     }
 
-    function getAllowanceTarget() public view returns (address) {
+    function getAllowanceSpender() public view returns (address) {
         return address(this);
     }
 
