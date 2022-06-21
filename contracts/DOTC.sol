@@ -12,6 +12,7 @@ import "./OrderLib.sol";
 
 contract DOTC is ReentrancyGuard {
     using SafeERC20 for ERC20;
+    using Address for address;
     using OrderLib for OrderLib.Order;
 
     event OrderCreated(uint256 indexed id, address indexed maker);
@@ -100,6 +101,11 @@ contract DOTC is ReentrancyGuard {
         dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), path);
         require(dstAmountOut > o.bid.amount, "low bid");
         require(dstAmountOut > o.dstMinAmountNext(), "insufficient out");
+        require(
+            ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) >= o.srcBidAmountNext(),
+            "insufficient user allowance"
+        );
+        require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "insufficient user balance");
     }
 
     function performFill(uint256 id)
@@ -126,8 +132,7 @@ contract DOTC is ReentrancyGuard {
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
         ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getAllowanceSpender(), srcAmountIn);
 
-        bytes memory out = Address.functionDelegateCall(
-            o.bid.exchange,
+        bytes memory out = o.bid.exchange.functionDelegateCall(
             abi.encodeWithSelector(
                 IExchange(o.bid.exchange).swap.selector,
                 srcAmountIn,

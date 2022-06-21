@@ -5,8 +5,10 @@ import {
   dotc,
   fill,
   setMockExchangeAmountOut,
+  srcToken,
   taker,
   time,
+  user,
   withMockExchange,
 } from "./base.test";
 import { account, expectRevert } from "@defi.org/web3-candies";
@@ -40,7 +42,6 @@ describe("Errors", () => {
     });
 
     it("recently filled", async () => {
-      // TODO
       await ask(2000, 1000, 0.5);
       await bid(0);
       await mineBlock(30);
@@ -58,19 +59,26 @@ describe("Errors", () => {
     });
 
     it("insufficient amount out when last partial fill", async () => {
-      await ask(2000, 1500, 1);
+      await ask(2000, 1500, 0.75);
       await bid(0);
       await mineBlock(10);
       await fill(0);
       await mineBlock(60);
 
       await withMockExchange(0.1);
-
       await expectRevert(() => bid(0), "insufficient out");
     });
 
-    xit("check balanceOf in the bid?", async () => {
-      // TODO
+    it("insufficient user allowance", async () => {
+      await ask(2000, 2000, 1);
+      await srcToken.methods.approve(dotc.options.address, 0).send({ from: user });
+      await expectRevert(() => bid(0), "insufficient user allowance");
+    });
+
+    it("insufficient user balance", async () => {
+      await ask(2000, 2000, 1);
+      await srcToken.methods.transfer(taker, await srcToken.methods.balanceOf(user).call()).send({ from: user });
+      await expectRevert(() => bid(0), "insufficient user balance");
     });
   });
 
