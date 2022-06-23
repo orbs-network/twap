@@ -3,6 +3,10 @@ describe("Incentives", async () => {
     // TODO
   });
 
+  xit("maker callback on each fill", async () => {
+    // TODO
+  });
+
   xit("taker does not fill winning bid", async () => {
     // TODO
   });
@@ -36,6 +40,10 @@ describe("Incentives", async () => {
   });
 
   xit("winning bid must be different path?", async () => {
+    // TODO
+  });
+
+  xit("bid is valid within pending bid if more than fill delay from last fill?", async () => {
     // TODO
   });
 });

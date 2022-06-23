@@ -69,6 +69,8 @@ contract DOTC is ReentrancyGuard {
         address exchange,
         address[] calldata path
     ) external nonReentrant {
+        // TODO add dstFeeAmount => to bidder
+        // TODO clear bid to allow to bid less when more than fill delay, in case market condition changed
         (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path);
         o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, path, dstAmountOut);
         book[id] = o;
@@ -79,7 +81,7 @@ contract DOTC is ReentrancyGuard {
         (OrderLib.Order memory o, uint256 srcAmountIn, uint256 dstAmountOut) = performFill(id);
 
         emit OrderFilled(id, o.bid.taker, srcAmountIn, dstAmountOut);
-        o.bid = OrderLib.newBid();
+        o.bid = OrderLib.newBid(); // TODO no need to clear all the bid, assume same path still valid, only clear amount, time ?
         o.filled.time = block.timestamp;
         o.filled.amount += srcAmountIn;
         book[id] = o;
@@ -130,16 +132,7 @@ contract DOTC is ReentrancyGuard {
     function performFillSwap(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
         srcAmountIn = o.srcBidAmountNext();
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
-        ERC20(o.ask.srcToken).safeIncreaseAllowance(IExchange(o.bid.exchange).getAllowanceSpender(), srcAmountIn);
-
-        bytes memory out = o.bid.exchange.functionDelegateCall(
-            abi.encodeWithSelector(
-                IExchange(o.bid.exchange).swap.selector,
-                srcAmountIn,
-                o.dstMinAmountNext(),
-                o.bid.path
-            )
-        );
-        dstAmountOut = abi.decode(out, (uint256));
+        ERC20(o.ask.srcToken).safeIncreaseAllowance(o.bid.exchange, srcAmountIn);
+        dstAmountOut = IExchange(o.bid.exchange).swap(srcAmountIn, o.dstMinAmountNext(), o.bid.path);
     }
 }

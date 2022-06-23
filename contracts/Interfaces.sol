@@ -2,8 +2,6 @@
 pragma solidity 0.8.10;
 
 interface IExchange {
-    function getAllowanceSpender() external view returns (address);
-
     function getAmountOut(uint256 amountIn, address[] calldata path) external view returns (uint256 amountOut);
 
     function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);

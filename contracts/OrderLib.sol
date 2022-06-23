@@ -74,8 +74,9 @@ library OrderLib {
 
     function dstMinAmountNext(Order memory self) internal pure returns (uint256) {
         return
-            self.ask.srcBidAmount <= self.ask.srcAmount - self.filled.amount
-                ? self.ask.dstMinAmount
-                : (self.ask.dstMinAmount * (self.ask.srcAmount - self.filled.amount)) / self.ask.srcBidAmount;
+            Math.min(
+                self.ask.dstMinAmount,
+                (self.ask.dstMinAmount * (self.ask.srcAmount - self.filled.amount)) / self.ask.srcBidAmount
+            );
     }
 }

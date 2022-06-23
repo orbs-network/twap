@@ -1,5 +1,5 @@
 import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, block, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
+import { account, block, bn18, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import { DOTC, Quoter } from "../typechain-hardhat/contracts";
 import { IExchange } from "../typechain-hardhat/contracts/Interfaces.sol";
@@ -108,11 +108,16 @@ export async function increasePrice() {
 
 export async function withMockExchange(dstAmountOut: number) {
   exchange = await deployArtifact("MockExchange", { from: deployer });
+  await erc20s.eth
+    .WETH()
+    .methods.deposit()
+    .send({ from: deployer, value: bn18(1e6) });
+  await dstToken.methods.transfer(exchange.options.address, bn18(1e6)).send({ from: deployer });
   await setMockExchangeAmountOut(dstAmountOut);
 }
 
 export async function setMockExchangeAmountOut(dstAmountOut: number) {
   await (exchange as MockExchange).methods
-    .setAmounts([0, await dstToken.amount(dstAmountOut)])
+    .setMockAmounts([0, await dstToken.amount(dstAmountOut)])
     .send({ from: deployer });
 }

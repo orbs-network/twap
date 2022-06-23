@@ -17,10 +17,6 @@ contract UniswapV2Exchange is IExchange {
         uniswap = IUniswapV2(_uniswap);
     }
 
-    function getAllowanceSpender() public view returns (address) {
-        return address(uniswap);
-    }
-
     function getAmountOut(uint256 amountIn, address[] calldata path) public view returns (uint256 amountOut) {
         return getAmountsOut(amountIn, path)[path.length - 1];
     }
@@ -34,8 +30,11 @@ contract UniswapV2Exchange is IExchange {
         uint256 amountOutMin,
         address[] calldata path
     ) public returns (uint256 amountOut) {
+        ERC20 srcToken = ERC20(path[0]);
+        srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
+        srcToken.safeIncreaseAllowance(address(uniswap), amountIn);
         return
-            uniswap.swapExactTokensForTokens(amountIn, amountOutMin, path, address(this), block.timestamp)[
+            uniswap.swapExactTokensForTokens(amountIn, amountOutMin, path, msg.sender, block.timestamp)[
                 path.length - 1
             ];
     }
