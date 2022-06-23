@@ -58,6 +58,16 @@ describe("Errors", () => {
       await expectRevert(() => bid(0), "insufficient out");
     });
 
+    it("insufficient amount out with excess fee", async () => {
+      await ask(2000, 1000, 0.5);
+      await expectRevert(() => bid(0, undefined, 0.1), "insufficient out");
+    });
+
+    it("fee underflow protection", async () => {
+      await ask(2000, 1000, 0.5);
+      await expectRevert(() => bid(0, undefined, 1), "Arithmetic operation underflowed");
+    });
+
     it("insufficient amount out when last partial fill", async () => {
       await ask(2000, 1500, 0.75);
       await bid(0);
@@ -119,6 +129,30 @@ describe("Errors", () => {
 
       await setMockExchangeAmountOut(0.1);
       await expectRevert(() => fill(0), "insufficient out");
+    });
+
+    it("insufficient out with excess fee", async () => {
+      await ask(2000, 1000, 0.5);
+
+      await withMockExchange(1);
+
+      await bid(0, undefined, 0.1);
+      await mineBlock(10);
+
+      await setMockExchangeAmountOut(0.5);
+      await expectRevert(() => fill(0), "insufficient out");
+    });
+
+    it("fee subtracted from dstAmountOut underflow protection", async () => {
+      await ask(2000, 1000, 0.5);
+
+      await withMockExchange(10);
+
+      await bid(0, undefined, 1);
+      await mineBlock(10);
+
+      await setMockExchangeAmountOut(0.5);
+      await expectRevert(() => fill(0), "Arithmetic operation underflowed");
     });
   });
 });

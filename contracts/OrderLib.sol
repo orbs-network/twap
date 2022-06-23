@@ -22,6 +22,7 @@ library OrderLib {
         address exchange;
         address[] path;
         uint256 amount;
+        uint256 fee;
     }
 
     struct Fill {
@@ -64,7 +65,8 @@ library OrderLib {
                 address(0), // taker
                 address(0), // exchange
                 new address[](0), // path
-                0 // amount
+                0, // amount
+                0 // fee
             );
     }
 

@@ -61,6 +61,20 @@ describeOnETH("DOTC", async () => {
 
     await mineBlock(10);
     await fill(0);
-    await expectFilled(0, 1000, 0.6);
+    await expectFilled(0, 1000, 0.59); // 0.01 taker fee
+  });
+
+  xit("outbid current bid within pending period same path and amount but lower fee", async () => {
+    // await ask(2000, 1000, 0.5);
+    //
+    // await bid(0);
+    // await mineBlock(1);
+    //
+    // await withMockExchange(0.6);
+    // await bid(0);
+    //
+    // await mineBlock(10);
+    // await fill(0);
+    // await expectFilled(0, 1000, 0.6);
   });
 });

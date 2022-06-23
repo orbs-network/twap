@@ -69,8 +69,8 @@ export async function ask(srcAmount: number, srcRate: number, dstRate: number, d
     .send({ from: user });
 }
 
-export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address]) {
-  return dotc.methods.bid(id, exchange.options.address, path).send({ from: taker });
+export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address], fee: number = 0.01) {
+  return dotc.methods.bid(id, exchange.options.address, path, await dstToken.amount(fee)).send({ from: taker });
 }
 
 export async function fill(id: number) {

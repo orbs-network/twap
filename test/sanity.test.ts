@@ -47,6 +47,7 @@ describeOnETH("Sanity", () => {
     expect(o.bid.exchange).eq(zeroAddress);
     expect(o.bid.path).empty;
     expect(o.bid.amount).bignumber.zero;
+    expect(o.bid.fee).bignumber.zero;
 
     expect(o.filled.time).bignumber.zero;
     expect(o.filled.amount).bignumber.zero;
@@ -59,6 +60,7 @@ describeOnETH("Sanity", () => {
     expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
     expect(o.bid.path).deep.eq([srcToken.address, dstToken.address]);
+    expect(o.bid.fee).bignumber.eq(await dstToken.amount(0.01));
     expect(o.bid.amount)
       .bignumber.gte(await dstToken.amount(1))
       .closeTo(await dstToken.amount(1), await dstToken.amount(0.1));
@@ -80,6 +82,7 @@ describeOnETH("Sanity", () => {
     expect(o.bid.path).empty;
     expect(o.bid.amount).bignumber.zero;
     expect(o.bid.time).bignumber.zero;
+    expect(o.bid.fee).bignumber.zero;
 
     const events = parseEvents(tx, dotc);
     expect(events[0].event).eq("OrderFilled");
@@ -89,5 +92,6 @@ describeOnETH("Sanity", () => {
     expect(events[0].returnValues.dstAmountOut)
       .bignumber.gte(await dstToken.amount(0.5))
       .closeTo(await dstToken.amount(0.5), await dstToken.amount(0.1));
+    expect(events[0].returnValues.fee).bignumber.eq(await dstToken.amount(0.01));
   });
 });

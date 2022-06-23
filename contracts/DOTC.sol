@@ -16,7 +16,13 @@ contract DOTC is ReentrancyGuard {
     using OrderLib for OrderLib.Order;
 
     event OrderCreated(uint256 indexed id, address indexed maker);
-    event OrderFilled(uint256 indexed id, address indexed taker, uint256 srcAmountIn, uint256 dstAmountOut);
+    event OrderFilled(
+        uint256 indexed id,
+        address indexed taker,
+        uint256 srcAmountIn,
+        uint256 dstAmountOut,
+        uint256 fee
+    );
 
     uint256 public constant BID_DELAY_SEC = 10;
     uint256 public constant FILL_DELAY_SEC = 60;
@@ -67,12 +73,12 @@ contract DOTC is ReentrancyGuard {
     function bid(
         uint256 id,
         address exchange,
-        address[] calldata path
+        address[] calldata path,
+        uint256 fee
     ) external nonReentrant {
-        // TODO add dstFeeAmount => to bidder
         // TODO clear bid to allow to bid less when more than fill delay, in case market condition changed
-        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path);
-        o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, path, dstAmountOut);
+        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path, fee);
+        o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, path, dstAmountOut, fee);
         book[id] = o;
     }
 
@@ -80,7 +86,7 @@ contract DOTC is ReentrancyGuard {
     function fill(uint256 id) external nonReentrant {
         (OrderLib.Order memory o, uint256 srcAmountIn, uint256 dstAmountOut) = performFill(id);
 
-        emit OrderFilled(id, o.bid.taker, srcAmountIn, dstAmountOut);
+        emit OrderFilled(id, o.bid.taker, srcAmountIn, dstAmountOut, o.bid.fee);
         o.bid = OrderLib.newBid(); // TODO no need to clear all the bid, assume same path still valid, only clear amount, time ?
         o.filled.time = block.timestamp;
         o.filled.amount += srcAmountIn;
@@ -94,13 +100,15 @@ contract DOTC is ReentrancyGuard {
     function verifyBid(
         uint256 id,
         address exchange,
-        address[] calldata path
+        address[] calldata path,
+        uint256 fee
     ) private view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
         require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), path);
+        dstAmountOut -= fee;
         require(dstAmountOut > o.bid.amount, "low bid");
         require(dstAmountOut > o.dstMinAmountNext(), "insufficient out");
         require(
@@ -134,5 +142,8 @@ contract DOTC is ReentrancyGuard {
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
         ERC20(o.ask.srcToken).safeIncreaseAllowance(o.bid.exchange, srcAmountIn);
         dstAmountOut = IExchange(o.bid.exchange).swap(srcAmountIn, o.dstMinAmountNext(), o.bid.path);
+
+        dstAmountOut -= o.bid.fee;
+        ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, o.bid.fee);
     }
 }
