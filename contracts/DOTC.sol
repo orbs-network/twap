@@ -134,16 +134,17 @@ contract DOTC is ReentrancyGuard {
         (srcAmountIn, dstAmountOut) = performFillSwap(o);
 
         require(dstAmountOut >= o.dstMinAmountNext(), "insufficient out");
-        ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
     }
 
     function performFillSwap(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
         srcAmountIn = o.srcBidAmountNext();
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
         ERC20(o.ask.srcToken).safeIncreaseAllowance(o.bid.exchange, srcAmountIn);
+
         dstAmountOut = IExchange(o.bid.exchange).swap(srcAmountIn, o.dstMinAmountNext(), o.bid.path);
 
         dstAmountOut -= o.bid.fee;
         ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, o.bid.fee);
+        ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
     }
 }
