@@ -1,6 +1,19 @@
-import { useChaiBN } from "@defi.org/web3-candies";
-import { ask, bid, describeOnETH, expectFilled, fill, withMockExchange } from "./base.test";
+import { account, useChaiBN } from "@defi.org/web3-candies";
+import {
+  ask,
+  bid,
+  describeOnETH,
+  dotc,
+  dstToken,
+  exchange,
+  expectFilled,
+  fill,
+  order,
+  srcToken,
+  withMockExchange,
+} from "./base.test";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { expect } from "chai";
 
 useChaiBN();
 
@@ -64,17 +77,18 @@ describeOnETH("DOTC", async () => {
     await expectFilled(0, 1000, 0.59); // 0.01 taker fee
   });
 
-  xit("outbid current bid within pending period same path and amount but lower fee", async () => {
-    // await ask(2000, 1000, 0.5);
-    //
-    // await bid(0);
-    // await mineBlock(1);
-    //
-    // await withMockExchange(0.6);
-    // await bid(0);
-    //
-    // await mineBlock(10);
-    // await fill(0);
-    // await expectFilled(0, 1000, 0.6);
+  it("outbid current bid within pending period same path and amount but lower fee", async () => {
+    await ask(2000, 1000, 0.5);
+
+    await bid(0);
+    expect((await order(0)).bid.fee).bignumber.eq(await dstToken.amount(0.01));
+    await mineBlock(1);
+
+    await dotc.methods
+      .bid(0, exchange.options.address, [srcToken.address, dstToken.address], await dstToken.amount(0.001))
+      .send({ from: await account(5) });
+
+    expect((await order(0)).bid.taker).eq(await account(5));
+    expect((await order(0)).bid.fee).bignumber.eq(await dstToken.amount(0.001));
   });
 });
