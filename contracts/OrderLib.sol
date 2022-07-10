@@ -14,6 +14,7 @@ library OrderLib {
         uint256 srcAmount;
         uint256 srcBidAmount;
         uint256 dstMinAmount;
+        address onFillCallback;
     }
 
     struct Bid {
@@ -44,12 +45,23 @@ library OrderLib {
         uint256 srcAmount,
         uint256 srcBidAmount,
         uint256 dstMinAmount,
-        uint256 deadline
+        uint256 deadline,
+        address onFillCallback
     ) internal view returns (Order memory) {
         return
             Order(
                 id,
-                Ask(block.timestamp, deadline, msg.sender, srcToken, dstToken, srcAmount, srcBidAmount, dstMinAmount),
+                Ask(
+                    block.timestamp,
+                    deadline,
+                    msg.sender,
+                    srcToken,
+                    dstToken,
+                    srcAmount,
+                    srcBidAmount,
+                    dstMinAmount,
+                    onFillCallback
+                ),
                 newBid(),
                 Fill(
                     0, // time

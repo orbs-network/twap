@@ -53,7 +53,8 @@ contract DOTC is ReentrancyGuard {
         uint256 srcAmount,
         uint256 srcBidAmount,
         uint256 dstMinAmount,
-        uint256 deadline
+        uint256 deadline,
+        address onFillCallback
     ) external nonReentrant returns (uint256 id) {
         OrderLib.Order memory o = OrderLib.newOrder(
             length(),
@@ -62,7 +63,8 @@ contract DOTC is ReentrancyGuard {
             srcAmount,
             srcBidAmount,
             dstMinAmount,
-            deadline
+            deadline,
+            onFillCallback
         );
         book.push(o);
         emit OrderCreated(o.id, o.ask.maker);
@@ -76,7 +78,6 @@ contract DOTC is ReentrancyGuard {
         address[] calldata path,
         uint256 fee
     ) external nonReentrant {
-        // TODO clear bid to allow to bid less when more than fill delay, in case market condition changed
         (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path, fee);
         o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, path, dstAmountOut, fee);
         book[id] = o;
@@ -87,10 +88,14 @@ contract DOTC is ReentrancyGuard {
         (OrderLib.Order memory o, uint256 srcAmountIn, uint256 dstAmountOut) = performFill(id);
 
         emit OrderFilled(id, o.bid.taker, srcAmountIn, dstAmountOut, o.bid.fee);
-        o.bid = OrderLib.newBid(); // TODO no need to clear all the bid, assume same path still valid, only clear amount, time ?
+        o.bid = OrderLib.newBid();
         o.filled.time = block.timestamp;
         o.filled.amount += srcAmountIn;
         book[id] = o;
+
+        if (o.ask.onFillCallback != address(0)) {
+            IFillCallback(o.ask.onFillCallback).onFill(o, srcAmountIn, dstAmountOut);
+        }
     }
 
     /**

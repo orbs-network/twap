@@ -1,5 +1,5 @@
 import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, block, bn18, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
+import { account, block, bn18, erc20s, Token, useChaiBN, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import { DOTC, Quoter } from "../typechain-hardhat/contracts";
 import { IExchange } from "../typechain-hardhat/contracts/Interfaces.sol";
@@ -65,7 +65,7 @@ export async function ask(srcAmount: number, srcRate: number, dstRate: number, d
   const _dstRate = await dstToken.amount(dstRate);
   await srcToken.methods.approve(dotc.options.address, _srcAmount).send({ from: user });
   return dotc.methods
-    .ask(srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline)
+    .ask(srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline, zeroAddress)
     .send({ from: user });
 }
 

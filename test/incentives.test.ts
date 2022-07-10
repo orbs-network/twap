@@ -3,10 +3,6 @@ describe("Incentives", async () => {
     // TODO
   });
 
-  xit("maker callback on each fill", async () => {
-    // TODO
-  });
-
   xit("taker does not fill winning bid", async () => {
     // TODO
   });
@@ -46,4 +42,8 @@ describe("Incentives", async () => {
   xit("bid is valid within pending bid if more than fill delay from last fill?", async () => {
     // TODO
   });
+
+  // TODO no need to clear all the bid, assume same path still valid, only clear amount, time ?
+
+  // TODO clear bid to allow to bid less when more than fill delay, in case market condition changed (stuck bids?)
 });

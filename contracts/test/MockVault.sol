@@ -6,17 +6,26 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../Interfaces.sol";
 import "../DOTC.sol";
 
 import "hardhat/console.sol";
 
-contract MockVault {
+contract MockVault is Ownable, IFillCallback {
+    struct Filled {
+        OrderLib.Order o;
+        uint256 srcAmountIn;
+        uint256 dstAmountOut;
+    }
+
     DOTC public dotc;
 
     ERC20 public srcToken;
     ERC20 public dstToken;
+
+    Filled[] public filled;
 
     constructor(
         address _dotc,
@@ -28,14 +37,25 @@ contract MockVault {
         dstToken = ERC20(_dstToken);
     }
 
-    function doHardWork() external {
-        dotc.ask(
-            address(srcToken),
-            address(dstToken),
-            srcToken.balanceOf(address(this)),
-            srcToken.balanceOf(address(this)),
-            1,
-            block.timestamp
-        );
+    function createAsk(
+        uint256 srcAmount,
+        uint256 srcBidAmount,
+        uint256 dstMinAmount,
+        uint256 deadline
+    ) external onlyOwner {
+        dotc.ask(address(srcToken), address(dstToken), srcAmount, srcBidAmount, dstMinAmount, deadline, address(this));
+    }
+
+    function doHardWork() public {
+        //
+    }
+
+    function onFill(
+        OrderLib.Order memory o,
+        uint256 srcAmountIn,
+        uint256 dstAmountOut
+    ) external {
+        filled.push(Filled(o, srcAmountIn, dstAmountOut));
+        doHardWork();
     }
 }
