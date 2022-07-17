@@ -1,9 +1,8 @@
 import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
 import { account, block, bn18, erc20s, Token, useChaiBN, web3, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { DOTC, Quoter } from "../typechain-hardhat/contracts";
-import { IExchange } from "../typechain-hardhat/contracts/Interfaces.sol";
-import { MockExchange } from "../typechain-hardhat/contracts/test";
+import type { DOTC, IExchange, Quoter } from "../typechain-hardhat/contracts";
+import type { MockExchange } from "../typechain-hardhat/contracts/test";
 
 useChaiBN();
 
