@@ -1,4 +1,4 @@
-import { account, useChaiBN } from "@defi.org/web3-candies";
+import { account, useChaiBN, web3 } from "@defi.org/web3-candies";
 import {
   ask,
   bid,
@@ -85,7 +85,12 @@ describeOnETH("DOTC", async () => {
     await mineBlock(1);
 
     await dotc.methods
-      .bid(0, exchange.options.address, [srcToken.address, dstToken.address], await dstToken.amount(0.001))
+      .bid(
+        0,
+        exchange.options.address,
+        web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]),
+        await dstToken.amount(0.001)
+      )
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));

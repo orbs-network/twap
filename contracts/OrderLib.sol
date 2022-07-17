@@ -9,19 +9,19 @@ library OrderLib {
         uint256 time;
         uint256 deadline;
         address maker;
+        address exchange;
         address srcToken;
         address dstToken;
         uint256 srcAmount;
         uint256 srcBidAmount;
         uint256 dstMinAmount;
-        address onFillCallback;
     }
 
     struct Bid {
         uint256 time;
         address taker;
         address exchange;
-        address[] path;
+        bytes data;
         uint256 amount;
         uint256 fee;
     }
@@ -40,13 +40,13 @@ library OrderLib {
 
     function newOrder(
         uint256 id,
+        address exchange,
         address srcToken,
         address dstToken,
         uint256 srcAmount,
         uint256 srcBidAmount,
         uint256 dstMinAmount,
-        uint256 deadline,
-        address onFillCallback
+        uint256 deadline
     ) internal view returns (Order memory) {
         return
             Order(
@@ -55,12 +55,12 @@ library OrderLib {
                     block.timestamp,
                     deadline,
                     msg.sender,
+                    exchange,
                     srcToken,
                     dstToken,
                     srcAmount,
                     srcBidAmount,
-                    dstMinAmount,
-                    onFillCallback
+                    dstMinAmount
                 ),
                 newBid(),
                 Fill(
@@ -76,7 +76,7 @@ library OrderLib {
                 0, // time
                 address(0), // taker
                 address(0), // exchange
-                new address[](0), // path
+                new bytes(0), // data
                 0, // amount
                 0 // fee
             );

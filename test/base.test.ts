@@ -1,5 +1,5 @@
 import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, block, bn18, erc20s, Token, useChaiBN, zeroAddress } from "@defi.org/web3-candies";
+import { account, block, bn18, erc20s, Token, useChaiBN, web3, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import { DOTC, Quoter } from "../typechain-hardhat/contracts";
 import { IExchange } from "../typechain-hardhat/contracts/Interfaces.sol";
@@ -58,19 +58,27 @@ async function initExternals() {
   expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(await srcToken.amount(userSrcTokenStartBalance));
 }
 
-export async function ask(srcAmount: number, srcRate: number, dstRate: number, deadline: number = 0) {
+export async function ask(
+  srcAmount: number,
+  srcRate: number,
+  dstRate: number,
+  deadline: number = 0,
+  exchange: string = zeroAddress
+) {
   deadline = deadline || (await time()) + 1000;
   const _srcAmount = await srcToken.amount(srcAmount);
   const _srcRate = await srcToken.amount(srcRate);
   const _dstRate = await dstToken.amount(dstRate);
   await srcToken.methods.approve(dotc.options.address, _srcAmount).send({ from: user });
   return dotc.methods
-    .ask(srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline, zeroAddress)
+    .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline)
     .send({ from: user });
 }
 
 export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address], fee: number = 0.01) {
-  return dotc.methods.bid(id, exchange.options.address, path, await dstToken.amount(fee)).send({ from: taker });
+  return dotc.methods
+    .bid(id, exchange.options.address, web3().eth.abi.encodeParameter("address[]", path), await dstToken.amount(fee))
+    .send({ from: taker });
 }
 
 export async function fill(id: number) {
@@ -103,7 +111,9 @@ export async function increasePrice() {
   console.log("📈 increasing price...");
   const amount = await srcToken.amount(10e6);
   await srcToken.methods.approve(exchange.options.address, amount).send({ from: srcTokenWhale });
-  await exchange.methods.swap(amount, 1, [srcToken.address, dstToken.address]).send({ from: srcTokenWhale });
+  await exchange.methods
+    .swap(amount, 1, web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]))
+    .send({ from: srcTokenWhale });
 }
 
 export async function withMockExchange(dstAmountOut: number) {

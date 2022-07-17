@@ -13,7 +13,7 @@ import {
   time,
   user,
 } from "./base.test";
-import { parseEvents, zeroAddress } from "@defi.org/web3-candies";
+import { parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
 describeOnETH("Sanity", () => {
@@ -36,6 +36,7 @@ describeOnETH("Sanity", () => {
     expect(o.ask.time).bignumber.eq(blockTimeAtCreation.toString());
     expect(o.ask.deadline).bignumber.eq(deadline.toString());
     expect(o.ask.maker).eq(user);
+    expect(o.ask.exchange).eq(zeroAddress);
     expect(o.ask.srcToken).eq(srcToken.address);
     expect(o.ask.dstToken).eq(dstToken.address);
     expect(o.ask.srcAmount).bignumber.eq(await srcToken.amount(3));
@@ -45,7 +46,7 @@ describeOnETH("Sanity", () => {
     expect(o.bid.time).bignumber.zero;
     expect(o.bid.taker).eq(zeroAddress);
     expect(o.bid.exchange).eq(zeroAddress);
-    expect(o.bid.path).empty;
+    expect(o.bid.data).deep.eq("0x");
     expect(o.bid.amount).bignumber.zero;
     expect(o.bid.fee).bignumber.zero;
 
@@ -59,7 +60,7 @@ describeOnETH("Sanity", () => {
     const o = await order(0);
     expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
-    expect(o.bid.path).deep.eq([srcToken.address, dstToken.address]);
+    expect(o.bid.data).deep.eq(web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]));
     expect(o.bid.fee).bignumber.eq(await dstToken.amount(0.01));
     expect(o.bid.amount)
       .bignumber.gte(await dstToken.amount(1))
@@ -79,7 +80,7 @@ describeOnETH("Sanity", () => {
 
     expect(o.bid.taker).eq(zeroAddress);
     expect(o.bid.exchange).eq(zeroAddress);
-    expect(o.bid.path).empty;
+    expect(o.bid.data).deep.eq("0x");
     expect(o.bid.amount).bignumber.zero;
     expect(o.bid.time).bignumber.zero;
     expect(o.bid.fee).bignumber.zero;

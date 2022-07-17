@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../Interfaces.sol";
+import "../IFillCallback.sol";
 import "../DOTC.sol";
 
 import "hardhat/console.sol";
@@ -43,7 +44,7 @@ contract MockVault is Ownable, IFillCallback {
         uint256 dstMinAmount,
         uint256 deadline
     ) external onlyOwner {
-        dotc.ask(address(srcToken), address(dstToken), srcAmount, srcBidAmount, dstMinAmount, deadline, address(this));
+        //        dotc.ask(address(srcToken), address(dstToken), srcAmount, srcBidAmount, dstMinAmount, deadline, address(this));
     }
 
     function doHardWork() public {

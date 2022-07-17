@@ -17,19 +17,22 @@ contract UniswapV2Exchange is IExchange {
         uniswap = IUniswapV2(_uniswap);
     }
 
-    function getAmountOut(uint256 amountIn, address[] calldata path) public view returns (uint256 amountOut) {
-        return getAmountsOut(amountIn, path)[path.length - 1];
+    function getAmountOut(uint256 amountIn, bytes calldata data) public view returns (uint256 amountOut) {
+        address[] memory path = abi.decode(data, (address[]));
+        return getAmountsOut(amountIn, data)[path.length - 1];
     }
 
-    function getAmountsOut(uint256 amountIn, address[] calldata path) public view returns (uint256[] memory amounts) {
+    function getAmountsOut(uint256 amountIn, bytes calldata data) public view returns (uint256[] memory amounts) {
+        address[] memory path = abi.decode(data, (address[]));
         return uniswap.getAmountsOut(amountIn, path);
     }
 
     function swap(
         uint256 amountIn,
         uint256 amountOutMin,
-        address[] calldata path
+        bytes calldata data
     ) public returns (uint256 amountOut) {
+        address[] memory path = abi.decode(data, (address[]));
         ERC20 srcToken = ERC20(path[0]);
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
         srcToken.safeIncreaseAllowance(address(uniswap), amountIn);

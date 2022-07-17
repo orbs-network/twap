@@ -20,7 +20,8 @@ contract Quoter {
         amountOut = 0;
 
         for (uint256 i = 0; i < paths.length; i++) {
-            uint256 amount = exchange.getAmountOut(amountIn, paths[i]);
+            bytes memory data = abi.encode(paths[i]);
+            uint256 amount = exchange.getAmountOut(amountIn, data);
             if (amount > amountOut) {
                 index = i;
                 amountOut = amount;

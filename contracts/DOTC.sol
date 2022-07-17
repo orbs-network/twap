@@ -48,23 +48,23 @@ contract DOTC is ReentrancyGuard {
 
     // 1. maker creates order
     function ask(
+        address exchange,
         address srcToken,
         address dstToken,
         uint256 srcAmount,
         uint256 srcBidAmount,
         uint256 dstMinAmount,
-        uint256 deadline,
-        address onFillCallback
+        uint256 deadline
     ) external nonReentrant returns (uint256 id) {
         OrderLib.Order memory o = OrderLib.newOrder(
             length(),
+            exchange,
             srcToken,
             dstToken,
             srcAmount,
             srcBidAmount,
             dstMinAmount,
-            deadline,
-            onFillCallback
+            deadline
         );
         book.push(o);
         emit OrderCreated(o.id, o.ask.maker);
@@ -75,11 +75,11 @@ contract DOTC is ReentrancyGuard {
     function bid(
         uint256 id,
         address exchange,
-        address[] calldata path,
+        bytes calldata data,
         uint256 fee
     ) external nonReentrant {
-        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, path, fee);
-        o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, path, dstAmountOut, fee);
+        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, data, fee);
+        o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, data, dstAmountOut, fee);
         book[id] = o;
     }
 
@@ -92,10 +92,6 @@ contract DOTC is ReentrancyGuard {
         o.filled.time = block.timestamp;
         o.filled.amount += srcAmountIn;
         book[id] = o;
-
-        if (o.ask.onFillCallback != address(0)) {
-            IFillCallback(o.ask.onFillCallback).onFill(o, srcAmountIn, dstAmountOut);
-        }
     }
 
     /**
@@ -105,14 +101,14 @@ contract DOTC is ReentrancyGuard {
     function verifyBid(
         uint256 id,
         address exchange,
-        address[] calldata path,
+        bytes calldata data,
         uint256 fee
     ) private view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
         require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
 
-        dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), path);
+        dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), data);
         dstAmountOut -= fee;
         require(dstAmountOut > o.bid.amount, "low bid");
         require(dstAmountOut > o.dstMinAmountNext(), "insufficient out");
@@ -146,7 +142,7 @@ contract DOTC is ReentrancyGuard {
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
         ERC20(o.ask.srcToken).safeIncreaseAllowance(o.bid.exchange, srcAmountIn);
 
-        dstAmountOut = IExchange(o.bid.exchange).swap(srcAmountIn, o.dstMinAmountNext(), o.bid.path);
+        dstAmountOut = IExchange(o.bid.exchange).swap(srcAmountIn, o.dstMinAmountNext(), o.bid.data);
 
         dstAmountOut -= o.bid.fee;
         ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, o.bid.fee);

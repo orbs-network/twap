@@ -11,7 +11,7 @@
     "@defi.org/web3-candies": "3.x"
   },
   "scripts": {
-    "clean": "rm -rf artifacts cache",
+    "clean": "rm -rf artifacts cache typechain-hardhat",
     "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
     "typechain": "hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
