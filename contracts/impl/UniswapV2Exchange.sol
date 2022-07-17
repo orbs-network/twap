@@ -5,7 +5,7 @@ pragma solidity 0.8.10;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../Interfaces.sol";
+import "../IExchange.sol";
 import "./IUniswapV2.sol";
 
 contract UniswapV2Exchange is IExchange {

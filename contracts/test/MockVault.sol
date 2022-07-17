@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "../Interfaces.sol";
+import "../IExchange.sol";
 import "../IFillCallback.sol";
 import "../DOTC.sol";
 

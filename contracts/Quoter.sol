@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import "./Interfaces.sol";
+import "./IExchange.sol";
 
 contract Quoter {
     IExchange public immutable exchange;
