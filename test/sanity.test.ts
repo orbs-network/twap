@@ -7,6 +7,7 @@ import {
   dstToken,
   exchange,
   fill,
+  initFixture,
   order,
   srcToken,
   taker,
@@ -17,6 +18,8 @@ import { expectRevert, parseEvents, web3, zeroAddress } from "@defi.org/web3-can
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
 describeOnETH("Sanity", () => {
+  beforeEach(initFixture);
+
   it("maker creates ask order, emits event", async () => {
     expect(await dotc.methods.length().call()).bignumber.zero;
 

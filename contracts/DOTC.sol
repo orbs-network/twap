@@ -96,6 +96,7 @@ contract DOTC is ReentrancyGuard {
 
     function cancel(uint256 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
+        require(msg.sender == o.ask.maker, "invalid maker");
         o.ask.deadline = 0;
         book[id] = o;
     }

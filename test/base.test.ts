@@ -20,7 +20,9 @@ let srcTokenWhale: string;
 
 const userSrcTokenStartBalance = 1_000_000;
 
-beforeEach(async () => {
+export const describeOnETH = process.env.NETWORK == "ETH" ? describe : xdescribe;
+
+export async function initFixture() {
   await resetNetworkFork();
   await initAccounts();
   await initExternals();
@@ -28,7 +30,7 @@ beforeEach(async () => {
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [router]);
   quoter = await deployArtifact<Quoter>("Quoter", { from: deployer }, [exchange.options.address]);
   dotc = await deployArtifact<DOTC>("DOTC", { from: deployer });
-});
+}
 
 async function initAccounts() {
   user = await account(1);
@@ -99,8 +101,6 @@ export async function expectFilled(id: number, srcExactAmount: number, dstMinAmo
     .bignumber.gte(await dstToken.amount(dstMinAmount))
     .closeTo(await dstToken.amount(dstMinAmount), await dstToken.amount(dstMinAmount * 0.1));
 }
-
-export const describeOnETH = process.env.NETWORK == "ETH" ? describe : xdescribe;
 
 export async function time() {
   return (await block()).timestamp;

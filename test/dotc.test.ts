@@ -8,6 +8,7 @@ import {
   exchange,
   expectFilled,
   fill,
+  initFixture,
   order,
   srcToken,
   withMockExchange,
@@ -18,6 +19,8 @@ import { expect } from "chai";
 useChaiBN();
 
 describeOnETH("DOTC", async () => {
+  beforeEach(initFixture);
+
   it("single chunk", async () => {
     await ask(2000, 2000, 1);
     await bid(0);

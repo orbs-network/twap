@@ -1,9 +1,11 @@
 import {
   ask,
   bid,
+  deployer,
   describeOnETH,
   dotc,
   fill,
+  initFixture,
   setMockExchangeAmountOut,
   srcToken,
   taker,
@@ -16,6 +18,8 @@ import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 
 describe("Errors", () => {
+  beforeEach(initFixture);
+
   describe("order", async () => {
     it("invalid id", async () => {
       await expectRevert(() => dotc.methods.order(0).call(), "invalid id");
@@ -153,6 +157,11 @@ describe("Errors", () => {
 
       await setMockExchangeAmountOut(0.5);
       await expectRevert(() => fill(0), "Arithmetic operation underflowed");
+    });
+
+    it.only("cancel only from maker", async () => {
+      await ask(1, 1, 1);
+      await expectRevert(() => dotc.methods.cancel(0).send({ from: deployer }), "invalid maker");
     });
   });
 });
