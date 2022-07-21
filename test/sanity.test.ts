@@ -13,7 +13,7 @@ import {
   time,
   user,
 } from "./base.test";
-import { parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
+import { expectRevert, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
 describeOnETH("Sanity", () => {
@@ -94,5 +94,13 @@ describeOnETH("Sanity", () => {
       .bignumber.gte(await dstToken.amount(0.5))
       .closeTo(await dstToken.amount(0.5), await dstToken.amount(0.1));
     expect(events[0].returnValues.fee).bignumber.eq(await dstToken.amount(0.01));
+  });
+
+  it("cancel order", async () => {
+    await ask(2000, 1000, 0.5);
+    await dotc.methods.cancel(0).send({ from: user });
+    const o = await order(0);
+    expect(o.ask.deadline).bignumber.zero;
+    await expectRevert(() => bid(0), "expired");
   });
 });

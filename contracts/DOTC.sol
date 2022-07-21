@@ -94,6 +94,12 @@ contract DOTC is ReentrancyGuard {
         book[id] = o;
     }
 
+    function cancel(uint256 id) external nonReentrant {
+        OrderLib.Order memory o = order(id);
+        o.ask.deadline = 0;
+        book[id] = o;
+    }
+
     /**
      * ---- internals ----
      */
