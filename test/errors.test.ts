@@ -159,7 +159,7 @@ describe("Errors", () => {
       await expectRevert(() => fill(0), "Arithmetic operation underflowed");
     });
 
-    it.only("cancel only from maker", async () => {
+    it("cancel only from maker", async () => {
       await ask(1, 1, 1);
       await expectRevert(() => dotc.methods.cancel(0).send({ from: deployer }), "invalid maker");
     });
