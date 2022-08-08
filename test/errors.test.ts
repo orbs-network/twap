@@ -1,6 +1,5 @@
 import {
   deployer,
-  describeOnETH,
   dotc,
   initFixture,
   setMockExchangeAmountOut,
@@ -24,7 +23,7 @@ describe("Errors", () => {
     });
   });
 
-  describeOnETH("verify bid", async () => {
+  describe("verify bid", async () => {
     it("expired", async () => {
       await ask(2000, 2000, 1, (await time()) - 1);
       await expectRevert(() => bid(0), "expired");
@@ -93,7 +92,7 @@ describe("Errors", () => {
     });
   });
 
-  describeOnETH("perform fill", async () => {
+  describe("perform fill", async () => {
     it("expired", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);

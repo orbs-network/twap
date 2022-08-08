@@ -20,4 +20,7 @@ export default _.merge(hardhatDefaultConfig(), {
       },
     },
   },
+  mocha: {
+    retries: 1,
+  },
 } as HardhatUserConfig);

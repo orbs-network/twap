@@ -1,12 +1,12 @@
 import { account, useChaiBN, web3 } from "@defi.org/web3-candies";
-import { describeOnETH, dotc, dstToken, exchange, initFixture, srcToken, withMockExchange } from "./fixture";
+import { dotc, dstToken, exchange, initFixture, srcToken, withMockExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, expectFilled, fill, order } from "./dotc-utils";
 
 useChaiBN();
 
-describeOnETH("DOTC", async () => {
+describe("DOTC", async () => {
   beforeEach(initFixture);
 
   it("single chunk", async () => {

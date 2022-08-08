@@ -1,10 +1,10 @@
 import { expect } from "chai";
-import { describeOnETH, dotc, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
+import { dotc, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
 import { ask, bid, fill, order, time } from "./dotc-utils";
 import { expectRevert, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
-describeOnETH("Sanity", () => {
+describe("Sanity", () => {
   beforeEach(initFixture);
 
   it("maker creates ask order, emits event", async () => {

@@ -1,8 +1,11 @@
 import { erc20s } from "@defi.org/web3-candies";
-import { deployer, quoter } from "./fixture";
+import { deployer, exchange } from "./fixture";
+import { deployArtifact } from "@defi.org/web3-candies/dist/hardhat";
+import { Quoter } from "../typechain-hardhat/contracts";
 
 describe("Quoter", () => {
   xit("gas", async () => {
+    const quoter = await deployArtifact<Quoter>("Quoter", { from: deployer }, [exchange.options.address]);
     const wbtc = erc20s.poly.WBTC().address;
     const usdc = erc20s.poly.USDC().address;
     const dai = erc20s.poly.DAI().address;
