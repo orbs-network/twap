@@ -1,20 +1,8 @@
 import { account, useChaiBN, web3 } from "@defi.org/web3-candies";
-import {
-  ask,
-  bid,
-  describeOnETH,
-  dotc,
-  dstToken,
-  exchange,
-  expectFilled,
-  fill,
-  initFixture,
-  order,
-  srcToken,
-  withMockExchange,
-} from "./base.test";
+import { describeOnETH, dotc, dstToken, exchange, initFixture, srcToken, withMockExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
+import { ask, bid, expectFilled, fill, order } from "./dotc-utils";
 
 useChaiBN();
 

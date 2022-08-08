@@ -1,21 +1,18 @@
 import {
-  ask,
-  bid,
   deployer,
   describeOnETH,
   dotc,
-  fill,
   initFixture,
   setMockExchangeAmountOut,
   srcToken,
   taker,
-  time,
   user,
   withMockExchange,
-} from "./base.test";
+} from "./fixture";
 import { account, expectRevert } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
+import { ask, bid, fill, time } from "./dotc-utils";
 
 describe("Errors", () => {
   beforeEach(initFixture);

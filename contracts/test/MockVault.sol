@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../IExchange.sol";
-import "../IFillCallback.sol";
+import "./IFillCallback.sol";
 import "../DOTC.sol";
 
 import "hardhat/console.sol";

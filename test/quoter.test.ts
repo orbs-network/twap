@@ -1,5 +1,5 @@
 import { erc20s } from "@defi.org/web3-candies";
-import { deployer, quoter } from "./base.test";
+import { deployer, quoter } from "./fixture";
 
 describe("Quoter", () => {
   xit("gas", async () => {

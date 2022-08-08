@@ -1,19 +1,6 @@
 import { expect } from "chai";
-import {
-  ask,
-  bid,
-  describeOnETH,
-  dotc,
-  dstToken,
-  exchange,
-  fill,
-  initFixture,
-  order,
-  srcToken,
-  taker,
-  time,
-  user,
-} from "./base.test";
+import { describeOnETH, dotc, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
+import { ask, bid, fill, order, time } from "./dotc-utils";
 import { expectRevert, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
