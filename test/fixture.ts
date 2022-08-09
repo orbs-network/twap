@@ -23,6 +23,7 @@ export async function initFixture() {
   await initAccounts();
   await initExternals();
   dotc = await deployArtifact<DOTC>("DOTC", { from: deployer });
+  await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
 }
 
 async function initAccounts() {
@@ -50,7 +51,6 @@ async function initExternalsETH() {
   dstToken = erc20s.eth.WETH();
   srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
   dstTokenWhale = "0x8EB8a3b98659Cce290402893d0123abb75E3ab28";
-  await fundUserSrcTokenFromWhale();
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
     "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a", // UniswapV2
   ]);
@@ -61,26 +61,27 @@ async function initExternalsPOLY() {
   dstToken = erc20s.poly.WETH();
   srcTokenWhale = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
   dstTokenWhale = "0x72A53cDBBcc1b9efa39c834A540550e23463AAcB";
-  await fundUserSrcTokenFromWhale();
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
     "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
   ]);
 }
 
-async function fundUserSrcTokenFromWhale() {
+async function fundSrcTokenFromWhale(target: string, amount: number) {
   tag(srcTokenWhale, "srcTokenWhale");
-  tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(srcTokenWhale);
+  await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
+  expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
+}
+async function fundDstTokenFromWhale(target: string, amount: number) {
+  tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
-  await srcToken.methods.transfer(user, await srcToken.amount(userSrcTokenStartBalance)).send({ from: srcTokenWhale });
-  expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(await srcToken.amount(userSrcTokenStartBalance));
+  await dstToken.methods.transfer(target, await dstToken.amount(amount)).send({ from: dstTokenWhale });
+  expect(await dstToken.methods.balanceOf(target).call()).bignumber.eq(await dstToken.amount(amount));
 }
 
 export async function withMockExchange(dstAmountOut: number) {
   exchange = await deployArtifact("MockExchange", { from: deployer });
-  await dstToken.methods
-    .transfer(exchange.options.address, await dstToken.amount(10_000))
-    .send({ from: dstTokenWhale });
+  await fundDstTokenFromWhale(exchange.options.address, 10_000);
   await setMockExchangeAmountOut(dstAmountOut);
 }
 
