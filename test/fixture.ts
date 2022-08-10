@@ -1,8 +1,9 @@
-import { deployArtifact, impersonate, resetNetworkFork, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, erc20s, Token, useChaiBN, web3 } from "@defi.org/web3-candies";
+import { deployArtifact, impersonate, resetNetworkFork, setBalance, tag } from "@defi.org/web3-candies/dist/hardhat";
+import { account, bn18, erc20s, fmt18, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { DOTC, IExchange } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
+import { srcDstPathData } from "./dotc-utils";
 
 useChaiBN();
 
@@ -22,6 +23,7 @@ export async function initFixture() {
   await resetNetworkFork();
   await initAccounts();
   await initExternals();
+  expect(await currentDstPrice()).closeTo(1800, 50);
   dotc = await deployArtifact<DOTC>("DOTC", { from: deployer });
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
 }
@@ -50,7 +52,7 @@ async function initExternalsETH() {
   srcToken = erc20s.eth.USDC();
   dstToken = erc20s.eth.WETH();
   srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
-  dstTokenWhale = "0x8EB8a3b98659Cce290402893d0123abb75E3ab28";
+  dstTokenWhale = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
     "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a", // UniswapV2
   ]);
@@ -75,6 +77,8 @@ async function fundSrcTokenFromWhale(target: string, amount: number) {
 async function fundDstTokenFromWhale(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
+  await setBalance(dstTokenWhale, bn18(1e6));
+  console.log("✨", await dstToken.methods.balanceOf(dstTokenWhale).call().then(fmt18));
   await dstToken.methods.transfer(target, await dstToken.amount(amount)).send({ from: dstTokenWhale });
   expect(await dstToken.methods.balanceOf(target).call()).bignumber.eq(await dstToken.amount(amount));
 }
@@ -91,11 +95,15 @@ export async function setMockExchangeAmountOut(dstAmountOut: number) {
     .send({ from: deployer });
 }
 
+export async function currentDstPrice() {
+  const amountIn = await srcToken.amount(1000);
+  const dstOut = await exchange.methods.getAmountOut(amountIn, srcDstPathData()).call().then(dstToken.mantissa);
+  return (await srcToken.mantissa(amountIn)).div(dstOut).toNumber(); // rounded
+}
+
 export async function increasePrice() {
   console.log("📈 increasing price...");
   const amount = await srcToken.amount(10e6);
   await srcToken.methods.approve(exchange.options.address, amount).send({ from: srcTokenWhale });
-  await exchange.methods
-    .swap(amount, 1, web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]))
-    .send({ from: srcTokenWhale });
+  await exchange.methods.swap(amount, 1, srcDstPathData()).send({ from: srcTokenWhale });
 }

@@ -42,9 +42,13 @@ export async function expectFilled(id: number, srcExactAmount: number, dstMinAmo
 
   expect(await dstToken.methods.balanceOf(user).call())
     .bignumber.gte(await dstToken.amount(dstMinAmount))
-    .closeTo(await dstToken.amount(dstMinAmount), await dstToken.amount(dstMinAmount * 0.1));
+    .closeTo(await dstToken.amount(dstMinAmount), await dstToken.amount(dstMinAmount * 0.2));
 }
 
 export async function time() {
   return (await block()).timestamp;
+}
+
+export function srcDstPathData() {
+  return web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]);
 }

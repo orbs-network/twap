@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { dotc, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
-import { ask, bid, fill, order, time } from "./dotc-utils";
-import { expectRevert, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
+import { ask, bid, fill, order, srcDstPathData, time } from "./dotc-utils";
+import { expectRevert, parseEvents, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 
 describe("Sanity", () => {
@@ -50,11 +50,11 @@ describe("Sanity", () => {
     const o = await order(0);
     expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
-    expect(o.bid.data).deep.eq(web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]));
+    expect(o.bid.data).deep.eq(srcDstPathData());
     expect(o.bid.fee).bignumber.eq(await dstToken.amount(0.01));
     expect(o.bid.amount)
       .bignumber.gte(await dstToken.amount(1))
-      .closeTo(await dstToken.amount(1), await dstToken.amount(0.1));
+      .closeTo(await dstToken.amount(1), await dstToken.amount(0.2));
     expect(o.bid.time).bignumber.eq((await time()).toString());
   });
 

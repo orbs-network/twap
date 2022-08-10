@@ -1,7 +1,7 @@
 import { erc20s } from "@defi.org/web3-candies";
 import { deployer, exchange } from "./fixture";
 import { deployArtifact } from "@defi.org/web3-candies/dist/hardhat";
-import { Quoter } from "../typechain-hardhat/contracts";
+import type { Quoter } from "../typechain-hardhat/contracts/test";
 
 describe("Quoter", () => {
   xit("gas", async () => {

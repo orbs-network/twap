@@ -21,6 +21,6 @@ export default _.merge(hardhatDefaultConfig(), {
     },
   },
   mocha: {
-    retries: 1,
+    bail: true,
   },
 } as HardhatUserConfig);

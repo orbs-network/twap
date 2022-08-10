@@ -13,11 +13,11 @@
   "scripts": {
     "clean": "rm -rf artifacts cache typechain-hardhat",
     "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
-    "typechain": "hardhat typechain",
+    "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
     "build": "hardhat compile && solhint 'contracts/**/*.sol'",
-    "test": "BLOCK=14850000 DEBUG=web3-candies hardhat test --logs",
-    "test:poly": "NETWORK=POLY BLOCK=28800000 DEBUG=web3-candies hardhat test --logs"
+    "test": "BLOCK=14908980 DEBUG=web3-candies hardhat test --logs",
+    "test:poly": "NETWORK=POLY BLOCK=29194866 DEBUG=web3-candies hardhat test --logs"
   },
   "prettier": {
     "printWidth": 120
