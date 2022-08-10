@@ -16,7 +16,8 @@
     "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
     "build": "hardhat compile && solhint 'contracts/**/*.sol'",
-    "test": "BLOCK=14908980 DEBUG=web3-candies hardhat test --logs",
+    "test": "npm run test:eth && npm run test:poly",
+    "test:eth": "BLOCK=14908980 DEBUG=web3-candies hardhat test --logs",
     "test:poly": "NETWORK=POLY BLOCK=29194866 DEBUG=web3-candies hardhat test --logs"
   },
   "prettier": {

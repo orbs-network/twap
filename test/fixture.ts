@@ -1,5 +1,5 @@
 import { deployArtifact, impersonate, resetNetworkFork, setBalance, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, bn18, erc20s, fmt18, Token, useChaiBN } from "@defi.org/web3-candies";
+import { account, bn18, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { DOTC, IExchange } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
@@ -15,6 +15,7 @@ export let exchange: IExchange;
 
 export let srcToken: Token;
 export let dstToken: Token;
+export let nativeToken: Token;
 export const userSrcTokenStartBalance = 1_000_000;
 let srcTokenWhale: string;
 let dstTokenWhale: string;
@@ -51,6 +52,7 @@ async function initExternals() {
 async function initExternalsETH() {
   srcToken = erc20s.eth.USDC();
   dstToken = erc20s.eth.WETH();
+  nativeToken = dstToken;
   srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
   dstTokenWhale = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
@@ -61,6 +63,7 @@ async function initExternalsETH() {
 async function initExternalsPOLY() {
   srcToken = erc20s.poly.USDC();
   dstToken = erc20s.poly.WETH();
+  nativeToken = erc20s.poly.WMATIC();
   srcTokenWhale = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
   dstTokenWhale = "0x72A53cDBBcc1b9efa39c834A540550e23463AAcB";
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
@@ -78,7 +81,6 @@ async function fundDstTokenFromWhale(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
   await setBalance(dstTokenWhale, bn18(1e6));
-  console.log("✨", await dstToken.methods.balanceOf(dstTokenWhale).call().then(fmt18));
   await dstToken.methods.transfer(target, await dstToken.amount(amount)).send({ from: dstTokenWhale });
   expect(await dstToken.methods.balanceOf(target).call()).bignumber.eq(await dstToken.amount(amount));
 }
