@@ -7,16 +7,17 @@ export async function ask(
   srcRate: number,
   dstRate: number,
   deadline: number = 0,
-  exchange: string = zeroAddress
+  exchange: string = zeroAddress,
+  _user: string = user
 ) {
   deadline = deadline || (await time()) + 1000;
   const _srcAmount = await srcToken.amount(srcAmount);
   const _srcRate = await srcToken.amount(srcRate);
   const _dstRate = await dstToken.amount(dstRate);
-  await srcToken.methods.approve(dotc.options.address, _srcAmount).send({ from: user });
+  await srcToken.methods.approve(dotc.options.address, _srcAmount).send({ from: _user });
   return dotc.methods
     .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline)
-    .send({ from: user });
+    .send({ from: _user });
 }
 
 export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address], fee: number = 0.01) {

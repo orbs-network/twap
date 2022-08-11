@@ -1,8 +1,9 @@
 import { expect } from "chai";
 import { dotc, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
 import { ask, bid, fill, order, srcDstPathData, time } from "./dotc-utils";
-import { expectRevert, parseEvents, zeroAddress } from "@defi.org/web3-candies";
+import { account, block, expectRevert, parseEvents, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import _ from "lodash";
 
 describe("Sanity", () => {
   beforeEach(initFixture);
@@ -92,5 +93,25 @@ describe("Sanity", () => {
     const o = await order(0);
     expect(o.ask.deadline).bignumber.zero;
     await expectRevert(() => bid(0), "expired");
+  });
+
+  describe("History", async () => {
+    beforeEach(async () => {
+      await ask(2000, 1000, 0.5);
+      await ask(4000, 2000, 1);
+      await dotc.methods.cancel(1).send({ from: user });
+      await ask(8000, 4000, 2, 0, zeroAddress, await account(6));
+      await ask(1000, 1000, 0.5, 1234);
+    });
+
+    it("find orders for maker", async () => {
+      const toBlock = (await block()).number;
+      const fromBlock = toBlock - 1000;
+      const events = await dotc.getPastEvents("OrderCreated", { fromBlock, toBlock, filter: { maker: user } });
+      expect(_.map(events, (e) => e.returnValues.id)).deep.eq(["0", "1", "3"]);
+      expect((await order(0)).ask.srcAmount).bignumber.eq(await srcToken.amount(2000));
+      expect((await order(1)).ask.deadline).bignumber.zero;
+      expect((await order(3)).ask.deadline).bignumber.eq("1234");
+    });
   });
 });
