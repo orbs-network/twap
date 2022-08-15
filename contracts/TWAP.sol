@@ -24,8 +24,9 @@ contract TWAP is ReentrancyGuard {
         uint256 fee
     );
 
-    uint256 public constant BIDDING_WINDOW_SECONDS = 10;
-    uint256 public constant MINIMUM_DELAY_SECONDS = 60;
+    uint256 public constant MIN_BID_WINDOW_SECONDS = 10;
+    uint256 public constant MAX_BID_WINDOW_SECONDS = 60;
+    uint256 public constant MIN_FILL_DELAY_SECONDS = 60;
 
     OrderLib.Order[] public book;
 
@@ -62,7 +63,7 @@ contract TWAP is ReentrancyGuard {
         uint256 deadline,
         uint256 delay
     ) external nonReentrant returns (uint256 id) {
-        require(delay >= MINIMUM_DELAY_SECONDS, "minimum delay");
+        require(delay >= MIN_FILL_DELAY_SECONDS, "minimum delay");
         require(
             srcToken != address(0) &&
                 dstToken != address(0) &&
@@ -104,7 +105,11 @@ contract TWAP is ReentrancyGuard {
         bytes calldata data,
         uint256 fee
     ) external nonReentrant {
-        (OrderLib.Order memory o, uint256 dstAmountOut) = verifyBid(id, exchange, data, fee);
+        OrderLib.Order memory o = order(id);
+        if (block.timestamp > o.bid.time + MAX_BID_WINDOW_SECONDS) {
+            o.bid = OrderLib.newBid();
+        }
+        uint256 dstAmountOut = verifyBid(o, exchange, data, fee);
         o.bid = OrderLib.Bid(block.timestamp, msg.sender, exchange, data, dstAmountOut, fee);
         book[id] = o;
     }
@@ -114,7 +119,8 @@ contract TWAP is ReentrancyGuard {
      * Emits OrderFilled
      */
     function fill(uint256 id) external nonReentrant {
-        (OrderLib.Order memory o, uint256 srcAmountIn, uint256 dstAmountOut) = performFill(id);
+        OrderLib.Order memory o = order(id);
+        (uint256 srcAmountIn, uint256 dstAmountOut) = performFill(o);
 
         emit OrderFilled(id, o.bid.taker, srcAmountIn, dstAmountOut, o.bid.fee);
         o.bid = OrderLib.newBid();
@@ -138,12 +144,11 @@ contract TWAP is ReentrancyGuard {
      */
 
     function verifyBid(
-        uint256 id,
+        OrderLib.Order memory o,
         address exchange,
         bytes calldata data,
         uint256 fee
-    ) private view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
-        o = order(id);
+    ) private view returns (uint256 dstAmountOut) {
         require(block.timestamp < o.ask.deadline, "expired");
         require(block.timestamp > o.filled.time + o.ask.delay, "recently filled");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "invalid exchange");
@@ -163,18 +168,10 @@ contract TWAP is ReentrancyGuard {
         require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "insufficient maker balance");
     }
 
-    function performFill(uint256 id)
-        private
-        returns (
-            OrderLib.Order memory o,
-            uint256 srcAmountIn,
-            uint256 dstAmountOut
-        )
-    {
-        o = order(id);
+    function performFill(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
         require(msg.sender == o.bid.taker, "invalid taker");
         require(block.timestamp < o.ask.deadline, "expired");
-        require(block.timestamp > o.bid.time + BIDDING_WINDOW_SECONDS, "pending bid");
+        require(block.timestamp > o.bid.time + MIN_BID_WINDOW_SECONDS, "pending bid");
 
         (srcAmountIn, dstAmountOut) = performFillSwap(o);
 

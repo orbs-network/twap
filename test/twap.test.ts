@@ -1,4 +1,4 @@
-import { account, useChaiBN } from "@defi.org/web3-candies";
+import { account, expectRevert, useChaiBN } from "@defi.org/web3-candies";
 import { twap, dstToken, exchange, initFixture, withMockExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
@@ -81,5 +81,17 @@ describe("TWAP", async () => {
 
     expect((await order(0)).bid.taker).eq(await account(5));
     expect((await order(0)).bid.fee).bignumber.eq(await dstToken.amount(0.001));
+  });
+
+  it("clears stale unfilled bid after max bidding window", async () => {
+    expect(await twap.methods.MAX_BID_WINDOW_SECONDS().call()).bignumber.eq("60");
+    await ask(2000, 1000, 0.5);
+    await bid(0);
+
+    await mineBlock(59);
+    await expectRevert(() => bid(0), "low bid");
+
+    await mineBlock(1);
+    await bid(0);
   });
 });

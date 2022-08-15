@@ -26,7 +26,7 @@ describe("Errors", () => {
     });
 
     it("minimum delay 60 seconds", async () => {
-      expect(await twap.methods.MINIMUM_DELAY_SECONDS().call().then(parseInt)).eq(60);
+      expect(await twap.methods.MIN_FILL_DELAY_SECONDS().call().then(parseInt)).eq(60);
       await expectRevert(() => ask(2000, 1000, 0.5, undefined, undefined, 59), "minimum delay");
     });
 
