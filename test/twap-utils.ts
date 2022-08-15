@@ -8,6 +8,7 @@ export async function ask(
   dstRate: number,
   deadline: number = 0,
   exchange: string = zeroAddress,
+  delay: number = 60,
   _user: string = user
 ) {
   deadline = deadline || (await time()) + 1000;
@@ -16,7 +17,7 @@ export async function ask(
   const _dstRate = await dstToken.amount(dstRate);
   await srcToken.methods.approve(twap.options.address, _srcAmount).send({ from: _user });
   return twap.methods
-    .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline)
+    .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline, delay)
     .send({ from: _user });
 }
 

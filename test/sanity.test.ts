@@ -33,6 +33,7 @@ describe("Sanity", () => {
     expect(o.ask.srcAmount).bignumber.eq(await srcToken.amount(3));
     expect(o.ask.srcBidAmount).bignumber.eq(await srcToken.amount(2));
     expect(o.ask.dstMinAmount).bignumber.eq(await dstToken.amount(1));
+    expect(o.ask.delay).bignumber.eq("60");
 
     expect(o.bid.time).bignumber.zero;
     expect(o.bid.taker).eq(zeroAddress);
@@ -100,7 +101,7 @@ describe("Sanity", () => {
       await ask(2000, 1000, 0.5);
       await ask(4000, 2000, 1);
       await twap.methods.cancel(1).send({ from: user });
-      await ask(8000, 4000, 2, 0, zeroAddress, await account(6));
+      await ask(8000, 4000, 2, 0, zeroAddress, 60, await account(6));
       await ask(1000, 1000, 0.5, 1234);
     });
 

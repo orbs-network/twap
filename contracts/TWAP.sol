@@ -24,8 +24,8 @@ contract TWAP is ReentrancyGuard {
         uint256 fee
     );
 
-    uint256 public constant BID_DELAY_SEC = 10;
-    uint256 public constant FILL_DELAY_SEC = 60;
+    uint256 public constant BIDDING_WINDOW_SECONDS = 10;
+    uint256 public constant MINIMUM_DELAY_SECONDS = 60;
 
     OrderLib.Order[] public book;
 
@@ -59,8 +59,10 @@ contract TWAP is ReentrancyGuard {
         uint256 srcAmount,
         uint256 srcBidAmount,
         uint256 dstMinAmount,
-        uint256 deadline
+        uint256 deadline,
+        uint256 delay
     ) external nonReentrant returns (uint256 id) {
+        require(delay >= MINIMUM_DELAY_SECONDS, "minimum delay");
         OrderLib.Order memory o = OrderLib.newOrder(
             length(),
             exchange,
@@ -69,7 +71,8 @@ contract TWAP is ReentrancyGuard {
             srcAmount,
             srcBidAmount,
             dstMinAmount,
-            deadline
+            deadline,
+            delay
         );
         book.push(o);
         emit OrderCreated(o.id, o.ask.maker);
@@ -127,7 +130,7 @@ contract TWAP is ReentrancyGuard {
     ) private view returns (OrderLib.Order memory o, uint256 dstAmountOut) {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
-        require(block.timestamp > o.filled.time + FILL_DELAY_SEC, "recently filled");
+        require(block.timestamp > o.filled.time + o.ask.delay, "recently filled");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), data);
         dstAmountOut -= fee;
@@ -151,7 +154,7 @@ contract TWAP is ReentrancyGuard {
         o = order(id);
         require(msg.sender == o.bid.taker, "invalid taker");
         require(block.timestamp < o.ask.deadline, "expired");
-        require(block.timestamp > o.bid.time + BID_DELAY_SEC, "pending bid");
+        require(block.timestamp > o.bid.time + BIDDING_WINDOW_SECONDS, "pending bid");
 
         (srcAmountIn, dstAmountOut) = performFillSwap(o);
 

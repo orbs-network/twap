@@ -8,10 +8,10 @@ import {
   user,
   withMockExchange,
 } from "./fixture";
-import { account, expectRevert } from "@defi.org/web3-candies";
+import { account, expectRevert, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, fill, time } from "./twap-utils";
+import { ask, bid, fill, order, time } from "./twap-utils";
 
 describe("Errors", () => {
   beforeEach(initFixture);
@@ -20,6 +20,11 @@ describe("Errors", () => {
     it("invalid id", async () => {
       await expectRevert(() => twap.methods.order(0).call(), "invalid id");
       await expectRevert(() => twap.methods.order(123).call(), "invalid id");
+    });
+
+    it("minimum delay 60 seconds", async () => {
+      expect(await twap.methods.MINIMUM_DELAY_SECONDS().call().then(parseInt)).eq(60);
+      await expectRevert(() => ask(2000, 1000, 0.5, 0, zeroAddress, 59), "minimum delay");
     });
   });
 
@@ -49,7 +54,24 @@ describe("Errors", () => {
 
       await expectRevert(() => bid(0), "recently filled");
 
-      await mineBlock(await twap.methods.FILL_DELAY_SEC().call().then(parseInt));
+      await mineBlock(parseInt((await order(0)).ask.delay));
+      await bid(0);
+    });
+
+    it("recently filled custom delay", async () => {
+      await ask(2000, 1000, 0.5, 0, zeroAddress, 600);
+      await bid(0);
+      await mineBlock(30);
+      await fill(0);
+
+      await expectRevert(() => bid(0), "recently filled");
+
+      await mineBlock(60);
+      await expectRevert(() => bid(0), "recently filled");
+      await mineBlock(60);
+      await expectRevert(() => bid(0), "recently filled");
+
+      await mineBlock(600);
       await bid(0);
     });
 

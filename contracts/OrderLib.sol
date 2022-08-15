@@ -15,6 +15,7 @@ library OrderLib {
         uint256 srcAmount; // input total order amount
         uint256 srcBidAmount; // input chunk size
         uint256 dstMinAmount; // minimum output chunk size
+        uint256 delay; // minimum delay in seconds between chunks
     }
 
     struct Bid {
@@ -49,7 +50,8 @@ library OrderLib {
         uint256 srcAmount,
         uint256 srcBidAmount,
         uint256 dstMinAmount,
-        uint256 deadline
+        uint256 deadline,
+        uint256 delay
     ) internal view returns (Order memory) {
         return
             Order(
@@ -63,7 +65,8 @@ library OrderLib {
                     dstToken,
                     srcAmount,
                     srcBidAmount,
-                    dstMinAmount
+                    dstMinAmount,
+                    delay
                 ),
                 newBid(),
                 Fill(
