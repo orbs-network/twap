@@ -68,8 +68,6 @@ describe("Errors", () => {
 
       await mineBlock(60);
       await expectRevert(() => bid(0), "recently filled");
-      await mineBlock(60);
-      await expectRevert(() => bid(0), "recently filled");
 
       await mineBlock(600);
       await bid(0);
