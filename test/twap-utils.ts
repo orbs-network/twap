@@ -4,8 +4,8 @@ import { twap, dstToken, exchange, srcToken, taker, user, userSrcTokenStartBalan
 
 export async function ask(
   srcAmount: number,
-  srcRate: number,
-  dstRate: number,
+  srcBidAmount: number,
+  dstMinAmount: number,
   deadline: number = 0,
   exchange: string = zeroAddress,
   delay: number = 60,
@@ -13,8 +13,8 @@ export async function ask(
 ) {
   deadline = deadline || (await time()) + 1000;
   const _srcAmount = await srcToken.amount(srcAmount);
-  const _srcRate = await srcToken.amount(srcRate);
-  const _dstRate = await dstToken.amount(dstRate);
+  const _srcRate = await srcToken.amount(srcBidAmount);
+  const _dstRate = await dstToken.amount(dstMinAmount);
   await srcToken.methods.approve(twap.options.address, _srcAmount).send({ from: _user });
   return twap.methods
     .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline, delay)

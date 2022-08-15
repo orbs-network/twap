@@ -94,4 +94,15 @@ describe("TWAP", async () => {
     await mineBlock(1);
     await bid(0);
   });
+
+  it("supports market orders, english auction incentivizes best competitive price", async () => {
+    await ask(2000, 1000, 0.000001);
+    await bid(0, undefined, 0.4);
+    await bid(0, undefined, 0.3);
+    await bid(0, undefined, 0.1);
+    await bid(0, undefined, 0.01);
+    await mineBlock(10);
+    await fill(0);
+    await expectFilled(0, 1000, 0.5);
+  });
 });
