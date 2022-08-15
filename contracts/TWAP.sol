@@ -63,6 +63,17 @@ contract TWAP is ReentrancyGuard {
         uint256 delay
     ) external nonReentrant returns (uint256 id) {
         require(delay >= MINIMUM_DELAY_SECONDS, "minimum delay");
+        require(
+            srcToken != address(0) &&
+                dstToken != address(0) &&
+                srcToken != dstToken &&
+                srcAmount > 0 &&
+                srcBidAmount > 0 &&
+                srcBidAmount <= srcAmount &&
+                dstMinAmount > 0 &&
+                deadline > block.timestamp,
+            "invalid params"
+        );
         OrderLib.Order memory o = OrderLib.newOrder(
             length(),
             exchange,
@@ -131,16 +142,17 @@ contract TWAP is ReentrancyGuard {
         o = order(id);
         require(block.timestamp < o.ask.deadline, "expired");
         require(block.timestamp > o.filled.time + o.ask.delay, "recently filled");
+        require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "invalid exchange");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), data);
         dstAmountOut -= fee;
         require(dstAmountOut > o.bid.amount, "low bid");
-        require(dstAmountOut > o.dstMinAmountNext(), "insufficient out");
+        require(dstAmountOut >= o.dstMinAmountNext(), "insufficient out");
         require(
             ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) >= o.srcBidAmountNext(),
-            "insufficient user allowance"
+            "insufficient maker allowance"
         );
-        require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "insufficient user balance");
+        require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "insufficient maker balance");
     }
 
     function performFill(uint256 id)

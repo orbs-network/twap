@@ -7,11 +7,14 @@ import {
   taker,
   user,
   withMockExchange,
+  dstToken,
+  exchange,
 } from "./fixture";
-import { account, expectRevert, zeroAddress } from "@defi.org/web3-candies";
-import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { account, expectRevert, web3, zeroAddress } from "@defi.org/web3-candies";
+import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, fill, order, time } from "./twap-utils";
+import { ask, bid, fill, order, srcDstPathData, time } from "./twap-utils";
+import { MockExchange } from "../typechain-hardhat/contracts/test";
 
 describe("Errors", () => {
   beforeEach(initFixture);
@@ -24,17 +27,50 @@ describe("Errors", () => {
 
     it("minimum delay 60 seconds", async () => {
       expect(await twap.methods.MINIMUM_DELAY_SECONDS().call().then(parseInt)).eq(60);
-      await expectRevert(() => ask(2000, 1000, 0.5, 0, zeroAddress, 59), "minimum delay");
+      await expectRevert(() => ask(2000, 1000, 0.5, undefined, undefined, 59), "minimum delay");
+    });
+
+    it("invalid params", async () => {
+      twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 60); //valid
+
+      const now = await time();
+
+      await Promise.all(
+        [
+          twap.methods.ask(zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, zeroAddress, 10, 5, 10, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 60),
+        ].map((c) => expectRevert(() => c.call(), "invalid params"))
+      );
     });
   });
 
   describe("verify bid", async () => {
     it("expired", async () => {
-      await ask(2000, 2000, 1, (await time()) - 1);
+      await ask(2000, 2000, 1, (await time()) + 10);
+      await mineBlock(10);
       await expectRevert(() => bid(0), "expired");
 
       await ask(2000, 2000, 1, (await time()) + 10);
       await bid(1);
+    });
+
+    it("invalid exchange", async () => {
+      await withMockExchange(1);
+      const otherExchange = await deployArtifact<MockExchange>("MockExchange", { from: deployer });
+
+      await ask(2000, 2000, 1, undefined, exchange.options.address);
+      await mineBlock(10);
+      await expectRevert(
+        () => twap.methods.bid(0, otherExchange.options.address, srcDstPathData(), 0).call(),
+        "invalid exchange"
+      );
+      await twap.methods.bid(0, exchange.options.address, srcDstPathData(), 0).call();
     });
 
     it("low bid", async () => {
@@ -59,7 +95,7 @@ describe("Errors", () => {
     });
 
     it("recently filled custom delay", async () => {
-      await ask(2000, 1000, 0.5, 0, zeroAddress, 600);
+      await ask(2000, 1000, 0.5, undefined, undefined, 600);
       await bid(0);
       await mineBlock(30);
       await fill(0);
@@ -102,13 +138,13 @@ describe("Errors", () => {
     it("insufficient user allowance", async () => {
       await ask(2000, 2000, 1);
       await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
-      await expectRevert(() => bid(0), "insufficient user allowance");
+      await expectRevert(() => bid(0), "insufficient maker allowance");
     });
 
     it("insufficient user balance", async () => {
       await ask(2000, 2000, 1);
       await srcToken.methods.transfer(taker, await srcToken.methods.balanceOf(user).call()).send({ from: user });
-      await expectRevert(() => bid(0), "insufficient user balance");
+      await expectRevert(() => bid(0), "insufficient maker balance");
     });
   });
 

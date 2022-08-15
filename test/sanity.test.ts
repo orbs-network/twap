@@ -101,8 +101,9 @@ describe("Sanity", () => {
       await ask(2000, 1000, 0.5);
       await ask(4000, 2000, 1);
       await twap.methods.cancel(1).send({ from: user });
-      await ask(8000, 4000, 2, 0, zeroAddress, 60, await account(6));
-      await ask(1000, 1000, 0.5, 1234);
+      await ask(8000, 4000, 2, undefined, undefined, undefined, await account(6));
+      await ask(1000, 1000, 0.5, (await time()) + 10);
+      await mineBlock(10);
     });
 
     it("find orders for maker", async () => {
@@ -111,8 +112,8 @@ describe("Sanity", () => {
       const events = await twap.getPastEvents("OrderCreated", { fromBlock, toBlock, filter: { maker: user } });
       expect(_.map(events, (e) => e.returnValues.id)).deep.eq(["0", "1", "3"]);
       expect((await order(0)).ask.srcAmount).bignumber.eq(await srcToken.amount(2000));
-      expect((await order(1)).ask.deadline).bignumber.zero;
-      expect((await order(3)).ask.deadline).bignumber.eq("1234");
+      expect((await order(1)).ask.srcAmount).bignumber.eq(await srcToken.amount(4000));
+      expect((await order(3)).ask.srcAmount).bignumber.eq(await srcToken.amount(1000));
     });
   });
 });
