@@ -1,6 +1,6 @@
 import { block, web3, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { dotc, dstToken, exchange, srcToken, taker, user, userSrcTokenStartBalance } from "./fixture";
+import { twap, dstToken, exchange, srcToken, taker, user, userSrcTokenStartBalance } from "./fixture";
 
 export async function ask(
   srcAmount: number,
@@ -14,24 +14,24 @@ export async function ask(
   const _srcAmount = await srcToken.amount(srcAmount);
   const _srcRate = await srcToken.amount(srcRate);
   const _dstRate = await dstToken.amount(dstRate);
-  await srcToken.methods.approve(dotc.options.address, _srcAmount).send({ from: _user });
-  return dotc.methods
+  await srcToken.methods.approve(twap.options.address, _srcAmount).send({ from: _user });
+  return twap.methods
     .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline)
     .send({ from: _user });
 }
 
 export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address], fee: number = 0.01) {
-  return dotc.methods
+  return twap.methods
     .bid(id, exchange.options.address, web3().eth.abi.encodeParameter("address[]", path), await dstToken.amount(fee))
     .send({ from: taker });
 }
 
 export async function fill(id: number) {
-  return dotc.methods.fill(id).send({ from: taker });
+  return twap.methods.fill(id).send({ from: taker });
 }
 
 export async function order(id: number): Promise<any> {
-  return dotc.methods.order(id).call();
+  return twap.methods.order(id).call();
 }
 
 export async function expectFilled(id: number, srcExactAmount: number, dstMinAmount: number) {

@@ -1,4 +1,4 @@
-# dotc
+# TWAP
 
 [see test output](TEST_OUTPUT.md)
 
@@ -6,9 +6,9 @@
 - create `.env` file with:
 ```
 NETWORK_URL_ETH=<URL>
-NETWORK_URL_BSC=<URL>
 NETWORK_URL_POLY=<URL>
 ETHERSCAN_ETH=<KEY>
+ETHERSCAN_POLY=<KEY>
 COINMARKETCAP=<KEY>
 ```
 

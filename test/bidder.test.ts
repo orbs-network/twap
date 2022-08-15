@@ -1,9 +1,9 @@
-import { dotc, dstToken, exchange, initFixture, nativeToken, taker } from "./fixture";
+import { twap, dstToken, exchange, initFixture, nativeToken, taker } from "./fixture";
 import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import type { Bidder } from "../typechain-hardhat/contracts";
-import { ask, expectFilled, srcDstPathData } from "./dotc-utils";
+import { ask, expectFilled, srcDstPathData } from "./twap-utils";
 import { web3, zeroAddress } from "@defi.org/web3-candies";
+import type { Bidder } from "../typechain-hardhat/contracts/bidder";
 
 describe("Bidder", async () => {
   let bidder: Bidder;
@@ -11,7 +11,7 @@ describe("Bidder", async () => {
   beforeEach(initFixture);
 
   beforeEach(async () => {
-    bidder = await deployArtifact<Bidder>("Bidder", { from: taker }, [dotc.options.address, nativeToken.address]);
+    bidder = await deployArtifact<Bidder>("Bidder", { from: taker }, [twap.options.address, nativeToken.address]);
     await ask(2000, 1000, 0.5);
   });
 
@@ -23,7 +23,7 @@ describe("Bidder", async () => {
 
   it("sanity", async () => {
     expect(await bidder.methods.owner().call()).eq(taker);
-    expect(await bidder.methods.dotc().call()).eq(dotc.options.address);
+    expect(await bidder.methods.twap().call()).eq(twap.options.address);
     expect(await bidder.methods.weth().call()).eq(nativeToken.address);
   });
 

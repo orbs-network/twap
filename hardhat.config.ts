@@ -16,7 +16,7 @@ export default _.merge(hardhatDefaultConfig(), {
   networks: {
     hardhat: {
       accounts: {
-        passphrase: "dotc", // empty accounts
+        passphrase: "twap", // empty accounts
       },
     },
   },

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { dotc, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
-import { ask, bid, fill, order, srcDstPathData, time } from "./dotc-utils";
+import { twap, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
+import { ask, bid, fill, order, srcDstPathData, time } from "./twap-utils";
 import { account, block, expectRevert, parseEvents, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
@@ -9,17 +9,17 @@ describe("Sanity", () => {
   beforeEach(initFixture);
 
   it("maker creates ask order, emits event", async () => {
-    expect(await dotc.methods.length().call()).bignumber.zero;
+    expect(await twap.methods.length().call()).bignumber.zero;
 
     const deadline = (await time()) + 100;
     const tx = await ask(3, 2, 1, deadline);
     const blockTimeAtCreation = await time();
 
-    const events = parseEvents(tx, dotc);
+    const events = parseEvents(tx, twap);
     expect(events[0].event).eq("OrderCreated");
     expect(events[0].returnValues.id).eq("0");
     expect(events[0].returnValues.maker).eq(user);
-    expect(await dotc.methods.length().call()).bignumber.eq("1");
+    expect(await twap.methods.length().call()).bignumber.eq("1");
 
     const o = await order(0);
     expect(o.id).bignumber.zero;
@@ -76,7 +76,7 @@ describe("Sanity", () => {
     expect(o.bid.time).bignumber.zero;
     expect(o.bid.fee).bignumber.zero;
 
-    const events = parseEvents(tx, dotc);
+    const events = parseEvents(tx, twap);
     expect(events[0].event).eq("OrderFilled");
     expect(events[0].returnValues.id).eq("0");
     expect(events[0].returnValues.taker).eq(taker);
@@ -89,7 +89,7 @@ describe("Sanity", () => {
 
   it("cancel order", async () => {
     await ask(2000, 1000, 0.5);
-    await dotc.methods.cancel(0).send({ from: user });
+    await twap.methods.cancel(0).send({ from: user });
     const o = await order(0);
     expect(o.ask.deadline).bignumber.zero;
     await expectRevert(() => bid(0), "expired");
@@ -99,7 +99,7 @@ describe("Sanity", () => {
     beforeEach(async () => {
       await ask(2000, 1000, 0.5);
       await ask(4000, 2000, 1);
-      await dotc.methods.cancel(1).send({ from: user });
+      await twap.methods.cancel(1).send({ from: user });
       await ask(8000, 4000, 2, 0, zeroAddress, await account(6));
       await ask(1000, 1000, 0.5, 1234);
     });
@@ -107,7 +107,7 @@ describe("Sanity", () => {
     it("find orders for maker", async () => {
       const toBlock = (await block()).number;
       const fromBlock = toBlock - 1000;
-      const events = await dotc.getPastEvents("OrderCreated", { fromBlock, toBlock, filter: { maker: user } });
+      const events = await twap.getPastEvents("OrderCreated", { fromBlock, toBlock, filter: { maker: user } });
       expect(_.map(events, (e) => e.returnValues.id)).deep.eq(["0", "1", "3"]);
       expect((await order(0)).ask.srcAmount).bignumber.eq(await srcToken.amount(2000));
       expect((await order(1)).ask.deadline).bignumber.zero;

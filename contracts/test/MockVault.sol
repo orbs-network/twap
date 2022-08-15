@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../IExchange.sol";
 import "./IFillCallback.sol";
-import "../DOTC.sol";
+import "../TWAP.sol";
 
 import "hardhat/console.sol";
 
@@ -21,7 +21,7 @@ contract MockVault is Ownable, IFillCallback {
         uint256 dstAmountOut;
     }
 
-    DOTC public dotc;
+    TWAP public twap;
 
     ERC20 public srcToken;
     ERC20 public dstToken;
@@ -29,11 +29,11 @@ contract MockVault is Ownable, IFillCallback {
     Filled[] public filled;
 
     constructor(
-        address _dotc,
+        address _twap,
         address _srcToken,
         address _dstToken
     ) {
-        dotc = DOTC(_dotc);
+        twap = TWAP(_twap);
         srcToken = ERC20(_srcToken);
         dstToken = ERC20(_dstToken);
     }
@@ -44,7 +44,7 @@ contract MockVault is Ownable, IFillCallback {
         uint256 dstMinAmount,
         uint256 deadline
     ) external onlyOwner {
-        //        dotc.ask(address(srcToken), address(dstToken), srcAmount, srcBidAmount, dstMinAmount, deadline, address(this));
+        //        twap.ask(address(srcToken), address(dstToken), srcAmount, srcBidAmount, dstMinAmount, deadline, address(this));
     }
 
     function doHardWork() public {

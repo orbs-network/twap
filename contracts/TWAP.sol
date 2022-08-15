@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./OrderLib.sol";
 import "./IExchange.sol";
 
-contract DOTC is ReentrancyGuard {
+contract TWAP is ReentrancyGuard {
     using SafeERC20 for ERC20;
     using Address for address;
     using OrderLib for OrderLib.Order;
@@ -29,24 +29,29 @@ contract DOTC is ReentrancyGuard {
 
     OrderLib.Order[] public book;
 
-    /**
-     * ---- views ----
-     */
+    // -------- views --------
 
+    /**
+     * returns Order by order id
+     */
     function order(uint256 id) public view returns (OrderLib.Order memory) {
         require(id < length(), "invalid id");
         return book[id];
     }
 
+    /**
+     * returns order book length
+     */
     function length() public view returns (uint256) {
         return book.length;
     }
 
-    /**
-     * ---- actions ----
-     */
+    // -------- actions --------
 
-    // 1. maker creates order
+    /**
+     * Create Order for msg.sender (maker)
+     * returns order id
+     */
     function ask(
         address exchange,
         address srcToken,
@@ -72,6 +77,9 @@ contract DOTC is ReentrancyGuard {
     }
 
     // 2. taker offers matching bid, only if higher than current bid, sufficient rate, and after last filled delay
+    /**
+     *
+     */
     function bid(
         uint256 id,
         address exchange,

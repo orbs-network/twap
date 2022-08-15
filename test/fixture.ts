@@ -1,16 +1,16 @@
 import { deployArtifact, impersonate, resetNetworkFork, setBalance, tag } from "@defi.org/web3-candies/dist/hardhat";
 import { account, bn18, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import type { DOTC, IExchange } from "../typechain-hardhat/contracts";
+import type { TWAP, IExchange } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
-import { srcDstPathData } from "./dotc-utils";
+import { srcDstPathData } from "./twap-utils";
 
 useChaiBN();
 
 export let deployer: string;
 export let user: string;
 export let taker: string;
-export let dotc: DOTC;
+export let twap: TWAP;
 export let exchange: IExchange;
 
 export let srcToken: Token;
@@ -25,7 +25,7 @@ export async function initFixture() {
   await initAccounts();
   await initExternals();
   expect(await currentDstPrice()).closeTo(1800, 50);
-  dotc = await deployArtifact<DOTC>("DOTC", { from: deployer });
+  twap = await deployArtifact<TWAP>("TWAP", { from: deployer });
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
 }
 

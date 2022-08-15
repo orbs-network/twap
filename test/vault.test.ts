@@ -1,9 +1,9 @@
 import { deployArtifact } from "@defi.org/web3-candies/dist/hardhat";
-import { deployer, dotc, dstToken, initFixture, srcToken } from "./fixture";
+import { deployer, twap, dstToken, initFixture, srcToken } from "./fixture";
 import type { MockVault } from "../typechain-hardhat/contracts/test";
 import { maxUint256 } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { bid, expectFilled } from "./dotc-utils";
+import { bid, expectFilled } from "./twap-utils";
 
 describe("user is vault", async () => {
   beforeEach(initFixture);
@@ -12,7 +12,7 @@ describe("user is vault", async () => {
 
   beforeEach(async () => {
     vault = await deployArtifact("MockVault", { from: deployer }, [
-      dotc.options.address,
+      twap.options.address,
       srcToken.address,
       dstToken.address,
     ]);

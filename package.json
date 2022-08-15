@@ -1,10 +1,10 @@
 {
-  "name": "dotc",
+  "name": "@defi.org/twap",
   "version": "0.0.1",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defi-org-code/dotc.git"
+    "url": "git+https://github.com/defi-org-code/twap.git"
   },
   "license": "MIT",
   "dependencies": {

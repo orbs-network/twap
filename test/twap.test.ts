@@ -1,12 +1,12 @@
 import { account, useChaiBN } from "@defi.org/web3-candies";
-import { dotc, dstToken, exchange, initFixture, withMockExchange } from "./fixture";
+import { twap, dstToken, exchange, initFixture, withMockExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, expectFilled, fill, order, srcDstPathData } from "./dotc-utils";
+import { ask, bid, expectFilled, fill, order, srcDstPathData } from "./twap-utils";
 
 useChaiBN();
 
-describe("DOTC", async () => {
+describe("TWAP", async () => {
   beforeEach(initFixture);
 
   it("single chunk", async () => {
@@ -75,7 +75,7 @@ describe("DOTC", async () => {
     expect((await order(0)).bid.fee).bignumber.eq(await dstToken.amount(0.01));
     await mineBlock(1);
 
-    await dotc.methods
+    await twap.methods
       .bid(0, exchange.options.address, srcDstPathData(), await dstToken.amount(0.001))
       .send({ from: await account(5) });
 

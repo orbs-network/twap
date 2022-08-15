@@ -6,18 +6,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "./IWETH.sol";
-import "./IExchange.sol";
-import "./DOTC.sol";
-import "./OrderLib.sol";
+import "../IExchange.sol";
+import "../OrderLib.sol";
+import "../TWAP.sol";
 
 contract Bidder is Ownable {
     using SafeERC20 for ERC20;
 
-    address public immutable dotc;
+    address public immutable twap;
     address public immutable weth;
 
-    constructor(address _dotc, address _weth) {
-        dotc = _dotc;
+    constructor(address _twap, address _weth) {
+        twap = _twap;
         weth = _weth;
     }
 
@@ -27,7 +27,7 @@ contract Bidder is Ownable {
         bytes calldata data,
         uint256 fee
     ) external onlyOwner {
-        DOTC(dotc).bid(id, exchange, data, fee);
+        TWAP(twap).bid(id, exchange, data, fee);
     }
 
     function fill(
@@ -36,10 +36,10 @@ contract Bidder is Ownable {
         uint256 feeMinAmountOut,
         bytes calldata feeData
     ) external onlyOwner {
-        OrderLib.Order memory o = DOTC(dotc).order(id);
+        OrderLib.Order memory o = TWAP(twap).order(id);
         uint256 fee = o.bid.fee;
 
-        DOTC(dotc).fill(id);
+        TWAP(twap).fill(id);
 
         uint256 dstBalance = ERC20(o.ask.dstToken).balanceOf(address(this));
         require(dstBalance >= fee, "insufficient fee");
@@ -57,5 +57,5 @@ contract Bidder is Ownable {
         }
     }
 
-    receive() external payable {}
+    receive() external payable {} // solhint-disable-line no-empty-blocks
 }

@@ -1,6 +1,6 @@
 import {
   deployer,
-  dotc,
+  twap,
   initFixture,
   setMockExchangeAmountOut,
   srcToken,
@@ -11,15 +11,15 @@ import {
 import { account, expectRevert } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, fill, time } from "./dotc-utils";
+import { ask, bid, fill, time } from "./twap-utils";
 
 describe("Errors", () => {
   beforeEach(initFixture);
 
   describe("order", async () => {
     it("invalid id", async () => {
-      await expectRevert(() => dotc.methods.order(0).call(), "invalid id");
-      await expectRevert(() => dotc.methods.order(123).call(), "invalid id");
+      await expectRevert(() => twap.methods.order(0).call(), "invalid id");
+      await expectRevert(() => twap.methods.order(123).call(), "invalid id");
     });
   });
 
@@ -49,7 +49,7 @@ describe("Errors", () => {
 
       await expectRevert(() => bid(0), "recently filled");
 
-      await mineBlock(await dotc.methods.FILL_DELAY_SEC().call().then(parseInt));
+      await mineBlock(await twap.methods.FILL_DELAY_SEC().call().then(parseInt));
       await bid(0);
     });
 
@@ -81,7 +81,7 @@ describe("Errors", () => {
 
     it("insufficient user allowance", async () => {
       await ask(2000, 2000, 1);
-      await srcToken.methods.approve(dotc.options.address, 0).send({ from: user });
+      await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
       await expectRevert(() => bid(0), "insufficient user allowance");
     });
 
@@ -110,7 +110,7 @@ describe("Errors", () => {
       await bid(0);
       const otherTaker = await account(9);
       expect(otherTaker).not.eq(taker);
-      await expectRevert(() => dotc.methods.fill(0).send({ from: otherTaker }), "invalid taker");
+      await expectRevert(() => twap.methods.fill(0).send({ from: otherTaker }), "invalid taker");
     });
 
     it("pending bid when still in bidding window", async () => {
@@ -157,7 +157,7 @@ describe("Errors", () => {
 
     it("cancel only from maker", async () => {
       await ask(1, 1, 1);
-      await expectRevert(() => dotc.methods.cancel(0).send({ from: deployer }), "invalid maker");
+      await expectRevert(() => twap.methods.cancel(0).send({ from: deployer }), "invalid maker");
     });
   });
 });
