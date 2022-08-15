@@ -10,7 +10,7 @@ import {
   dstToken,
   exchange,
 } from "./fixture";
-import { account, expectRevert, web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, ether, expectRevert, maxUint256, web3, zeroAddress } from "@defi.org/web3-candies";
 import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, fill, order, srcDstPathData, time } from "./twap-utils";
@@ -46,6 +46,25 @@ describe("Errors", () => {
           twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 60),
           twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 60),
         ].map((c) => expectRevert(() => c.call(), "invalid params"))
+      );
+    });
+
+    it("insufficient maker allowance", async () => {
+      await srcToken.methods.approve(twap.options.address, 5).send({ from: user });
+      await expectRevert(
+        () =>
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, 1e12, 60).send({ from: user }),
+        "insufficient maker allowance"
+      );
+    });
+
+    it("insufficient maker balance", async () => {
+      await srcToken.methods.approve(twap.options.address, 15).send({ from: user });
+      await srcToken.methods.transfer(taker, await srcToken.methods.balanceOf(user).call()).send({ from: user });
+      await expectRevert(
+        () =>
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, 1e12, 60).send({ from: user }),
+        "insufficient maker balance"
       );
     });
   });

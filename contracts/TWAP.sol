@@ -74,6 +74,7 @@ contract TWAP is ReentrancyGuard {
                 deadline > block.timestamp,
             "invalid params"
         );
+
         OrderLib.Order memory o = OrderLib.newOrder(
             length(),
             exchange,
@@ -85,6 +86,9 @@ contract TWAP is ReentrancyGuard {
             deadline,
             delay
         );
+
+        verifyMakerBalance(o);
+
         book.push(o);
         emit OrderCreated(o.id, o.ask.maker);
         return o.id;
@@ -148,6 +152,10 @@ contract TWAP is ReentrancyGuard {
         dstAmountOut -= fee;
         require(dstAmountOut > o.bid.amount, "low bid");
         require(dstAmountOut >= o.dstMinAmountNext(), "insufficient out");
+        verifyMakerBalance(o);
+    }
+
+    function verifyMakerBalance(OrderLib.Order memory o) private view {
         require(
             ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) >= o.srcBidAmountNext(),
             "insufficient maker allowance"

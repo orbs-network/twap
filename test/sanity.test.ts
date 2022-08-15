@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { twap, dstToken, exchange, initFixture, srcToken, taker, user } from "./fixture";
+import { twap, dstToken, exchange, initFixture, srcToken, taker, user, fundSrcTokenFromWhale } from "./fixture";
 import { ask, bid, fill, order, srcDstPathData, time } from "./twap-utils";
 import { account, block, expectRevert, parseEvents, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
@@ -99,9 +99,13 @@ describe("Sanity", () => {
   describe("History", async () => {
     beforeEach(async () => {
       await ask(2000, 1000, 0.5);
+
       await ask(4000, 2000, 1);
       await twap.methods.cancel(1).send({ from: user });
+
+      await fundSrcTokenFromWhale(await account(6), 8000);
       await ask(8000, 4000, 2, undefined, undefined, undefined, await account(6));
+
       await ask(1000, 1000, 0.5, (await time()) + 10);
       await mineBlock(10);
     });

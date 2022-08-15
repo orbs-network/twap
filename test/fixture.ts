@@ -71,7 +71,7 @@ async function initExternalsPOLY() {
   ]);
 }
 
-async function fundSrcTokenFromWhale(target: string, amount: number) {
+export async function fundSrcTokenFromWhale(target: string, amount: number) {
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
   await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
