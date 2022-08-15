@@ -32,7 +32,7 @@ contract TWAP is ReentrancyGuard {
     // -------- views --------
 
     /**
-     * returns Order by order id
+     * Returns Order by order id
      */
     function order(uint256 id) public view returns (OrderLib.Order memory) {
         require(id < length(), "invalid id");
@@ -40,7 +40,7 @@ contract TWAP is ReentrancyGuard {
     }
 
     /**
-     * returns order book length
+     * Returns order book length
      */
     function length() public view returns (uint256) {
         return book.length;
@@ -49,8 +49,8 @@ contract TWAP is ReentrancyGuard {
     // -------- actions --------
 
     /**
-     * Create Order for msg.sender (maker)
-     * returns order id
+     * Create Order by msg.sender (maker)
+     * Returns order id, emits OrderCreated
      */
     function ask(
         address exchange,
@@ -76,9 +76,9 @@ contract TWAP is ReentrancyGuard {
         return o.id;
     }
 
-    // 2. taker offers matching bid, only if higher than current bid, sufficient rate, and after last filled delay
     /**
-     *
+     * Bid for a specific order by id (msg.sender is taker)
+     * A valid bid is higher than current bid, with sufficient price after fees and after last fill delay
      */
     function bid(
         uint256 id,
@@ -91,7 +91,10 @@ contract TWAP is ReentrancyGuard {
         book[id] = o;
     }
 
-    // 3. winning bid is executed by the taker, only if after bidding window
+    /**
+     * Fill the current winning bid by the winning taker, if after the bidding window
+     * Emits OrderFilled
+     */
     function fill(uint256 id) external nonReentrant {
         (OrderLib.Order memory o, uint256 srcAmountIn, uint256 dstAmountOut) = performFill(id);
 
@@ -102,6 +105,9 @@ contract TWAP is ReentrancyGuard {
         book[id] = o;
     }
 
+    /**
+     * Cancel order by id
+     */
     function cancel(uint256 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
         require(msg.sender == o.ask.maker, "invalid maker");

@@ -6,38 +6,41 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 
 library OrderLib {
     struct Ask {
-        uint256 time;
-        uint256 deadline;
-        address maker;
-        address exchange;
-        address srcToken;
-        address dstToken;
-        uint256 srcAmount;
-        uint256 srcBidAmount;
-        uint256 dstMinAmount;
+        uint256 time; // order creation timestamp
+        uint256 deadline; // order duration timestamp
+        address maker; // order creator
+        address exchange; // swap only on this exchange, or zero for any exchange
+        address srcToken; // input token
+        address dstToken; // output token
+        uint256 srcAmount; // input total order amount
+        uint256 srcBidAmount; // input chunk size
+        uint256 dstMinAmount; // minimum output chunk size
     }
 
     struct Bid {
-        uint256 time;
-        address taker;
-        address exchange;
-        bytes data;
-        uint256 amount;
-        uint256 fee;
+        uint256 time; // bid creation timestamp
+        address taker; // bidder
+        address exchange; // execute bid on this exchange, never zero
+        bytes data; // swap data to pass to exchange
+        uint256 amount; // dstToken output amount for this bid after fees
+        uint256 fee; // dstToken requested by taker for performing the bid and fill
     }
 
     struct Fill {
-        uint256 time;
-        uint256 amount;
+        uint256 time; // last fill timestamp
+        uint256 amount; // srcToken total filled amount
     }
 
     struct Order {
-        uint256 id;
-        Ask ask;
-        Bid bid;
-        Fill filled;
+        uint256 id; // order id
+        Ask ask; // order ask parameters
+        Bid bid; // current winning bid
+        Fill filled; // total filled
     }
 
+    /**
+     * new Order for msg.sender
+     */
     function newOrder(
         uint256 id,
         address exchange,
@@ -70,6 +73,9 @@ library OrderLib {
             );
     }
 
+    /**
+     * new empty Bid
+     */
     function newBid() internal pure returns (Bid memory) {
         return
             Bid(
@@ -82,10 +88,16 @@ library OrderLib {
             );
     }
 
+    /**
+     * next chunk srcToken: either ask.srcBidAmount or leftover
+     */
     function srcBidAmountNext(Order memory self) internal pure returns (uint256) {
         return Math.min(self.ask.srcBidAmount, self.ask.srcAmount - self.filled.amount);
     }
 
+    /**
+     * next chunk dstToken minimum amount out: either ask.dstMinAmount or leftover
+     */
     function dstMinAmountNext(Order memory self) internal pure returns (uint256) {
         return
             Math.min(
