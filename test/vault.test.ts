@@ -5,7 +5,7 @@ import { maxUint256 } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import { bid, expectFilled } from "./twap-utils";
 
-describe("user is vault", async () => {
+xdescribe("user is vault", async () => {
   beforeEach(initFixture);
 
   let vault: MockVault;
@@ -18,7 +18,7 @@ describe("user is vault", async () => {
     ]);
   });
 
-  xit("callback on each fill", async () => {
+  it("callback on each fill", async () => {
     await vault.methods
       .createAsk(await srcToken.amount(10_000), await srcToken.amount(2000), await dstToken.amount(1), maxUint256)
       .send({ from: deployer });
