@@ -17,16 +17,17 @@ contract UniswapV2Exchange is IExchange {
         uniswap = IUniswapV2(_uniswap);
     }
 
+    /**
+     * data = abi encoded address[]
+     */
     function getAmountOut(uint256 amountIn, bytes calldata data) public view returns (uint256 amountOut) {
         address[] memory path = abi.decode(data, (address[]));
-        return getAmountsOut(amountIn, data)[path.length - 1];
+        return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
     }
 
-    function getAmountsOut(uint256 amountIn, bytes calldata data) public view returns (uint256[] memory amounts) {
-        address[] memory path = abi.decode(data, (address[]));
-        return uniswap.getAmountsOut(amountIn, path);
-    }
-
+    /**
+     * data = abi encoded address[]
+     */
     function swap(
         uint256 amountIn,
         uint256 amountOutMin,

@@ -20,10 +20,6 @@ contract MockExchange is IExchange {
         return amounts[amounts.length - 1];
     }
 
-    function getAmountsOut(uint256, bytes calldata) public view returns (uint256[] memory) {
-        return amounts;
-    }
-
     function swap(
         uint256 amountIn,
         uint256,
