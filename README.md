@@ -8,9 +8,9 @@ or [Market Order](https://en.wikipedia.org/wiki/Order_(exchange)#Market_order)
 **on any DEX**, with partial fills, by breaking the order into "chunks" and enabling an [English Auction](https://en.wikipedia.org/wiki/English_auction) bidding war on each 
 chunk.
 
-The winning bidder (taker, anyone willing to find the best path to trade for the next chunk on any DEX) receives a portion of the output tokens for their effort.
+The winning taker (bidder, anyone willing to find the best path to trade for the next chunk on any DEX) receives a portion of the output tokens for their effort.
 
-1 honest bidder (willing to take just enough to cover gas costs) is enough to ensure the entire system functions effectively at spot prices.
+1 honest taker (willing to take just enough to cover gas costs) is enough to ensure the entire system functions effectively at spot prices.
 
 ### The `TWAP` contract does not hold any funds, has no owners or other roles and is immutable
 
@@ -21,13 +21,14 @@ The winning bidder (taker, anyone willing to find the best path to trade for the
     * A short order duration minimizes risk of market price volatility while still allowing arbitrageurs to close the gap, effectively increasing liquidity on the same pools
     * A consideration should be given to the amount of chunks, as more chunks implies more gas costs on the order, which can add up to more than the benefit given by spreading
       over time
-    * Gas costs will eventually be rolled onto the `maker`, as bidders will only be willing to bid if it is worth it. 1 honest bidder is enough for the entire system to function
-      as efficiently as possible, minus the fee that bidder is willing to take
+    * Gas costs will eventually be rolled onto the `maker`, as takers will only be willing to bid if it is worth it. 1 honest taker is enough for the entire system to function
+      as efficiently as possible, minus the fee that taker is willing to take
     * A limit order (tight `dstMinAmount`) may also be only partially filled if price moves away while order is in flight
 * Long term [DCA strategy](https://en.wikipedia.org/wiki/Dollar_cost_averaging)
     * By setting duration to be very long in the future (can be years), setting allowance and holding the entire amount of tokens, a maker can effectively implement an automated DCA
       bot that is resilient to price manipulations and requires no other actions from the maker
-    * Assuming there is 1 honest bidder, setting a market order (near 0 `dstMinAmount`) and a large delay will create a bidding war on the next chunk once in a while (can be days, weeks or months), while ensuring a price that is very close to spot market price
+    * Assuming there is 1 honest taker, setting a market order (near 0 `dstMinAmount`) and a large delay will create a bidding war on the next chunk once in a while (can be days, 
+      weeks or months), while ensuring a price that is very close to spot market price
     * The order will be visible on chain, and as bidding and execution can be predicted, a large enough order may still be interesting enough to manipulate price across all
       markets, just before it is executed, so this is better reserved for large-cap "base" assets not easily prone to entire market cap price manipulations
 
