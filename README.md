@@ -33,6 +33,8 @@ The winning bidder (taker, anyone willing to find the best path to trade for the
 
 ## Architecture
 
+![TWAP diagram](./TWAP.png)
+
 #### [TWAP](./contracts/TWAP.sol) contract holds the order book, an array of all `Orders`
 
 #### [Order](./contracts/OrderLib.sol) is created by a `maker` with all required parameters and constraints
