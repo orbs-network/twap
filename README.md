@@ -33,6 +33,17 @@ The winning bidder (taker, anyone willing to find the best path to trade for the
 
 ## Architecture
 
+### Actors
+
+* `maker`: User, the Order creator. Has `srcToken` balance and allowance to be swapped by the `TWAP` contract on a specific (or any) exchange
+  * Controls all Order restriction parameters such as limit price, expiration and delay between chunks
+* `taker`: Incentivized independant participators that listen to Orders submitted by makers
+  * Try to find the best path on relevant chunks and submit bids for those chunks with a fee
+  * `fee`: 0 or more of the `dstToken` output to be sent to the taker on chunk fill
+  * Spends the effort needed to find the best path, and risks being out-bid in the bidding war by another `taker` with a better path or lower fee
+
+### State diagram and execution flowchart
+
 ![TWAP diagram](./TWAP.png)
 
 #### [TWAP](./contracts/TWAP.sol) contract holds the order book, an array of all `Orders`
