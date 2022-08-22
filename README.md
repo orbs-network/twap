@@ -51,9 +51,13 @@ The winning taker (bidder, anyone willing to find the best path to trade for the
 
 #### [Order](./contracts/OrderLib.sol) is created by a `maker` with all required parameters and constraints
 * `id`: the index in the order book, generated
+* `status`: open, canceled, completed
+* `filledTime`: last chunk filled timestamp
+* `srcFilledAmount`: total filled amount in `srcToken`
 * `Ask`: holds the order parameters requested by the maker
   * `time`: order creation timestamp
   * `deadline`: order duration timestamp, required
+  * `delay`: minimum delay in seconds between chunks, required, must be `>MIN_FILL_DELAY_SECONDS`
   * `maker`: order creator (`msg.sender`)
   * `exchange`: swap only on this exchange, or zero for any exchange
   * `srcToken`: input token, required
@@ -62,17 +66,14 @@ The winning taker (bidder, anyone willing to find the best path to trade for the
   * `srcAmount`: input total order amount in `srcToken`, required
   * `srcBidAmount`: input chunk size in `srcToken`, required
   * `dstMinAmount`: minimum output chunk size, in `dstToken`, required
-  * `delay`: minimum delay in seconds between chunks, required, must be `>MIN_FILL_DELAY_SECONDS`
 * `Bid`: holds the current winning bid, or empty, set by the `taker`
   * `time`: bid creation timestamp
   * `taker`: the winning bidder
   * `exchange`: execute bid on this exchange, never zero on a valid bid
-  * `data`: swap data to pass to exchange
-  * `amount`: output amount for this bid after fees in `dstToken`
-  * `fee`: requested by `taker` for performing the bid and fill, in `dstToken`, may be `0`
-* `Fill`: holds total executed
-  * `time`: last fill timestamp
-  * `amount`: total filled amount in `srcToken`
+  * `dstAmount`: output amount for this bid after fees in `dstToken`
+  * `dstFee`: requested by `taker` for performing the bid and fill, in `dstToken`, may be `0`
+  * `data`: swap data passed to exchange, expected output = `dstAmount` + `dstFee`
+
 * `OrderCreated` event is emitted
 
 #### Once order is created, it waits in the contract to be filled, when viable
@@ -94,7 +95,7 @@ The winning taker (bidder, anyone willing to find the best path to trade for the
 * If no other bid is set as the new winner, the current `taker` (winning bidder) can fill the bid by calling `fill(id)`
 * The fill performs the same verifications as when bidding, but also performs the actual swap on the requested exchange, transferring tokens from `maker` to the `exchange`, and 
   back to the `maker`
-* If `fee` is set `>0` it is paid out to the winning `taker` on completion of the order, out of the `dstToken` amount of that swap
+* If `dstFee` is set `>0` it is paid out to the winning `taker` on completion of the order, out of the `dstToken` amount of that swap
 * `OrderFilled` event is emitted
 
 #### That means there is an incentive to find a good enough path for the bid such that the fee will be as high as possible

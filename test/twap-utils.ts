@@ -23,7 +23,7 @@ export async function ask(
 
 export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address], fee: number = 0.01) {
   return twap.methods
-    .bid(id, exchange.options.address, web3().eth.abi.encodeParameter("address[]", path), await dstToken.amount(fee))
+    .bid(id, exchange.options.address, await dstToken.amount(fee), web3().eth.abi.encodeParameter("address[]", path))
     .send({ from: taker });
 }
 
@@ -36,7 +36,7 @@ export async function order(id: number): Promise<any> {
 }
 
 export async function expectFilled(id: number, srcExactAmount: number, dstMinAmount: number) {
-  expect((await order(id)).filled.amount).bignumber.eq(await srcToken.amount(srcExactAmount));
+  expect((await order(id)).srcFilledAmount).bignumber.eq(await srcToken.amount(srcExactAmount));
 
   expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
     await srcToken.amount(userSrcTokenStartBalance - srcExactAmount)
@@ -49,6 +49,10 @@ export async function expectFilled(id: number, srcExactAmount: number, dstMinAmo
 
 export async function time() {
   return (await block()).timestamp;
+}
+
+export function endTime() {
+  return 2 ** 32 - 2;
 }
 
 export function srcDstPathData() {

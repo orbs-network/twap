@@ -72,15 +72,15 @@ describe("TWAP", async () => {
     await ask(2000, 1000, 0.5);
 
     await bid(0);
-    expect((await order(0)).bid.fee).bignumber.eq(await dstToken.amount(0.01));
+    expect((await order(0)).bid.dstFee).bignumber.eq(await dstToken.amount(0.01));
     await mineBlock(1);
 
     await twap.methods
-      .bid(0, exchange.options.address, srcDstPathData(), await dstToken.amount(0.001))
+      .bid(0, exchange.options.address, await dstToken.amount(0.001), srcDstPathData())
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));
-    expect((await order(0)).bid.fee).bignumber.eq(await dstToken.amount(0.001));
+    expect((await order(0)).bid.dstFee).bignumber.eq(await dstToken.amount(0.001));
   });
 
   it("clears stale unfilled bid after max bidding window", async () => {
@@ -88,7 +88,7 @@ describe("TWAP", async () => {
     await ask(2000, 1000, 0.5);
     await bid(0);
 
-    await mineBlock(59);
+    await mineBlock(58);
     await expectRevert(() => bid(0), "low bid");
 
     await mineBlock(1);
