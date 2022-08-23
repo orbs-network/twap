@@ -33,7 +33,7 @@ library OrderLib {
         address exchange; // execute bid on this exchange, never zero
         uint256 dstAmount; // dstToken output amount for this bid after fees
         uint256 dstFee; // dstToken requested by taker for performing the bid and fill
-        bytes data; // swap data to pass to exchange, out dstToken>=dstAmount+dstFee
+        bytes data; // swap data to pass to exchange, out dstToken==dstAmount+dstFee
     }
 
     /**
@@ -70,22 +70,14 @@ library OrderLib {
                     srcBidAmount,
                     dstMinAmount
                 ),
-                newBid()
-            );
-    }
-
-    /**
-     * new empty Bid
-     */
-    function newBid() private pure returns (Bid memory) {
-        return
-            Bid(
-                0, // time
-                address(0), // taker
-                address(0), // exchange
-                0, // dstAmount
-                0, // dstFee
-                new bytes(0) // data
+                Bid(
+                    0, // time
+                    address(0), // taker
+                    address(0), // exchange
+                    0, // dstAmount
+                    0, // dstFee
+                    new bytes(0) // data
+                )
             );
     }
 
@@ -108,7 +100,7 @@ library OrderLib {
      */
     function filled(Order memory self, uint256 srcAmountIn) internal view {
         require(block.timestamp < type(uint32).max, "end of time");
-        self.bid = newBid();
+        delete self.bid;
         self.filledTime = uint32(block.timestamp);
         self.srcFilledAmount += srcAmountIn;
     }

@@ -19,6 +19,7 @@ describe("Sanity", () => {
     expect(events[0].event).eq("OrderCreated");
     expect(events[0].returnValues.id).eq("0");
     expect(events[0].returnValues.maker).eq(user);
+    expect(events[0].returnValues.ask[5]).eq(srcToken.address);
     expect(await twap.methods.length().call()).bignumber.eq("1");
 
     const o = await order(0);
@@ -50,9 +51,9 @@ describe("Sanity", () => {
     expect(o.srcFilledAmount).bignumber.zero;
   });
 
-  it("bid sets Bid fields", async () => {
+  it("bid sets Bid fields, emits event", async () => {
     await ask(2000, 2000, 1);
-    await bid(0);
+    const tx = await bid(0);
     const o = await order(0);
     expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
@@ -62,6 +63,11 @@ describe("Sanity", () => {
       .bignumber.gte(await dstToken.amount(1))
       .closeTo(await dstToken.amount(1), await dstToken.amount(0.2));
     expect(o.bid.time).bignumber.eq((await time()).toString());
+
+    const events = parseEvents(tx, twap);
+    expect(events[0].event).eq("OrderBid");
+    expect(events[0].returnValues.id).eq("0");
+    expect(events[0].returnValues.taker).eq(taker);
   });
 
   it("fill sets Fill fields and clears the Bid, emits event", async () => {
@@ -92,18 +98,23 @@ describe("Sanity", () => {
     expect(events[0].returnValues.dstFee).bignumber.eq(await dstToken.amount(0.01));
   });
 
-  it("cancel order", async () => {
+  it("cancel order, emits event", async () => {
     await ask(2000, 1000, 0.5);
-    await twap.methods.cancel(0).send({ from: user });
+    const tx = await twap.methods.cancel(0).send({ from: user });
     const o = await order(0);
     expect(o.ask.deadline).bignumber.not.eq(zero);
     expect(o.status)
       .eq(await twap.methods.STATUS_CANCELED().call())
       .eq("1");
     await expectRevert(() => bid(0), "status");
+
+    const events = parseEvents(tx, twap);
+    expect(events[0].event).eq("OrderCanceled");
+    expect(events[0].returnValues.id).eq("0");
+    expect(events[0].returnValues.sender).eq(user);
   });
 
-  it("order fully filled", async () => {
+  it("order fully filled, emits event", async () => {
     await ask(2000, 1000, 0.5);
     await bid(0);
     await mineBlock(10);
@@ -111,13 +122,18 @@ describe("Sanity", () => {
     await mineBlock(60);
     await bid(0);
     await mineBlock(10);
-    await fill(0);
+    const tx = await fill(0);
     const o = await order(0);
     expect(o.ask.deadline).bignumber.not.eq(zero);
     expect(o.status)
       .eq(await twap.methods.STATUS_COMPLETED().call())
       .eq("2");
     await expectRevert(() => bid(0), "status");
+
+    const events = parseEvents(tx, twap);
+    expect(events[1].event).eq("OrderCompleted");
+    expect(events[1].returnValues.id).eq("0");
+    expect(events[1].returnValues.taker).eq(taker);
   });
 
   describe("History", async () => {

@@ -1,5 +1,5 @@
-import { account, expectRevert, useChaiBN } from "@defi.org/web3-candies";
-import { twap, dstToken, exchange, initFixture, withMockExchange } from "./fixture";
+import { account, erc20s, expectRevert, parseEvents, useChaiBN } from "@defi.org/web3-candies";
+import { deployer, dstToken, exchange, initFixture, srcToken, twap, user, withMockExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, expectFilled, fill, order, srcDstPathData } from "./twap-utils";
@@ -104,5 +104,31 @@ describe("TWAP", async () => {
     await mineBlock(10);
     await fill(0);
     await expectFilled(0, 1000, 0.5);
+  });
+
+  describe("prune stale invalid order", async () => {
+    it("when no approval", async () => {
+      await ask(2000, 1000, 0.5);
+
+      await twap.methods.prune(0).send({ from: deployer });
+      expect((await order(0)).status).eq(await twap.methods.STATUS_OPEN().call());
+
+      await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
+      const tx = await twap.methods.prune(0).send({ from: deployer });
+      expect((await order(0)).status).eq(await twap.methods.STATUS_CANCELED().call());
+
+      const logs = parseEvents(tx, twap.options.jsonInterface);
+      expect(logs[0].event).eq("OrderCanceled");
+      expect(logs[0].returnValues.sender).eq(deployer);
+      expect(logs[0].returnValues.id).eq("0");
+    });
+
+    it("when no balance", async () => {
+      await ask(2000, 1000, 0.5);
+
+      await srcToken.methods.transfer(deployer, await srcToken.methods.balanceOf(user).call()).send({ from: user });
+      await twap.methods.prune(0).send({ from: deployer });
+      expect((await order(0)).status).eq(await twap.methods.STATUS_CANCELED().call());
+    });
   });
 });

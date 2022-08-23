@@ -8,9 +8,13 @@ or [Market Order](https://en.wikipedia.org/wiki/Order_(exchange)#Market_order)
 **on any DEX**, with partial fills, by breaking the order into "chunks" and enabling an [English Auction](https://en.wikipedia.org/wiki/English_auction) bidding war on each 
 chunk.
 
+Users (makers) create orders that wait in the contract to be filled.
+
 The winning taker (bidder, anyone willing to find the best path to trade for the next chunk on any DEX) receives a portion of the output tokens for their effort.
 
 1 honest taker (willing to take just enough to cover gas costs) is enough to ensure the entire system functions effectively at spot prices.
+
+The contract works only up to year 2106 (32bit timestamps).
 
 ### The `TWAP` contract does not hold any funds, has no owners or other roles and is immutable
 

@@ -10,13 +10,40 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./OrderLib.sol";
 import "./IExchange.sol";
 
+/**
+ * Time-Weighted Average Price
+ *
+ * This contract allows incentivized execution of a TWAP order: Limit or Market Orders
+ * on any DEX, with partial fills, by breaking the order into "chunks" and enabling an English Auction bidding war on each chunk.
+ *
+ * Users (makers) create orders that wait in the contract to be filled.
+ *
+ * The winning taker (bidder, anyone willing to find the best path to trade for the next chunk on any DEX) receives a portion of the output tokens for their effort.
+ *
+ * 1 honest taker (willing to take just enough to cover gas costs) is enough to ensure the entire system functions effectively at spot prices.
+ *
+ * The TWAP contract does not hold any funds, has no owners or other roles and is immutable.
+ *
+ * The contract works only up to year 2106 (32bit timestamps).
+ *
+ */
 contract TWAP is ReentrancyGuard {
     using SafeERC20 for ERC20;
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    event OrderCreated(address indexed maker, uint64 id);
-    event OrderFilled(address indexed taker, uint64 id, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee);
+    event OrderCreated(address indexed maker, uint64 id, OrderLib.Ask ask);
+    event OrderBid(address indexed taker, uint64 id, address indexed exchange, uint256 dstAmountOut, uint256 dstFee);
+    event OrderFilled(
+        address indexed taker,
+        uint64 id,
+        address indexed exchange,
+        uint256 srcAmountIn,
+        uint256 dstAmountOut,
+        uint256 dstFee
+    );
+    event OrderCompleted(address indexed taker, uint64 id);
+    event OrderCanceled(address indexed sender, uint64 id);
 
     uint32 public constant MIN_BID_WINDOW_SECONDS = 10;
     uint32 public constant MAX_BID_WINDOW_SECONDS = 60;
@@ -27,7 +54,7 @@ contract TWAP is ReentrancyGuard {
     uint32 public constant STATUS_COMPLETED = 2;
 
     OrderLib.Order[] public book;
-    uint32[] public status; // STATUS or deadline timestamp by order id, used for filtering
+    uint32[] public status; // STATUS or deadline timestamp by order id, used for efficient order filtering
 
     // -------- views --------
 
@@ -91,13 +118,14 @@ contract TWAP is ReentrancyGuard {
 
         book.push(o);
         status.push(deadline);
-        emit OrderCreated(msg.sender, o.id);
+        emit OrderCreated(msg.sender, o.id, o.ask);
         return o.id;
     }
 
     /**
      * Bid for a specific order by id (msg.sender is taker)
      * A valid bid is higher than current bid, with sufficient price after fees and after last fill delay
+     * Emits OrderBid event
      */
     function bid(
         uint64 id,
@@ -109,6 +137,7 @@ contract TWAP is ReentrancyGuard {
         uint256 dstAmountOut = verifyBid(o, exchange, dstFee, data);
         o.newBid(exchange, dstAmountOut, dstFee, data);
         book[id] = o;
+        emit OrderBid(msg.sender, o.id, exchange, dstAmountOut, dstFee);
     }
 
     /**
@@ -118,12 +147,13 @@ contract TWAP is ReentrancyGuard {
     function fill(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
         (uint256 srcAmountIn, uint256 dstAmountOut) = performFill(o);
-        emit OrderFilled(msg.sender, id, srcAmountIn, dstAmountOut, o.bid.dstFee);
+        emit OrderFilled(msg.sender, id, o.bid.exchange, srcAmountIn, dstAmountOut, o.bid.dstFee);
 
         o.filled(srcAmountIn);
         if (o.srcBidAmountNext() == 0) {
             status[id] = STATUS_COMPLETED;
             o.status = STATUS_COMPLETED;
+            emit OrderCompleted(msg.sender, id);
         }
         book[id] = o;
     }
@@ -133,10 +163,29 @@ contract TWAP is ReentrancyGuard {
      */
     function cancel(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
-        require(msg.sender == o.ask.maker, "invalid maker");
+        require(msg.sender == o.ask.maker, "maker");
         status[id] = STATUS_CANCELED;
         o.status = STATUS_CANCELED;
         book[id] = o;
+        emit OrderCanceled(msg.sender, id);
+    }
+
+    /**
+     * Called by anyone to mark a stale invalid order as canceled
+     */
+    function prune(uint64 id) external nonReentrant {
+        OrderLib.Order memory o = order(id);
+        if (
+            block.timestamp < status[id] &&
+            block.timestamp > o.filledTime + o.ask.delay &&
+            (ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) < o.srcBidAmountNext() ||
+                ERC20(o.ask.srcToken).balanceOf(o.ask.maker) < o.srcBidAmountNext())
+        ) {
+            status[id] = STATUS_CANCELED;
+            o.status = STATUS_CANCELED;
+            book[id] = o;
+            emit OrderCanceled(msg.sender, id);
+        }
     }
 
     /**
