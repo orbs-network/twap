@@ -59,7 +59,7 @@ contract TWAP is ReentrancyGuard {
     // -------- views --------
 
     /**
-     * Returns Order by order id
+     * returns Order by order id
      */
     function order(uint64 id) public view returns (OrderLib.Order memory) {
         require(id < length(), "invalid id");
@@ -67,7 +67,7 @@ contract TWAP is ReentrancyGuard {
     }
 
     /**
-     * Returns order book length
+     * returns order book length
      */
     function length() public view returns (uint64) {
         return uint64(book.length);
@@ -77,7 +77,15 @@ contract TWAP is ReentrancyGuard {
 
     /**
      * Create Order by msg.sender (maker)
-     * Returns order id, emits OrderCreated
+     * exchange: when 0 address order can be swapped on any exchange, otherwise only that specific exchange
+     * srcToken: swap from token
+     * dstToken: swap to token
+     * srcAmount: total order amount in srcToken
+     * srcBidAmount: chunk size in srcToken
+     * dstMinAmount: minimum amount out per chunk in dstToken
+     * deadline: order expiration
+     * delay: minimum seconds between chunk fills
+     * returns order id, emits OrderCreated
      */
     function ask(
         address exchange,
@@ -124,8 +132,12 @@ contract TWAP is ReentrancyGuard {
 
     /**
      * Bid for a specific order by id (msg.sender is taker)
-     * A valid bid is higher than current bid, with sufficient price after fees and after last fill delay
-     * Emits OrderBid event
+     * A valid bid is higher than current bid, with sufficient price after fees and after last fill delay. Invalid bids are reverted.
+     * id: order id
+     * exchange: bid to swap on exchange
+     * dstFee: fee to traker in dstToken, taken from the swapped amount
+     * data: swap data to pass to the exchange, for example the route path
+     * emits OrderBid event
      */
     function bid(
         uint64 id,
@@ -141,8 +153,9 @@ contract TWAP is ReentrancyGuard {
     }
 
     /**
-     * Fill the current winning bid by the winning taker, if after the bidding window
-     * Emits OrderFilled
+     * Fill the current winning bid by the winning taker, if after the bidding window. Invalid fills are reverted.
+     * id: order id
+     * emits OrderFilled, if order is fully filled emits OrderCompleted and status is updated
      */
     function fill(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
@@ -159,7 +172,9 @@ contract TWAP is ReentrancyGuard {
     }
 
     /**
-     * Cancel order by id
+     * Cancel order by id, only callable by maker
+     * id: order id
+     * emits OrderCanceled
      */
     function cancel(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
@@ -172,6 +187,8 @@ contract TWAP is ReentrancyGuard {
 
     /**
      * Called by anyone to mark a stale invalid order as canceled
+     * id: order id
+     * emits OrderCanceled
      */
     function prune(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);

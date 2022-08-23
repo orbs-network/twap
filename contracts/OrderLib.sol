@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 library OrderLib {
     struct Order {
         uint64 id; // order id
-        uint32 status; // Status
+        uint32 status; // status: open, canceled or completed
         uint32 filledTime; // last fill timestamp
         uint256 srcFilledAmount; // srcToken total filled amount
         Ask ask; // order ask parameters
