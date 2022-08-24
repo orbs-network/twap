@@ -32,7 +32,7 @@ contract TWAP is ReentrancyGuard {
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    event OrderCreated(address indexed maker, uint64 indexed id, OrderLib.Ask ask);
+    event OrderCreated(address indexed maker, uint64 indexed id, address indexed exchange, OrderLib.Ask ask);
     event OrderBid(address indexed taker, uint64 indexed id, address indexed exchange, OrderLib.Bid bid);
     event OrderFilled(
         address indexed taker,
@@ -51,7 +51,6 @@ contract TWAP is ReentrancyGuard {
     uint32 public constant MAX_BID_WINDOW_SECONDS = 60;
     uint32 public constant MIN_FILL_DELAY_SECONDS = 60;
 
-    uint32 public constant STATUS_OPEN = 0;
     uint32 public constant STATUS_CANCELED = 1;
     uint32 public constant STATUS_COMPLETED = 2;
 
@@ -128,7 +127,7 @@ contract TWAP is ReentrancyGuard {
 
         book.push(o);
         status.push(deadline);
-        emit OrderCreated(msg.sender, o.id, o.ask);
+        emit OrderCreated(msg.sender, o.id, exchange, o.ask);
         return o.id;
     }
 
@@ -199,7 +198,7 @@ contract TWAP is ReentrancyGuard {
     function prune(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
         if (
-            block.timestamp < status[id] &&
+            block.timestamp < o.status &&
             block.timestamp > o.filledTime + o.ask.delay &&
             (ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) < o.srcBidAmountNext() ||
                 ERC20(o.ask.srcToken).balanceOf(o.ask.maker) < o.srcBidAmountNext())
@@ -221,7 +220,7 @@ contract TWAP is ReentrancyGuard {
         uint256 dstFee,
         bytes calldata data
     ) private view returns (uint256 dstAmountOut) {
-        require(block.timestamp < status[o.id], "status"); // deadline, canceled or completed
+        require(block.timestamp < o.status, "status"); // deadline, canceled or completed
         require(block.timestamp > o.filledTime + o.ask.delay, "delay");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
@@ -242,7 +241,7 @@ contract TWAP is ReentrancyGuard {
 
     function performFill(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
         require(msg.sender == o.bid.taker, "taker");
-        require(block.timestamp < status[o.id], "status"); // deadline, canceled or completed
+        require(block.timestamp < o.status, "status"); // deadline, canceled or completed
         require(block.timestamp > o.bid.time + MIN_BID_WINDOW_SECONDS, "pending bid");
 
         srcAmountIn = o.srcBidAmountNext();

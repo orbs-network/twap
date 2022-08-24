@@ -111,7 +111,7 @@ describe("TWAP", async () => {
       await ask(2000, 1000, 0.5);
 
       await twap.methods.prune(0).send({ from: deployer });
-      expect((await order(0)).status).eq(await twap.methods.STATUS_OPEN().call());
+      expect((await order(0)).status).eq((await order(0)).ask.deadline);
 
       await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
       const tx = await twap.methods.prune(0).send({ from: deployer });

@@ -25,9 +25,7 @@ describe("Sanity", () => {
     const o = await order(0);
     expect(o.id).bignumber.zero;
 
-    expect(o.status)
-      .eq(await twap.methods.STATUS_OPEN().call())
-      .eq("0");
+    expect(o.status).eq(deadline.toString());
 
     expect(o.ask.time).bignumber.eq(blockTimeAtCreation.toString());
     expect(o.ask.deadline).bignumber.eq(deadline.toString());
