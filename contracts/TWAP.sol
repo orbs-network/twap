@@ -32,18 +32,20 @@ contract TWAP is ReentrancyGuard {
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    event OrderCreated(address indexed maker, uint64 id, OrderLib.Ask ask);
-    event OrderBid(address indexed taker, uint64 id, address indexed exchange, uint256 dstAmountOut, uint256 dstFee);
+    event OrderCreated(address indexed maker, uint64 indexed id, OrderLib.Ask ask);
+    event OrderBid(address indexed taker, uint64 indexed id, address indexed exchange, OrderLib.Bid bid);
     event OrderFilled(
         address indexed taker,
-        uint64 id,
+        uint64 indexed id,
         address indexed exchange,
         uint256 srcAmountIn,
+        uint256 dstFee,
         uint256 dstAmountOut,
-        uint256 dstFee
+        uint32 filledTime,
+        uint256 srcFilledAmount
     );
-    event OrderCompleted(address indexed taker, uint64 id);
-    event OrderCanceled(address indexed sender, uint64 id);
+    event OrderCompleted(address indexed taker, uint64 indexed id);
+    event OrderCanceled(address indexed sender, uint64 indexed id);
 
     uint32 public constant MIN_BID_WINDOW_SECONDS = 10;
     uint32 public constant MAX_BID_WINDOW_SECONDS = 60;
@@ -149,7 +151,7 @@ contract TWAP is ReentrancyGuard {
         uint256 dstAmountOut = verifyBid(o, exchange, dstFee, data);
         o.newBid(exchange, dstAmountOut, dstFee, data);
         book[id] = o;
-        emit OrderBid(msg.sender, o.id, exchange, dstAmountOut, dstFee);
+        emit OrderBid(msg.sender, o.id, exchange, o.bid);
     }
 
     /**
@@ -159,10 +161,14 @@ contract TWAP is ReentrancyGuard {
      */
     function fill(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
-        (uint256 srcAmountIn, uint256 dstAmountOut) = performFill(o);
-        emit OrderFilled(msg.sender, id, o.bid.exchange, srcAmountIn, dstAmountOut, o.bid.dstFee);
+        address exchange = o.bid.exchange;
+        uint256 dstFee = o.bid.dstFee;
 
+        (uint256 srcAmountIn, uint256 dstAmountOut) = performFill(o);
         o.filled(srcAmountIn);
+
+        emit OrderFilled(msg.sender, id, exchange, srcAmountIn, dstFee, dstAmountOut, o.filledTime, o.srcFilledAmount);
+
         if (o.srcBidAmountNext() == 0) {
             status[id] = STATUS_COMPLETED;
             o.status = STATUS_COMPLETED;
