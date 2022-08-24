@@ -84,8 +84,8 @@ The contract works only up to year 2106 (32bit timestamps).
 
 #### Every bid checks for the following conditions:
 * The order is not canceled, and deadline did not pass
-* The maker approved `srcToken` to be swapped by the `TWAP` contract (only the next chunk / bid is enough)
-* The maker has enough balance of `srcToken` to be swapped (only the next chunk / bid is enough)
+* The maker approved `srcToken` to be swapped by the `TWAP` contract (enough for the next chunk)
+* The maker has enough balance of `srcToken` to be swapped (enough for the next chunk)
 * The order was not recently filled
   * The `delay` is set by the order maker, minimum `MIN_FILL_DELAY_SECONDS`
 * If `exchange` was set by the order maker, only that exchange can be used to swap. If `zero`, any exchange can be used
