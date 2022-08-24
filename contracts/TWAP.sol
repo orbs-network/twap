@@ -38,9 +38,11 @@ contract TWAP is ReentrancyGuard {
         address indexed taker,
         uint64 indexed id,
         address indexed exchange,
+        address srcToken,
+        address dstToken,
         uint256 srcAmountIn,
-        uint256 dstFee,
         uint256 dstAmountOut,
+        uint256 dstFee,
         uint32 filledTime,
         uint256 srcFilledAmount
     );
@@ -160,13 +162,22 @@ contract TWAP is ReentrancyGuard {
      */
     function fill(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
-        address exchange = o.bid.exchange;
-        uint256 dstFee = o.bid.dstFee;
 
-        (uint256 srcAmountIn, uint256 dstAmountOut) = performFill(o);
+        (address exchange, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee) = performFill(o);
         o.filled(srcAmountIn);
 
-        emit OrderFilled(msg.sender, id, exchange, srcAmountIn, dstFee, dstAmountOut, o.filledTime, o.srcFilledAmount);
+        emit OrderFilled(
+            msg.sender,
+            id,
+            exchange,
+            o.ask.srcToken,
+            o.ask.dstToken,
+            srcAmountIn,
+            dstAmountOut,
+            dstFee,
+            o.filledTime,
+            o.srcFilledAmount
+        );
 
         if (o.srcBidAmountNext() == 0) {
             status[id] = STATUS_COMPLETED;
@@ -239,21 +250,31 @@ contract TWAP is ReentrancyGuard {
         require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= bidAmount, "maker balance");
     }
 
-    function performFill(OrderLib.Order memory o) private returns (uint256 srcAmountIn, uint256 dstAmountOut) {
+    function performFill(OrderLib.Order memory o)
+        private
+        returns (
+            address exchange,
+            uint256 srcAmountIn,
+            uint256 dstAmountOut,
+            uint256 dstFee
+        )
+    {
         require(msg.sender == o.bid.taker, "taker");
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
         require(block.timestamp > o.bid.time + MIN_BID_WINDOW_SECONDS, "pending bid");
 
+        exchange = o.bid.exchange;
+        dstFee = o.bid.dstFee;
         srcAmountIn = o.srcBidAmountNext();
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
-        ERC20(o.ask.srcToken).safeIncreaseAllowance(o.bid.exchange, srcAmountIn);
+        ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
 
         uint256 expectedOut = o.dstMinAmountNext();
-        dstAmountOut = IExchange(o.bid.exchange).swap(srcAmountIn, expectedOut + o.bid.dstFee, o.bid.data);
-        dstAmountOut -= o.bid.dstFee;
+        dstAmountOut = IExchange(exchange).swap(srcAmountIn, expectedOut + dstFee, o.bid.data);
+        dstAmountOut -= dstFee;
         require(dstAmountOut >= expectedOut, "min out");
 
-        ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, o.bid.dstFee);
+        ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, dstFee);
         ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
     }
 }
