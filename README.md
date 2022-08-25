@@ -149,17 +149,19 @@ Please note the following additional features of the TWAP contract:
 
 
 ## Build Setup
-- create `.env` file with:
+- tests running on a specific block to ensure deterministic outcomes
+- create free accounts on Alchemy (or similar archive node provider), etherscan and coinmarketcap
+- create `.env` file with (or pass as environment variables):
 ```
-NETWORK_URL_ETH=<URL>
-NETWORK_URL_POLY=<URL>
-ETHERSCAN_ETH=<KEY>
-ETHERSCAN_POLY=<KEY>
-COINMARKETCAP=<KEY>
+NETWORK_URL_ETH="https://eth-mainnet.g.alchemy.com/v2/08***************************Kf"
+NETWORK_URL_POLY="https://polygon-mainnet.g.alchemy.com/v2/a7***************************xN"
+ETHERSCAN_ETH="VV***************************14"
+ETHERSCAN_POLY="9H***************************WY"
+COINMARKETCAP="81***************************36"
 ```
-
-- `npm install`
-- `npm run build`
-- `npm run test`
+- workflow:
+  - `npm install`
+  - `npm run build`
+  - `npm run test` (runs tests on all supported chains, currently Ethereum and Polygon)
 
 [see tests output](./TEST_OUTPUT.md)
