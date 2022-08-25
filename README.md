@@ -163,3 +163,4 @@ COINMARKETCAP=<KEY>
 - `npm run test`
 
 [see tests output](./TEST_OUTPUT.md)
+
