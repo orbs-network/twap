@@ -174,12 +174,13 @@ contract TWAP is ReentrancyGuard {
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    event OrderCreated(address indexed maker, uint64 indexed id, address indexed exchange, OrderLib.Ask ask);
-    event OrderBid(address indexed taker, uint64 indexed id, address indexed exchange, OrderLib.Bid bid);
+    event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
+    event OrderBid(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Bid bid);
     event OrderFilled(
-        address indexed taker,
         uint64 indexed id,
+        address indexed maker,
         address indexed exchange,
+        address taker,
         address srcToken,
         address dstToken,
         uint256 srcAmountIn,
@@ -188,8 +189,8 @@ contract TWAP is ReentrancyGuard {
         uint32 filledTime,
         uint256 srcFilledAmount
     );
-    event OrderCompleted(address indexed taker, uint64 indexed id);
-    event OrderCanceled(address indexed sender, uint64 indexed id);
+    event OrderCompleted(uint64 indexed id, address indexed maker, address indexed exchange, address taker);
+    event OrderCanceled(uint64 indexed id, address indexed maker, address sender);
 
     uint32 public constant MIN_BID_WINDOW_SECONDS = 10;
     uint32 public constant MAX_BID_WINDOW_SECONDS = 60;
@@ -271,7 +272,7 @@ contract TWAP is ReentrancyGuard {
 
         book.push(o);
         status.push(deadline);
-        emit OrderCreated(msg.sender, o.id, exchange, o.ask);
+        emit OrderCreated(o.id, msg.sender, exchange, o.ask);
         return o.id;
     }
 
@@ -294,7 +295,7 @@ contract TWAP is ReentrancyGuard {
         uint256 dstAmountOut = verifyBid(o, exchange, dstFee, data);
         o.newBid(exchange, dstAmountOut, dstFee, data);
         book[id] = o;
-        emit OrderBid(msg.sender, o.id, exchange, o.bid);
+        emit OrderBid(o.id, o.ask.maker, exchange, o.bid);
     }
 
     /**
@@ -310,9 +311,10 @@ contract TWAP is ReentrancyGuard {
         o.filled(srcAmountIn);
 
         emit OrderFilled(
-            msg.sender,
             id,
+            o.ask.maker,
             exchange,
+            msg.sender,
             o.ask.srcToken,
             o.ask.dstToken,
             srcAmountIn,
@@ -325,7 +327,7 @@ contract TWAP is ReentrancyGuard {
         if (o.srcBidAmountNext() == 0) {
             status[id] = STATUS_COMPLETED;
             o.status = STATUS_COMPLETED;
-            emit OrderCompleted(msg.sender, id);
+            emit OrderCompleted(o.id, o.ask.maker, exchange, msg.sender);
         }
         book[id] = o;
     }
@@ -341,7 +343,7 @@ contract TWAP is ReentrancyGuard {
         status[id] = STATUS_CANCELED;
         o.status = STATUS_CANCELED;
         book[id] = o;
-        emit OrderCanceled(msg.sender, id);
+        emit OrderCanceled(o.id, o.ask.maker, msg.sender);
     }
 
     /**
@@ -360,7 +362,7 @@ contract TWAP is ReentrancyGuard {
             status[id] = STATUS_CANCELED;
             o.status = STATUS_CANCELED;
             book[id] = o;
-            emit OrderCanceled(msg.sender, id);
+            emit OrderCanceled(o.id, o.ask.maker, msg.sender);
         }
     }
 

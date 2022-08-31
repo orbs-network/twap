@@ -65,7 +65,7 @@ describe("Sanity", () => {
     const events = parseEvents(tx, twap);
     expect(events[0].event).eq("OrderBid");
     expect(events[0].returnValues.id).eq("0");
-    expect(events[0].returnValues.taker).eq(taker);
+    expect(events[0].returnValues.maker).eq(user);
     expect(events[0].returnValues.exchange).eq(exchange.options.address);
     expect(events[0].returnValues.bid[0]).eq(o.bid.time);
   });
