@@ -14,7 +14,6 @@ interface IExchange {
 
     /**
      * Swaps amountIn to amount out using abi encoded data (can either be path or more complex data)
-     * Must verify amountOutMin!
      */
     function swap(
         uint256 amountIn,

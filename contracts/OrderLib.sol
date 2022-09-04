@@ -30,7 +30,7 @@ library OrderLib {
         uint32 time; // bid creation timestamp
         address taker; // bidder
         address exchange; // execute bid on this exchange, never zero
-        uint256 dstAmount; // dstToken output amount for this bid after fees
+        uint256 dstAmount; // dstToken actual output amount for this bid after exchange fees, taker fee and buffer tolerance
         uint256 dstFee; // dstToken requested by taker for performing the bid and fill
         bytes data; // swap data to pass to exchange, out dstToken==dstAmount+dstFee
     }
@@ -112,13 +112,16 @@ library OrderLib {
     }
 
     /**
-     * next chunk dstToken minimum amount out: either ask.dstMinAmount or leftover
+     * next chunk dstToken minimum amount out
      */
     function dstMinAmountNext(Order memory self) internal pure returns (uint256) {
-        return
-            Math.min(
-                self.ask.dstMinAmount,
-                (self.ask.dstMinAmount * (self.ask.srcAmount - self.srcFilledAmount)) / self.ask.srcBidAmount
-            );
+        return (self.ask.dstMinAmount * srcBidAmountNext(self)) / self.ask.srcBidAmount;
+    }
+
+    /**
+     * next chunk expected output in dstToken, or winning bid
+     */
+    function dstExpectedOutNext(Order memory self) internal pure returns (uint256) {
+        return Math.max(self.bid.dstAmount, dstMinAmountNext(self));
     }
 }

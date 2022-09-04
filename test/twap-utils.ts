@@ -17,7 +17,16 @@ export async function ask(
   const _dstRate = await dstToken.amount(dstMinAmount);
   await srcToken.methods.approve(twap.options.address, _srcAmount).send({ from: _user });
   return twap.methods
-    .ask(exchange, srcToken.address, dstToken.address, _srcAmount, _srcRate, _dstRate, deadline, delay)
+    .ask(
+      exchange,
+      srcToken.address,
+      dstToken.address,
+      _srcAmount,
+      _srcRate,
+      _dstRate.isZero() ? 1 : _dstRate,
+      deadline,
+      delay
+    )
     .send({ from: _user });
 }
 
@@ -27,6 +36,7 @@ export async function bid(id: number, path: string[] = [srcToken.address, dstTok
       id,
       exchange.options.address,
       await dstToken.amount(fee),
+      0,
       web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path])
     )
     .send({ from: taker });

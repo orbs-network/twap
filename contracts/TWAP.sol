@@ -39,7 +39,13 @@ contract TWAP is ReentrancyGuard {
     using OrderLib for OrderLib.Order;
 
     event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
-    event OrderBid(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Bid bid);
+    event OrderBid(
+        uint64 indexed id,
+        address indexed maker,
+        address indexed exchange,
+        uint32 bufferPercent,
+        OrderLib.Bid bid
+    );
     event OrderFilled(
         uint64 indexed id,
         address indexed maker,
@@ -52,6 +58,9 @@ contract TWAP is ReentrancyGuard {
     );
     event OrderCompleted(uint64 indexed id, address indexed maker, address indexed exchange, address taker);
     event OrderCanceled(uint64 indexed id, address indexed maker, address sender);
+
+    uint32 public constant PERCENT_BASE = 100_000;
+    uint32 public constant MIN_OUTBID_PERCENT = 101_000;
 
     uint32 public constant MIN_BID_WINDOW_SECONDS = 10;
     uint32 public constant MAX_BID_WINDOW_SECONDS = 60;
@@ -143,6 +152,7 @@ contract TWAP is ReentrancyGuard {
      * id: order id
      * exchange: bid to swap on exchange
      * dstFee: fee to traker in dstToken, taken from the swapped amount
+     * bufferPercent: price output difference tolerance percent / 100,000. 0 means no buffer
      * data: swap data to pass to the exchange, for example the route path
      * emits OrderBid event
      */
@@ -150,13 +160,15 @@ contract TWAP is ReentrancyGuard {
         uint64 id,
         address exchange,
         uint256 dstFee,
+        uint32 bufferPercent,
         bytes calldata data
     ) external nonReentrant {
+        require(exchange != address(0) && bufferPercent < PERCENT_BASE, "params");
         OrderLib.Order memory o = order(id);
-        uint256 dstAmountOut = verifyBid(o, exchange, dstFee, data);
+        uint256 dstAmountOut = verifyBid(o, exchange, dstFee, bufferPercent, data);
         o.newBid(exchange, dstAmountOut, dstFee, data);
         book[id] = o;
-        emit OrderBid(o.id, o.ask.maker, exchange, o.bid);
+        emit OrderBid(o.id, o.ask.maker, exchange, bufferPercent, o.bid);
     }
 
     /**
@@ -202,17 +214,17 @@ contract TWAP is ReentrancyGuard {
      */
     function prune(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
-        if (
-            block.timestamp < o.status &&
-            block.timestamp > o.filledTime + o.ask.delay &&
-            (ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) < o.srcBidAmountNext() ||
-                ERC20(o.ask.srcToken).balanceOf(o.ask.maker) < o.srcBidAmountNext())
-        ) {
-            status[id] = STATUS_CANCELED;
-            o.status = STATUS_CANCELED;
-            book[id] = o;
-            emit OrderCanceled(o.id, o.ask.maker, msg.sender);
-        }
+        require(block.timestamp < o.status, "status");
+        require(block.timestamp > o.filledTime + o.ask.delay, "delay");
+        require(
+            ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) < o.srcBidAmountNext() ||
+                ERC20(o.ask.srcToken).balanceOf(o.ask.maker) < o.srcBidAmountNext(),
+            "valid"
+        );
+        status[id] = STATUS_CANCELED;
+        o.status = STATUS_CANCELED;
+        book[id] = o;
+        emit OrderCanceled(o.id, o.ask.maker, msg.sender);
     }
 
     /**
@@ -221,12 +233,13 @@ contract TWAP is ReentrancyGuard {
 
     /**
      * verifies the bid against the ask params, reverts on invalid bid.
-     * returns dstAmountOut after taker dstFee, which must be higher than any previous bid
+     * returns dstAmountOut after taker dstFee, which must be higher than any previous bid, unless previous bid is stale
      */
     function verifyBid(
         OrderLib.Order memory o,
         address exchange,
         uint256 dstFee,
+        uint32 bufferPercent,
         bytes calldata data
     ) private view returns (uint256 dstAmountOut) {
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
@@ -234,20 +247,14 @@ contract TWAP is ReentrancyGuard {
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), data);
+        dstAmountOut = (dstAmountOut * (PERCENT_BASE - bufferPercent)) / PERCENT_BASE;
         dstAmountOut -= dstFee;
 
         bool staleBid = block.timestamp > o.bid.time + MAX_BID_WINDOW_SECONDS;
-        require(staleBid || dstAmountOut > o.bid.dstAmount, "low bid"); // TODO minimum bid increase 1%?
+        uint256 neededToOutbid = (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE;
+        require(staleBid || dstAmountOut > neededToOutbid, "low bid");
         require(dstAmountOut >= o.dstMinAmountNext(), "min out");
         verifyMakerBalance(o);
-    }
-
-    /**
-     * reverts if maker does not hold enough balance srcToken or allowance to be spent here for the next chunk
-     */
-    function verifyMakerBalance(OrderLib.Order memory o) private view {
-        require(ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) >= o.srcBidAmountNext(), "maker allowance");
-        require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "maker balance");
     }
 
     /**
@@ -271,17 +278,25 @@ contract TWAP is ReentrancyGuard {
         exchange = o.bid.exchange;
         dstFee = o.bid.dstFee;
         srcAmountIn = o.srcBidAmountNext();
+
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
         srcAmountIn = ERC20(o.ask.srcToken).balanceOf(address(this)); // support FoT tokens
         ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
 
-        uint256 expectedOut = o.dstMinAmountNext();
-        IExchange(exchange).swap(srcAmountIn, expectedOut + dstFee, o.bid.data);
+        IExchange(exchange).swap(srcAmountIn, o.dstExpectedOutNext() + dstFee, o.bid.data);
         dstAmountOut = ERC20(o.ask.dstToken).balanceOf(address(this)); // support FoT tokens
         dstAmountOut -= dstFee;
-        require(dstAmountOut >= expectedOut, "min out");
+        require(dstAmountOut >= o.dstExpectedOutNext(), "min out");
 
         ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, dstFee);
         ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
+    }
+
+    /**
+     * reverts if maker does not hold enough balance srcToken or allowance to be spent here for the next chunk
+     */
+    function verifyMakerBalance(OrderLib.Order memory o) private view {
+        require(ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) >= o.srcBidAmountNext(), "maker allowance");
+        require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "maker balance");
     }
 }

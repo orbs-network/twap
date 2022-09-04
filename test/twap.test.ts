@@ -2,11 +2,9 @@ import {
   account,
   bn18,
   erc20,
-  erc20s,
   expectRevert,
   maxUint256,
   parseEvents,
-  Token,
   useChaiBN,
   web3,
   zeroAddress,
@@ -17,6 +15,7 @@ import {
   exchange,
   initFixture,
   nativeToken,
+  setMockExchangeAmountOut,
   srcToken,
   taker,
   twap,
@@ -101,17 +100,31 @@ describe("TWAP", async () => {
     await mineBlock(1);
 
     await twap.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.001), srcDstPathData())
+      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, srcDstPathData())
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));
     expect((await order(0)).bid.dstFee).bignumber.eq(await dstToken.amount(0.001));
   });
 
+  it("enforce bids 1% better than previous", async () => {
+    await ask(2000, 1000, 0.5);
+    await withMockExchange(100);
+    await bid(0);
+
+    await setMockExchangeAmountOut(100.001);
+    await expectRevert(() => bid(0), "low bid");
+
+    await setMockExchangeAmountOut(101);
+    await bid(0);
+  });
+
   it("clears stale unfilled bid after max bidding window", async () => {
     expect(await twap.methods.MAX_BID_WINDOW_SECONDS().call()).bignumber.eq("60");
     await ask(2000, 1000, 0.5);
+    await withMockExchange(1);
     await bid(0);
+    await setMockExchangeAmountOut(0.6);
 
     await mineBlock(58);
     await expectRevert(() => bid(0), "low bid");
@@ -131,12 +144,22 @@ describe("TWAP", async () => {
     await expectFilled(0, 1000, 0.5);
   });
 
+  it("prevent winning the bid by manipulating exchange price", async () => {
+    await ask(10_000, 2000, 0);
+
+    await withMockExchange(100); // win the bid with very high price that no one can outbid
+    await bid(0, undefined, 1);
+    expect((await order(0)).bid.dstAmount).bignumber.eq(await dstToken.amount(99));
+    expect((await order(0)).bid.dstFee).bignumber.eq(await dstToken.amount(1));
+
+    await mineBlock(100);
+    await setMockExchangeAmountOut(1.1); // bring price back to market
+    await expectRevert(() => fill(0), "min out"); // enforces won bid price
+  });
+
   describe("prune stale invalid order", async () => {
     it("when no approval", async () => {
       await ask(2000, 1000, 0.5);
-
-      await twap.methods.prune(0).send({ from: deployer });
-      expect((await order(0)).status).eq((await order(0)).ask.deadline);
 
       await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
       const tx = await twap.methods.prune(0).send({ from: deployer });
@@ -175,15 +198,16 @@ describe("TWAP", async () => {
 
     await addLiquidityETH(user, token, 50, 50);
 
-    const data = web3().eth.abi.encodeParameters(
-      ["bool", "address[]"],
-      [true, [token.options.address, nativeToken.address]]
-    );
-    await twap.methods.bid(0, exchange.options.address, await nativeToken.amount(0.01), data).send({ from: taker });
+    await twap.methods
+      .bid(
+        0,
+        exchange.options.address,
+        0,
+        80_000,
+        web3().eth.abi.encodeParameters(["bool", "address[]"], [true, [token.options.address, nativeToken.address]])
+      )
+      .send({ from: taker });
     await mineBlock(10);
-
-    expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(50));
     await twap.methods.fill(0).send({ from: taker });
-    expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(40));
   });
 });

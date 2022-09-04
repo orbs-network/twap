@@ -87,10 +87,10 @@ describe("Errors", () => {
       await ask(2000, 2000, 1, undefined, exchange.options.address);
       await mineBlock(10);
       await expectRevert(
-        () => twap.methods.bid(0, otherExchange.options.address, 0, srcDstPathData()).call(),
+        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, srcDstPathData()).call(),
         "exchange"
       );
-      await twap.methods.bid(0, exchange.options.address, 0, srcDstPathData()).call();
+      await twap.methods.bid(0, exchange.options.address, 0, 0, srcDstPathData()).call();
     });
 
     it("low bid", async () => {
@@ -230,10 +230,31 @@ describe("Errors", () => {
       await setMockExchangeAmountOut(0.5);
       await expectRevert(() => fill(0), "Arithmetic operation underflowed");
     });
+  });
 
-    it("cancel only from maker", async () => {
-      await ask(1, 1, 1);
-      await expectRevert(() => twap.methods.cancel(0).send({ from: deployer }), "maker");
-    });
+  it("cancel only from maker", async () => {
+    await ask(1, 1, 1);
+    await expectRevert(() => twap.methods.cancel(0).send({ from: deployer }), "maker");
+  });
+
+  it("prune only invalid orders", async () => {
+    await ask(1000, 100, 0.01);
+    await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "valid");
+
+    await bid(0, undefined, 0);
+    await mineBlock(10);
+    await fill(0);
+    await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "delay");
+
+    await twap.methods.cancel(0).send({ from: user });
+    await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "status");
+  });
+
+  it("bid params", async () => {
+    await expectRevert(() => twap.methods.bid(0, zeroAddress, 0, 0, []).send({ from: taker }), "params");
+    await expectRevert(
+      () => twap.methods.bid(0, exchange.options.address, 0, 110_000, []).send({ from: taker }),
+      "params"
+    );
   });
 });
