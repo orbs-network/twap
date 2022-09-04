@@ -96,7 +96,7 @@ describe("Sanity", () => {
       .bignumber.gte(await dstToken.amount(0.5))
       .closeTo(await dstToken.amount(0.5), await dstToken.amount(0.1));
     expect(events[0].returnValues.dstFee).bignumber.eq(await dstToken.amount(0.01));
-    expect(events[0].returnValues.filledTime).bignumber.eq(o.filledTime);
+    expect(events[0].returnValues.srcFilledAmount).bignumber.eq(o.srcFilledAmount);
   });
 
   it("cancel order, emits event", async () => {

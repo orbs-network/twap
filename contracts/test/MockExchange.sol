@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-// solhint-disable not-rely-on-time
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -20,17 +19,20 @@ contract MockExchange is IExchange {
         return amounts[amounts.length - 1];
     }
 
+    /**
+     * assumes holds balance of dstToken
+     */
     function swap(
         uint256 amountIn,
         uint256,
         bytes calldata data
-    ) public returns (uint256 amountOut) {
-        address[] memory path = abi.decode(data, (address[]));
+    ) public {
+        (, address[] memory path) = abi.decode(data, (bool, address[]));
         ERC20 srcToken = ERC20(path[0]);
         ERC20 dstToken = ERC20(path[path.length - 1]);
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
 
-        amountOut = amounts[amounts.length - 1];
+        uint256 amountOut = amounts[amounts.length - 1];
         dstToken.safeTransfer(msg.sender, amountOut);
     }
 }

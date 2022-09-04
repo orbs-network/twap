@@ -6,6 +6,7 @@
     "modifier-name-mixedcase": "warn",
     "func-param-name-mixedcase": "warn",
     "constructor-syntax": "warn",
-    "code-complexity": "warn"
+    "code-complexity": "warn",
+    "not-rely-on-time": "off"
   }
 }

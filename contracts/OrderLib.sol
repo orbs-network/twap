@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-// solhint-disable not-rely-on-time
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -50,7 +49,7 @@ library OrderLib {
         uint256 srcBidAmount,
         uint256 dstMinAmount
     ) internal view returns (Order memory) {
-        require(block.timestamp < type(uint32).max, "end of time");
+        require(block.timestamp < type(uint32).max, "time");
         require(deadline < type(uint32).max && delay < type(uint32).max, "uint32");
         return
             Order(
@@ -91,7 +90,7 @@ library OrderLib {
         uint256 dstFee,
         bytes memory data
     ) internal view {
-        require(block.timestamp < type(uint32).max, "end of time");
+        require(block.timestamp < type(uint32).max, "time");
         self.bid = OrderLib.Bid(uint32(block.timestamp), msg.sender, exchange, dstAmountOut, dstFee, data);
     }
 
@@ -99,7 +98,7 @@ library OrderLib {
      * chunk filled
      */
     function filled(Order memory self, uint256 srcAmountIn) internal view {
-        require(block.timestamp < type(uint32).max, "end of time");
+        require(block.timestamp < type(uint32).max, "time");
         delete self.bid;
         self.filledTime = uint32(block.timestamp);
         self.srcFilledAmount += srcAmountIn;

@@ -7,9 +7,9 @@ import { srcDstPathData } from "./twap-utils";
 
 useChaiBN();
 
-export let deployer: string;
 export let user: string;
 export let taker: string;
+export let deployer: string;
 export let twap: TWAP;
 export let exchange: IExchange;
 
@@ -56,7 +56,7 @@ async function initExternalsETH() {
   srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
   dstTokenWhale = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
-    "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a", // UniswapV2
+    "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", // UniswapV2
   ]);
 }
 
@@ -101,11 +101,4 @@ export async function currentDstPrice() {
   const amountIn = await srcToken.amount(1000);
   const dstOut = await exchange.methods.getAmountOut(amountIn, srcDstPathData()).call().then(dstToken.mantissa);
   return (await srcToken.mantissa(amountIn)).div(dstOut).toNumber(); // rounded
-}
-
-export async function increasePrice() {
-  console.log("📈 increasing price...");
-  const amount = await srcToken.amount(10e6);
-  await srcToken.methods.approve(exchange.options.address, amount).send({ from: srcTokenWhale });
-  await exchange.methods.swap(amount, 1, srcDstPathData()).send({ from: srcTokenWhale });
 }

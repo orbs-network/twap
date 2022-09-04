@@ -8,9 +8,7 @@ import "@nomiclabs/hardhat-etherscan";
 import { hardhatDefaultConfig } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
-task("deploy").setAction(async () => {
-  //
-});
+task("deploy").setAction(async () => {});
 
 export default _.merge(hardhatDefaultConfig(), {
   networks: {

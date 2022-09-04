@@ -23,7 +23,12 @@ export async function ask(
 
 export async function bid(id: number, path: string[] = [srcToken.address, dstToken.address], fee: number = 0.01) {
   return twap.methods
-    .bid(id, exchange.options.address, await dstToken.amount(fee), web3().eth.abi.encodeParameter("address[]", path))
+    .bid(
+      id,
+      exchange.options.address,
+      await dstToken.amount(fee),
+      web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path])
+    )
     .send({ from: taker });
 }
 
@@ -56,5 +61,5 @@ export function endTime() {
 }
 
 export function srcDstPathData() {
-  return web3().eth.abi.encodeParameter("address[]", [srcToken.address, dstToken.address]);
+  return web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [srcToken.address, dstToken.address]]);
 }

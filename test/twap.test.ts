@@ -1,8 +1,33 @@
-import { account, erc20s, expectRevert, parseEvents, useChaiBN } from "@defi.org/web3-candies";
-import { deployer, dstToken, exchange, initFixture, srcToken, twap, user, withMockExchange } from "./fixture";
-import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import {
+  account,
+  bn18,
+  erc20,
+  erc20s,
+  expectRevert,
+  maxUint256,
+  parseEvents,
+  Token,
+  useChaiBN,
+  web3,
+  zeroAddress,
+} from "@defi.org/web3-candies";
+import {
+  deployer,
+  dstToken,
+  exchange,
+  initFixture,
+  nativeToken,
+  srcToken,
+  taker,
+  twap,
+  user,
+  withMockExchange,
+} from "./fixture";
+import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, expectFilled, fill, order, srcDstPathData } from "./twap-utils";
+import { ask, bid, expectFilled, fill, order, srcDstPathData, time } from "./twap-utils";
+import { MockDeflationaryToken } from "../typechain-hardhat/contracts/test";
+import { addLiquidityETH } from "./exchange.test";
 
 useChaiBN();
 
@@ -130,5 +155,35 @@ describe("TWAP", async () => {
       await twap.methods.prune(0).send({ from: deployer });
       expect((await order(0)).status).eq(await twap.methods.STATUS_CANCELED().call());
     });
+  });
+
+  it("supports FoT tokens", async () => {
+    const token = erc20("FoT", (await deployArtifact("MockDeflationaryToken", { from: user })).options.address);
+    await token.methods.approve(twap.options.address, maxUint256).send({ from: user });
+    await twap.methods
+      .ask(
+        zeroAddress,
+        token.address,
+        nativeToken.address,
+        await token.amount(10),
+        await token.amount(10),
+        await nativeToken.amount(1),
+        (await time()) + 1e6,
+        60
+      )
+      .send({ from: user });
+
+    await addLiquidityETH(user, token, 50, 50);
+
+    const data = web3().eth.abi.encodeParameters(
+      ["bool", "address[]"],
+      [true, [token.options.address, nativeToken.address]]
+    );
+    await twap.methods.bid(0, exchange.options.address, await nativeToken.amount(0.01), data).send({ from: taker });
+    await mineBlock(10);
+
+    expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(50));
+    await twap.methods.fill(0).send({ from: taker });
+    expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(40));
   });
 });
