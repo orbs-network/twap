@@ -1,6 +1,6 @@
 import { block, web3, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { twap, dstToken, exchange, srcToken, taker, user, userSrcTokenStartBalance } from "./fixture";
+import { dstToken, exchange, srcToken, taker, twap, user, userSrcTokenStartBalance } from "./fixture";
 
 export async function ask(
   srcAmount: number,

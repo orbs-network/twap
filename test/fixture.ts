@@ -1,7 +1,7 @@
 import { deployArtifact, impersonate, resetNetworkFork, setBalance, tag } from "@defi.org/web3-candies/dist/hardhat";
 import { account, bn18, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import type { TWAP, IExchange } from "../typechain-hardhat/contracts";
+import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
 import { srcDstPathData } from "./twap-utils";
 
@@ -77,6 +77,7 @@ export async function fundSrcTokenFromWhale(target: string, amount: number) {
   await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
   expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
 }
+
 async function fundDstTokenFromWhale(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);

@@ -14,6 +14,8 @@ import "./IExchange.sol";
  * Time-Weighted Average Price
  * ---------------------------
  *
+ * https://github.com/orbs-network/twap
+ *
  * This smart contract allows the incentivized execution of a TWAP order (either a Limit Order or a Market Order) on any DEX, with the possibility of partial fills.
  *
  * A TWAP order breaks a larger order down into smaller trades or "chunks", which are executed over a set period of time.
@@ -37,6 +39,8 @@ contract TWAP is ReentrancyGuard {
     using SafeERC20 for ERC20;
     using Address for address;
     using OrderLib for OrderLib.Order;
+
+    uint8 public constant VERSION = 1;
 
     event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
     event OrderBid(
@@ -273,7 +277,7 @@ contract TWAP is ReentrancyGuard {
     {
         require(msg.sender == o.bid.taker, "taker");
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
-        require(block.timestamp > o.bid.time + MIN_BID_WINDOW_SECONDS, "pending bid"); // TODO multi-block MEV??
+        require(block.timestamp > o.bid.time + MIN_BID_WINDOW_SECONDS, "pending bid");
 
         exchange = o.bid.exchange;
         dstFee = o.bid.dstFee;

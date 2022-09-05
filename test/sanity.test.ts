@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { twap, dstToken, exchange, initFixture, srcToken, taker, user, fundSrcTokenFromWhale } from "./fixture";
+import { dstToken, exchange, fundSrcTokenFromWhale, initFixture, srcToken, taker, twap, user } from "./fixture";
 import { ask, bid, fill, order, srcDstPathData, time } from "./twap-utils";
 import { account, block, expectRevert, parseEvents, zero, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
