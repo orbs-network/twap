@@ -2,6 +2,12 @@
 
 > Time-Weighted Average Price
 
+## Security Audit Reports
+- ### [PeckShield](./Audit-Report-PeckShield.pdf)
+- ### [RDAuditors](./Audit-Report-RDAuditors.pdf)
+
+## Summary
+
 This smart contract allows the incentivized execution of a [TWAP](https://en.wikipedia.org/wiki/Time-weighted_average_price) order (either a 
 [Limit Order](https://en.wikipedia.org/wiki/Order_(exchange)#Limit_order)
 or a [Market Order](https://en.wikipedia.org/wiki/Order_(exchange)#Market_order))
