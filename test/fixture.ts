@@ -1,9 +1,9 @@
 import { deployArtifact, impersonate, resetNetworkFork, setBalance, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, bn18, erc20s, Token, useChaiBN } from "@defi.org/web3-candies";
+import { account, bn18, erc20s, ether, fmt18, Token, useChaiBN } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
-import { srcDstPathData } from "./twap-utils";
+import { encodedPath } from "./twap-utils";
 
 useChaiBN();
 
@@ -16,6 +16,7 @@ export let exchange: IExchange;
 export let srcToken: Token;
 export let dstToken: Token;
 export let nativeToken: Token;
+export let srcDstPath: string[];
 export const userSrcTokenStartBalance = 1_000_000;
 let srcTokenWhale: string;
 let dstTokenWhale: string;
@@ -44,6 +45,8 @@ async function initExternals() {
       return await initExternalsPOLY();
     case "ETH":
       return await initExternalsETH();
+    case "FTM":
+      return await initExternalsFTM();
     default:
       throw new Error(`unhandled NETWORK`);
   }
@@ -58,6 +61,7 @@ async function initExternalsETH() {
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
     "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", // UniswapV2
   ]);
+  srcDstPath = [srcToken.address, dstToken.address];
 }
 
 async function initExternalsPOLY() {
@@ -69,11 +73,25 @@ async function initExternalsPOLY() {
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
     "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
   ]);
+  srcDstPath = [srcToken.address, dstToken.address];
+}
+
+async function initExternalsFTM() {
+  srcToken = erc20s.ftm.USDC();
+  dstToken = erc20s.ftm.WETH();
+  nativeToken = erc20s.ftm.WFTM();
+  srcTokenWhale = "0x95bf7E307BC1ab0BA38ae10fc27084bC36FcD605";
+  dstTokenWhale = "0x25c130B2624CF12A4Ea30143eF50c5D68cEFA22f";
+  exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
+    "0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52", // Spiritswap
+  ]);
+  srcDstPath = [srcToken.address, nativeToken.address, dstToken.address];
 }
 
 export async function fundSrcTokenFromWhale(target: string, amount: number) {
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
+  await setBalance(srcTokenWhale, await nativeToken.amount(10e6));
   await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
   expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
 }
@@ -81,7 +99,7 @@ export async function fundSrcTokenFromWhale(target: string, amount: number) {
 async function fundDstTokenFromWhale(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
-  await setBalance(dstTokenWhale, bn18(1e6));
+  await setBalance(dstTokenWhale, await nativeToken.amount(10e6));
   await dstToken.methods.transfer(target, await dstToken.amount(amount)).send({ from: dstTokenWhale });
   expect(await dstToken.methods.balanceOf(target).call()).bignumber.eq(await dstToken.amount(amount));
 }
@@ -100,6 +118,6 @@ export async function setMockExchangeAmountOut(dstAmountOut: number) {
 
 export async function currentDstPrice() {
   const amountIn = await srcToken.amount(1000);
-  const dstOut = await exchange.methods.getAmountOut(amountIn, srcDstPathData()).call().then(dstToken.mantissa);
+  const dstOut = await exchange.methods.getAmountOut(amountIn, encodedPath()).call().then(dstToken.mantissa);
   return (await srcToken.mantissa(amountIn)).div(dstOut).toNumber(); // rounded
 }

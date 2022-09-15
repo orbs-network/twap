@@ -23,7 +23,7 @@ import {
 } from "./fixture";
 import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, expectFilled, fill, order, srcDstPathData, time } from "./twap-utils";
+import { ask, bid, expectFilled, fill, order, encodedPath, time } from "./twap-utils";
 import { MockDeflationaryToken } from "../typechain-hardhat/contracts/test";
 import { addLiquidityETH } from "./exchange.test";
 
@@ -99,7 +99,7 @@ describe("TWAP", async () => {
     await mineBlock(1);
 
     await twap.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, srcDstPathData())
+      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, encodedPath())
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));

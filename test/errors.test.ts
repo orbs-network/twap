@@ -13,7 +13,7 @@ import {
 import { account, expectRevert, zeroAddress } from "@defi.org/web3-candies";
 import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, endTime, fill, order, srcDstPathData, time } from "./twap-utils";
+import { ask, bid, endTime, fill, order, encodedPath, time } from "./twap-utils";
 import { MockExchange } from "../typechain-hardhat/contracts/test";
 
 describe("Errors", () => {
@@ -87,10 +87,10 @@ describe("Errors", () => {
       await ask(2000, 2000, 1, undefined, exchange.options.address);
       await mineBlock(10);
       await expectRevert(
-        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, srcDstPathData()).call(),
+        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, encodedPath()).call(),
         "exchange"
       );
-      await twap.methods.bid(0, exchange.options.address, 0, 0, srcDstPathData()).call();
+      await twap.methods.bid(0, exchange.options.address, 0, 0, encodedPath()).call();
     });
 
     it("low bid", async () => {

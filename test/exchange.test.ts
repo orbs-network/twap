@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { exchange, initFixture, nativeToken, srcToken, user, userSrcTokenStartBalance } from "./fixture";
-import { srcDstPathData } from "./twap-utils";
+import { encodedPath } from "./twap-utils";
 import { Abi, bn18, contract, erc20, expectRevert, maxUint256, Token, web3, zero } from "@defi.org/web3-candies";
 import { deployArtifact } from "@defi.org/web3-candies/dist/hardhat";
 import type { UniswapV2Exchange } from "../typechain-hardhat/contracts/exchange";
@@ -12,7 +12,7 @@ describe("IExchange implementations", async () => {
   describe("UniswapV2Exchange", async () => {
     it("swaps with uniswap", async () => {
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
-      await exchange.methods.swap(await srcToken.amount(100), 0, srcDstPathData()).send({ from: user });
+      await exchange.methods.swap(await srcToken.amount(100), 0, encodedPath()).send({ from: user });
       expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
         (await srcToken.amount(userSrcTokenStartBalance)).sub(await srcToken.amount(100))
       );
@@ -36,7 +36,7 @@ describe("IExchange implementations", async () => {
           ["bool", "address[]"],
           [false, [token.options.address, nativeToken.address]]
         );
-        await expectRevert(() => exchange.methods.swap(100, 0, data).send({ from: user }), "UniswapV2: K");
+        await expectRevert(() => exchange.methods.swap(100, 0, data).send({ from: user }), /(UniswapV2|Pancake): K/);
       });
 
       it("sell tokens with FoT", async () => {
