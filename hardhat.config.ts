@@ -5,17 +5,19 @@ import "hardhat-gas-reporter";
 import "hardhat-tracer";
 import "@nomiclabs/hardhat-web3";
 import "@nomiclabs/hardhat-etherscan";
-import { hardhatDefaultConfig } from "@defi.org/web3-candies/dist/hardhat";
+import { hardhatDefaultConfig, hre } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
-task("deploy").setAction(async () => {});
+task("deploy").setAction(async () => {
+  if (hre().network.config.chainId === hre().config.networks?.hardhat?.chainId) throw new Error("on hardhat network!");
+  if (process.env.NETWORK!.toLowerCase() !== hre().network.name.toLowerCase())
+    throw new Error(`different networks!, ${process.env.NETWORK} != ${hre().network.name}`);
+});
 
 export default _.merge(hardhatDefaultConfig(), {
   networks: {
     hardhat: {
-      accounts: {
-        passphrase: "twap", // empty accounts
-      },
+      blockGasLimit: 15e6,
     },
   },
   mocha: {
