@@ -23,4 +23,7 @@ export default _.merge(hardhatDefaultConfig(), {
   mocha: {
     bail: true,
   },
+  typechain: {
+    target: "node_modules/@defi.org/web3-candies/typechain-web3-bignumber",
+  },
 } as HardhatUserConfig);

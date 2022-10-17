@@ -1,13 +1,4 @@
-import {
-  account,
-  erc20,
-  expectRevert,
-  maxUint256,
-  parseEvents,
-  useChaiBN,
-  web3,
-  zeroAddress,
-} from "@defi.org/web3-candies";
+import { account, erc20, maxUint256, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import {
   deployer,
   dstToken,
@@ -21,13 +12,11 @@ import {
   user,
   withMockExchange,
 } from "./fixture";
-import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { deployArtifact, mineBlock, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, expectFilled, fill, order, encodedPath, time } from "./twap-utils";
 import { MockDeflationaryToken } from "../typechain-hardhat/contracts/test";
 import { addLiquidityETH } from "./exchange.test";
-
-useChaiBN();
 
 describe("TWAP", async () => {
   beforeEach(initFixture);

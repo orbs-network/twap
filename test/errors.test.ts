@@ -10,8 +10,8 @@ import {
   user,
   withMockExchange,
 } from "./fixture";
-import { account, expectRevert, zeroAddress } from "@defi.org/web3-candies";
-import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { account, zeroAddress } from "@defi.org/web3-candies";
+import { deployArtifact, mineBlock, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, endTime, fill, order, encodedPath, time } from "./twap-utils";
 import { MockExchange } from "../typechain-hardhat/contracts/test";

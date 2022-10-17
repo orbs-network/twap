@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { exchange, initFixture, nativeToken, srcToken, user, userSrcTokenStartBalance } from "./fixture";
 import { encodedPath } from "./twap-utils";
-import { Abi, bn18, contract, erc20, expectRevert, maxUint256, Token, web3, zero } from "@defi.org/web3-candies";
-import { deployArtifact } from "@defi.org/web3-candies/dist/hardhat";
+import { Abi, bn18, contract, erc20, maxUint256, Token, web3, zero } from "@defi.org/web3-candies";
+import { deployArtifact, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
 import type { UniswapV2Exchange } from "../typechain-hardhat/contracts/exchange";
 import type { MockDeflationaryToken } from "../typechain-hardhat/contracts/test";
 
@@ -14,7 +14,7 @@ describe("IExchange implementations", async () => {
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       await exchange.methods.swap(await srcToken.amount(100), 0, encodedPath()).send({ from: user });
       expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
-        (await srcToken.amount(userSrcTokenStartBalance)).sub(await srcToken.amount(100))
+        (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(100))
       );
     });
 
@@ -24,6 +24,7 @@ describe("IExchange implementations", async () => {
       beforeEach("deploy mock deflationary token", async () => {
         token = erc20("FoT", (await deployArtifact("MockDeflationaryToken", { from: user })).options.address);
         await expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(100));
+        await expect(await web3().eth.getBalance(user)).bignumber.gte(bn18(100));
       });
 
       beforeEach("add liquidity, 50 token + 100 eth", async () => {

@@ -1,11 +1,18 @@
-import { deployArtifact, impersonate, resetNetworkFork, setBalance, tag } from "@defi.org/web3-candies/dist/hardhat";
-import { account, bn18, erc20s, ether, fmt18, Token, useChaiBN } from "@defi.org/web3-candies";
+import {
+  deployArtifact,
+  impersonate,
+  resetNetworkFork,
+  setBalance,
+  tag,
+  useChaiBigNumber,
+} from "@defi.org/web3-candies/dist/hardhat";
+import { account, erc20s, Token } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
 import { encodedPath } from "./twap-utils";
 
-useChaiBN();
+useChaiBigNumber();
 
 export let user: string;
 export let taker: string;

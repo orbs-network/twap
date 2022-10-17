@@ -8,7 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@defi.org/web3-candies": "3.x"
+    "@defi.org/web3-candies": "4.x"
   },
   "scripts": {
     "clean": "rm -rf artifacts cache typechain-hardhat",
