@@ -1,11 +1,11 @@
 import {
   deployer,
   dstToken,
-  encodedSwapPath,
   exchange,
   initFixture,
   setMockExchangeAmountOut,
   srcToken,
+  swapDataForUniV2,
   taker,
   twap,
   user,
@@ -13,7 +13,7 @@ import {
   withUniswapV2Exchange,
 } from "./fixture";
 import { account, zeroAddress } from "@defi.org/web3-candies";
-import { deployArtifact, mineBlock, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
+import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, endTime, fill, order, time } from "./twap-utils";
 import { MockExchange } from "../typechain-hardhat/contracts/test";
@@ -90,10 +90,10 @@ describe("Errors", () => {
       await ask(2000, 2000, 1, undefined, exchange.options.address);
       await mineBlock(10);
       await expectRevert(
-        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, encodedSwapPath()).call(),
+        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, swapDataForUniV2).call(),
         "exchange"
       );
-      await twap.methods.bid(0, exchange.options.address, 0, 0, encodedSwapPath()).call();
+      await twap.methods.bid(0, exchange.options.address, 0, 0, swapDataForUniV2).call();
     });
 
     it("low bid", async () => {
@@ -139,12 +139,12 @@ describe("Errors", () => {
 
     it("insufficient amount out with excess fee", async () => {
       await ask(2000, 1000, 0.5);
-      await expectRevert(() => bid(0, undefined, 0.1), "min out");
+      await expectRevert(() => bid(0, 0.1), "min out");
     });
 
     it("fee underflow protection", async () => {
       await ask(2000, 1000, 0.5);
-      await expectRevert(() => bid(0, undefined, 1), /(Arithmetic operation underflowed|reverted)/);
+      await expectRevert(() => bid(0, 1), /(Arithmetic operation underflowed|reverted)/);
     });
 
     it("insufficient amount out when last partial fill", async () => {
@@ -215,7 +215,7 @@ describe("Errors", () => {
 
       await withMockExchange(1);
 
-      await bid(0, undefined, 0.1);
+      await bid(0, 0.1);
       await mineBlock(10);
 
       await setMockExchangeAmountOut(0.5);
@@ -227,7 +227,7 @@ describe("Errors", () => {
 
       await withMockExchange(10);
 
-      await bid(0, undefined, 1);
+      await bid(0, 1);
       await mineBlock(10);
 
       await setMockExchangeAmountOut(0.5);
@@ -244,7 +244,7 @@ describe("Errors", () => {
     await ask(1000, 100, 0.01);
     await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "valid");
 
-    await bid(0, undefined, 0);
+    await bid(0, 0);
     await mineBlock(10);
     await fill(0);
     await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "delay");

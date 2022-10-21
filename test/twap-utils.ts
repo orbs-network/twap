@@ -1,16 +1,6 @@
 import { block, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import {
-  dstToken,
-  encodedSwapPath,
-  exchange,
-  univ2SrcDstPath,
-  srcToken,
-  taker,
-  twap,
-  user,
-  userSrcTokenStartBalance,
-} from "./fixture";
+import { dstToken, exchange, srcToken, swapDataForUniV2, taker, twap, user, userSrcTokenStartBalance } from "./fixture";
 
 export async function ask(
   srcAmount: number,
@@ -40,9 +30,9 @@ export async function ask(
     .send({ from: _user });
 }
 
-export async function bid(id: number, path: string[] = univ2SrcDstPath, fee: number = 0.01) {
+export async function bid(id: number, fee: number = 0.01, bufferPercent = 0, swapData: string = swapDataForUniV2) {
   return twap.methods
-    .bid(id, exchange.options.address, await dstToken.amount(fee), 0, encodedSwapPath(path))
+    .bid(id, exchange.options.address, await dstToken.amount(fee), bufferPercent * 1000, swapData)
     .send({ from: taker });
 }
 

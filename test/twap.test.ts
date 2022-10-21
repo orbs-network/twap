@@ -1,24 +1,20 @@
-import { account, erc20, maxUint256, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, parseEvents } from "@defi.org/web3-candies";
 import {
   deployer,
   dstToken,
-  encodedSwapPath,
   exchange,
   initFixture,
-  nativeToken,
   setMockExchangeAmountOut,
   srcToken,
-  taker,
+  swapDataForUniV2,
   twap,
   user,
   withMockExchange,
   withUniswapV2Exchange,
 } from "./fixture";
-import { deployArtifact, mineBlock, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
+import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, expectFilled, fill, order, time } from "./twap-utils";
-import { MockDeflationaryToken } from "../typechain-hardhat/contracts/test";
-import { addLiquidityETH } from "./exchange.test";
+import { ask, bid, expectFilled, fill, order } from "./twap-utils";
 
 describe("TWAP", async () => {
   beforeEach(initFixture);
@@ -91,7 +87,7 @@ describe("TWAP", async () => {
     await mineBlock(1);
 
     await twap.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, encodedSwapPath())
+      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, swapDataForUniV2)
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));
@@ -126,10 +122,10 @@ describe("TWAP", async () => {
 
   it("supports market orders, english auction incentivizes best competitive price", async () => {
     await ask(2000, 1000, 0.000001);
-    await bid(0, undefined, 0.4);
-    await bid(0, undefined, 0.3);
-    await bid(0, undefined, 0.1);
-    await bid(0, undefined, 0.01);
+    await bid(0, 0.4);
+    await bid(0, 0.3);
+    await bid(0, 0.1);
+    await bid(0, 0.01);
     await mineBlock(10);
     await fill(0);
     await expectFilled(0, 1000, 0.5);
@@ -139,7 +135,7 @@ describe("TWAP", async () => {
     await ask(10_000, 2000, 0);
 
     await withMockExchange(100); // win the bid with very high price that no one can outbid
-    await bid(0, undefined, 1);
+    await bid(0, 1);
     expect((await order(0)).bid.dstAmount).bignumber.eq(await dstToken.amount(99));
     expect((await order(0)).bid.dstFee).bignumber.eq(await dstToken.amount(1));
 
@@ -169,36 +165,5 @@ describe("TWAP", async () => {
       await twap.methods.prune(0).send({ from: deployer });
       expect((await order(0)).status).eq(await twap.methods.STATUS_CANCELED().call());
     });
-  });
-
-  it("supports FoT tokens", async () => {
-    const token = erc20("FoT", (await deployArtifact("MockDeflationaryToken", { from: user })).options.address);
-    await token.methods.approve(twap.options.address, maxUint256).send({ from: user });
-    await twap.methods
-      .ask(
-        zeroAddress,
-        token.address,
-        nativeToken.address,
-        await token.amount(10),
-        await token.amount(10),
-        await nativeToken.amount(1),
-        (await time()) + 1e6,
-        60
-      )
-      .send({ from: user });
-
-    await addLiquidityETH(user, token, 50, 50);
-
-    await twap.methods
-      .bid(
-        0,
-        exchange.options.address,
-        0,
-        80_000,
-        web3().eth.abi.encodeParameters(["bool", "address[]"], [true, [token.options.address, nativeToken.address]])
-      )
-      .send({ from: taker });
-    await mineBlock(10);
-    await twap.methods.fill(0).send({ from: taker });
   });
 });

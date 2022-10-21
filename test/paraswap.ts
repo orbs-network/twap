@@ -34,8 +34,8 @@ export namespace Paraswap {
       network: (await currentNetwork())!.id.toString(),
       side: "SELL",
       includeDEXS: onlyDex || "",
-      otherExchangePrices: "true",
-      partner: "chucknorris",
+      // otherExchangePrices: "true",
+      // partner: "chucknorris",
     });
     const response = await axios.get(`${URL}/prices/?${params}`);
     expect(response.status).gte(200).lt(400);

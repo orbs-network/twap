@@ -6,11 +6,10 @@ import {
   tag,
   useChaiBigNumber,
 } from "@defi.org/web3-candies/dist/hardhat";
-import { account, currentNetwork, erc20s, networks, Token, web3 } from "@defi.org/web3-candies";
+import { account, currentNetwork, erc20s, Token, web3 } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
-import BigNumber from "bignumber.js";
 import _ from "lodash";
 
 useChaiBigNumber();
@@ -30,14 +29,16 @@ let dstTokenWhale: string;
 export let twap: TWAP;
 
 export let exchange: IExchange;
-export let univ2SrcDstPath: string[];
+export let swapDataForUniV2: string;
 
 export async function initFixture(latestBlock = false) {
   await resetNetworkFork(latestBlock ? "latest" : undefined);
   await initAccounts();
   await initTokens();
-  await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
   twap = await deployArtifact<TWAP>("TWAP", { from: deployer });
+
+  await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
+  expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
 }
 
 async function initAccounts() {
@@ -63,7 +64,7 @@ async function initTokens() {
       srcToken = erc20s.poly.USDC();
       dstToken = erc20s.poly.WETH();
       nativeToken = erc20s.poly.WMATIC();
-      srcTokenWhale = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
+      srcTokenWhale = "0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245";
       dstTokenWhale = "0x72A53cDBBcc1b9efa39c834A540550e23463AAcB";
       return;
 
@@ -96,13 +97,21 @@ export async function withUniswapV2Exchange() {
     ftm: [srcToken.address, nativeToken.address, dstToken.address],
     poly: [srcToken.address, dstToken.address],
   };
-  univ2SrcDstPath = _.find(paths, (p, k) => k === network!.shortname)!;
+  const path = _.find(paths, (p, k) => k === network!.shortname)!;
+  swapDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
+}
+
+export async function withParaswapExchange() {
+  exchange = await deployArtifact<IExchange>("ParaswapExchange", { from: deployer }, [
+    "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57", // Paraswap Augustus Swapper on all chains
+  ]);
 }
 
 export async function fundSrcTokenFromWhale(target: string, amount: number) {
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
   await setBalance(srcTokenWhale, await nativeToken.amount(10e6));
+  expect(await srcToken.methods.balanceOf(srcTokenWhale).call()).bignumber.gte(await srcToken.amount(amount));
   await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
   expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
 }
@@ -125,15 +134,4 @@ export async function setMockExchangeAmountOut(dstAmountOut: number) {
   await (exchange as MockExchange).methods
     .setMockAmounts([0, await dstToken.amount(dstAmountOut)])
     .send({ from: deployer });
-}
-
-export async function getAmountOutSrcToDst(amountIn: BigNumber) {
-  return exchange.methods
-    .getAmountOut(srcToken.address, dstToken.address, amountIn, encodedSwapPath())
-    .call()
-    .then(BigNumber);
-}
-
-export function encodedSwapPath(path = univ2SrcDstPath) {
-  return web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }
