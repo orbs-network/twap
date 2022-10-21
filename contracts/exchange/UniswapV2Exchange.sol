@@ -22,7 +22,12 @@ contract UniswapV2Exchange is IExchange {
     /**
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
-    function getAmountOut(uint256 amountIn, bytes calldata data) public view returns (uint256 amountOut) {
+    function getAmountOut(
+        address,
+        address,
+        uint256 amountIn,
+        bytes calldata data
+    ) public view returns (uint256 amountOut) {
         (, address[] memory path) = decode(data);
         return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
     }
@@ -31,12 +36,14 @@ contract UniswapV2Exchange is IExchange {
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
     function swap(
+        address _srcToken,
+        address,
         uint256 amountIn,
         uint256 amountOutMin,
         bytes calldata data
     ) public {
         (bool fotTokens, address[] memory path) = decode(data);
-        ERC20 srcToken = ERC20(path[0]);
+        ERC20 srcToken = ERC20(_srcToken);
 
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
         amountIn = srcToken.balanceOf(address(this)); // support FoT tokens

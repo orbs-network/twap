@@ -5,7 +5,8 @@
     "moduleResolution": "Node",
     "strict": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noEmit": true
   },
   "include": ["./test"],
   "files": ["./hardhat.config.ts"]

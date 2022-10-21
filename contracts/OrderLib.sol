@@ -119,7 +119,7 @@ library OrderLib {
     }
 
     /**
-     * next chunk expected output in dstToken, or winning bid
+     * next chunk expected output in dstToken, or winning bid, to be sent to maker (after fees)
      */
     function dstExpectedOutNext(Order memory self) internal pure returns (uint256) {
         return Math.max(self.bid.dstAmount, dstMinAmountNext(self));

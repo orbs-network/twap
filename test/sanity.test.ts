@@ -1,12 +1,24 @@
 import { expect } from "chai";
-import { dstToken, exchange, fundSrcTokenFromWhale, initFixture, srcToken, taker, twap, user } from "./fixture";
-import { ask, bid, fill, order, encodedPath, time } from "./twap-utils";
+import {
+  dstToken,
+  encodedSwapPath,
+  exchange,
+  fundSrcTokenFromWhale,
+  initFixture,
+  srcToken,
+  taker,
+  twap,
+  user,
+  withUniswapV2Exchange,
+} from "./fixture";
+import { ask, bid, fill, order, time } from "./twap-utils";
 import { account, block, parseEvents, zero, zeroAddress } from "@defi.org/web3-candies";
 import { mineBlock, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
 describe("Sanity", () => {
   beforeEach(initFixture);
+  beforeEach(withUniswapV2Exchange);
 
   it("maker creates ask order, emits event", async () => {
     expect(await twap.methods.length().call()).bignumber.zero;
@@ -55,7 +67,7 @@ describe("Sanity", () => {
     const o = await order(0);
     expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
-    expect(o.bid.data).deep.eq(encodedPath());
+    expect(o.bid.data).deep.eq(encodedSwapPath());
     expect(o.bid.dstFee).bignumber.eq(await dstToken.amount(0.01));
     expect(o.bid.dstAmount)
       .bignumber.gte(await dstToken.amount(1))

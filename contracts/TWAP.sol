@@ -250,7 +250,7 @@ contract TWAP is ReentrancyGuard {
         require(block.timestamp > o.filledTime + o.ask.delay, "delay");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
-        dstAmountOut = IExchange(exchange).getAmountOut(o.srcBidAmountNext(), data);
+        dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcToken, o.ask.dstToken, o.srcBidAmountNext(), data);
         dstAmountOut = (dstAmountOut * (PERCENT_BASE - bufferPercent)) / PERCENT_BASE;
         dstAmountOut -= dstFee;
 
@@ -282,15 +282,16 @@ contract TWAP is ReentrancyGuard {
         exchange = o.bid.exchange;
         dstFee = o.bid.dstFee;
         srcAmountIn = o.srcBidAmountNext();
+        uint256 minOut = o.dstExpectedOutNext();
 
         ERC20(o.ask.srcToken).safeTransferFrom(o.ask.maker, address(this), srcAmountIn);
         srcAmountIn = ERC20(o.ask.srcToken).balanceOf(address(this)); // support FoT tokens
         ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
 
-        IExchange(exchange).swap(srcAmountIn, o.dstExpectedOutNext() + dstFee, o.bid.data);
+        IExchange(exchange).swap(o.ask.srcToken, o.ask.dstToken, srcAmountIn, minOut + dstFee, o.bid.data);
         dstAmountOut = ERC20(o.ask.dstToken).balanceOf(address(this)); // support FoT tokens
         dstAmountOut -= dstFee;
-        require(dstAmountOut >= o.dstExpectedOutNext(), "min out");
+        require(dstAmountOut >= minOut, "min out");
 
         ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, dstFee);
         ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);

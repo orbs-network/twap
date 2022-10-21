@@ -1,6 +1,16 @@
-import { block, web3, zeroAddress } from "@defi.org/web3-candies";
+import { block, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { dstToken, exchange, srcDstPath, srcToken, taker, twap, user, userSrcTokenStartBalance } from "./fixture";
+import {
+  dstToken,
+  encodedSwapPath,
+  exchange,
+  univ2SrcDstPath,
+  srcToken,
+  taker,
+  twap,
+  user,
+  userSrcTokenStartBalance,
+} from "./fixture";
 
 export async function ask(
   srcAmount: number,
@@ -30,9 +40,9 @@ export async function ask(
     .send({ from: _user });
 }
 
-export async function bid(id: number, path: string[] = srcDstPath, fee: number = 0.01) {
+export async function bid(id: number, path: string[] = univ2SrcDstPath, fee: number = 0.01) {
   return twap.methods
-    .bid(id, exchange.options.address, await dstToken.amount(fee), 0, encodedPath(path))
+    .bid(id, exchange.options.address, await dstToken.amount(fee), 0, encodedSwapPath(path))
     .send({ from: taker });
 }
 
@@ -62,8 +72,4 @@ export async function time() {
 
 export function endTime() {
   return 2 ** 32 - 2;
-}
-
-export function encodedPath(path = srcDstPath) {
-  return web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }

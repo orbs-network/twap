@@ -2,6 +2,7 @@ import { account, erc20, maxUint256, parseEvents, web3, zeroAddress } from "@def
 import {
   deployer,
   dstToken,
+  encodedSwapPath,
   exchange,
   initFixture,
   nativeToken,
@@ -11,15 +12,17 @@ import {
   twap,
   user,
   withMockExchange,
+  withUniswapV2Exchange,
 } from "./fixture";
 import { deployArtifact, mineBlock, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, expectFilled, fill, order, encodedPath, time } from "./twap-utils";
+import { ask, bid, expectFilled, fill, order, time } from "./twap-utils";
 import { MockDeflationaryToken } from "../typechain-hardhat/contracts/test";
 import { addLiquidityETH } from "./exchange.test";
 
 describe("TWAP", async () => {
   beforeEach(initFixture);
+  beforeEach(withUniswapV2Exchange);
 
   it("single chunk", async () => {
     await ask(2000, 2000, 1);
@@ -88,7 +91,7 @@ describe("TWAP", async () => {
     await mineBlock(1);
 
     await twap.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, encodedPath())
+      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, encodedSwapPath())
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));

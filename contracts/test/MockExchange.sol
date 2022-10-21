@@ -15,7 +15,12 @@ contract MockExchange is IExchange {
         amounts = _amounts;
     }
 
-    function getAmountOut(uint256, bytes calldata) public view returns (uint256) {
+    function getAmountOut(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) public view returns (uint256) {
         return amounts[amounts.length - 1];
     }
 
@@ -23,13 +28,14 @@ contract MockExchange is IExchange {
      * assumes holds balance of dstToken
      */
     function swap(
+        address _srcToken,
+        address _dstToken,
         uint256 amountIn,
         uint256,
-        bytes calldata data
+        bytes calldata
     ) public {
-        (, address[] memory path) = abi.decode(data, (bool, address[]));
-        ERC20 srcToken = ERC20(path[0]);
-        ERC20 dstToken = ERC20(path[path.length - 1]);
+        ERC20 srcToken = ERC20(_srcToken);
+        ERC20 dstToken = ERC20(_dstToken);
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
 
         uint256 amountOut = amounts[amounts.length - 1];

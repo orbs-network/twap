@@ -15,11 +15,12 @@
     "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
     "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
-    "build": "hardhat compile && solhint 'contracts/**/*.sol'",
-    "test": "npm run test:eth && npm run test:poly && npm run test:ftm",
-    "test:eth": "BLOCK=14908980 DEBUG=web3-candies hardhat test --logs",
-    "test:poly": "NETWORK=POLY BLOCK=29194866 DEBUG=web3-candies hardhat test --logs",
-    "test:ftm": "NETWORK=FTM BLOCK=39838819 DEBUG=web3-candies hardhat test --logs"
+    "build": "hardhat compile && solhint 'contracts/**/*.sol' && tsc",
+    "test:logs": "for t in eth ftm poly; do DEBUG=web3-candies npm run test:$t -- --logs; done",
+    "test": "for t in eth ftm poly; do npm run test:$t; done",
+    "test:eth": "NETWORK=ETH BLOCK=14908980 hardhat test",
+    "test:ftm": "NETWORK=FTM BLOCK=39838819 hardhat test",
+    "test:poly": "NETWORK=POLY BLOCK=29194866 hardhat test"
   },
   "prettier": {
     "printWidth": 120
