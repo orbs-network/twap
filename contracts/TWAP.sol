@@ -47,7 +47,7 @@ contract TWAP is ReentrancyGuard {
         uint64 indexed id,
         address indexed maker,
         address indexed exchange,
-        uint32 bufferPercent,
+        uint32 slippagePercent,
         OrderLib.Bid bid
     );
     event OrderFilled(
@@ -156,7 +156,7 @@ contract TWAP is ReentrancyGuard {
      * id: order id
      * exchange: bid to swap on exchange
      * dstFee: fee to traker in dstToken, taken from the swapped amount
-     * bufferPercent: price output difference tolerance percent / 100,000. 0 means no buffer
+     * slippagePercent: price output difference tolerance percent / 100,000. 0 means no slippage
      * data: swap data to pass to the exchange, for example the route path
      * emits OrderBid event
      */
@@ -164,15 +164,15 @@ contract TWAP is ReentrancyGuard {
         uint64 id,
         address exchange,
         uint256 dstFee,
-        uint32 bufferPercent,
+        uint32 slippagePercent,
         bytes calldata data
     ) external nonReentrant {
-        require(exchange != address(0) && bufferPercent < PERCENT_BASE, "params");
+        require(exchange != address(0) && slippagePercent < PERCENT_BASE, "params");
         OrderLib.Order memory o = order(id);
-        uint256 dstAmountOut = verifyBid(o, exchange, dstFee, bufferPercent, data);
+        uint256 dstAmountOut = verifyBid(o, exchange, dstFee, slippagePercent, data);
         o.newBid(exchange, dstAmountOut, dstFee, data);
         book[id] = o;
-        emit OrderBid(o.id, o.ask.maker, exchange, bufferPercent, o.bid);
+        emit OrderBid(o.id, o.ask.maker, exchange, slippagePercent, o.bid);
     }
 
     /**
@@ -243,7 +243,7 @@ contract TWAP is ReentrancyGuard {
         OrderLib.Order memory o,
         address exchange,
         uint256 dstFee,
-        uint32 bufferPercent,
+        uint32 slippagePercent,
         bytes calldata data
     ) private view returns (uint256 dstAmountOut) {
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
@@ -251,12 +251,14 @@ contract TWAP is ReentrancyGuard {
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcToken, o.ask.dstToken, o.srcBidAmountNext(), data);
-        dstAmountOut = (dstAmountOut * (PERCENT_BASE - bufferPercent)) / PERCENT_BASE;
+        dstAmountOut -= (dstAmountOut * slippagePercent) / PERCENT_BASE;
         dstAmountOut -= dstFee;
 
-        bool staleBid = block.timestamp > o.bid.time + MAX_BID_WINDOW_SECONDS;
-        uint256 neededToOutbid = (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE;
-        require(staleBid || dstAmountOut > neededToOutbid, "low bid");
+        require(
+            block.timestamp > o.bid.time + MAX_BID_WINDOW_SECONDS || // stale bid
+                dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE, // or outbid by more than MIN_OUTBID_PERCENT
+            "low bid"
+        );
         require(dstAmountOut >= o.dstMinAmountNext(), "min out");
         verifyMakerBalance(o);
     }

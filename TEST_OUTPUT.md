@@ -14,114 +14,119 @@
 
 
   Errors
-    ✓ cancel only from maker (439ms)
-    ✓ prune only invalid orders (3626ms)
-    ✓ bid params (11ms)
+    ✓ cancel only from maker (476ms)
+    ✓ prune only invalid orders (4227ms)
+    ✓ bid params (12ms)
     order
       ✓ invalid id (7ms)
-      ✓ invalid params (27ms)
-      ✓ insufficient maker allowance (18ms)
-      ✓ insufficient maker balance (382ms)
+      ✓ invalid params (28ms)
+      ✓ insufficient maker allowance (17ms)
+      ✓ insufficient maker balance (420ms)
     verify bid
       ✓ expired (66ms)
-      ✓ invalid exchange (978ms)
-      ✓ low bid (89ms)
-      ✓ recently filled (113ms)
-      ✓ recently filled custom delay (116ms)
-      ✓ insufficient amount out (34ms)
+      ✓ invalid exchange (1282ms)
+      ✓ low bid (83ms)
+      ✓ recently filled (109ms)
+      ✓ recently filled custom delay (112ms)
+      ✓ insufficient amount out (32ms)
       ✓ insufficient amount out with excess fee (32ms)
-      ✓ fee underflow protection (32ms)
-      ✓ insufficient amount out when last partial fill (110ms)
-      ✓ insufficient user allowance (40ms)
-      ✓ insufficient user balance (42ms)
+      ✓ fee underflow protection (31ms)
+      ✓ insufficient amount out when last partial fill (107ms)
+      ✓ insufficient user allowance (39ms)
+      ✓ insufficient user balance (41ms)
     perform fill
-      ✓ expired (47ms)
-      ✓ invalid taker when no existing bid (30ms)
-      ✓ invalid taker when not the winning taker (47ms)
+      ✓ expired (44ms)
+      ✓ invalid taker when no existing bid (25ms)
+      ✓ invalid taker when not the winning taker (48ms)
       ✓ pending bid when still in bidding window (46ms)
-      ✓ insufficient out (632ms)
-      ✓ insufficient out with excess fee (85ms)
-      ✓ fee subtracted from dstAmountOut underflow protection (85ms)
+      ✓ insufficient out (725ms)
+      ✓ insufficient out with excess fee (76ms)
+      ✓ fee subtracted from dstAmountOut underflow protection (81ms)
 
   IExchange implementations
     UniswapV2Exchange
-      ✓ swap (232ms)
+      ✓ swap (244ms)
     ParaswapExchange
-      ✓ getAmountOut using pure encoded data from offchain (8ms)
-      ✓ swap with data from paraswap (7734ms)
+      ✓ getAmountOut using pure encoded data from offchain (4ms)
+      ✓ swap with data from paraswap (7292ms)
 
   FeeOnTransfer tokens
-    ✓ TWAP supports FOT tokens (81ms)
+    ✓ TWAP supports FOT tokens (100ms)
     UniswapV2Exchange supports FOT tokens
-      ✓ throws on normal swap (28ms)
-      ✓ sell tokens with FOT (37ms)
+      ✓ throws on normal swap (27ms)
+      ✓ sell tokens with FOT (39ms)
 
   Sanity
-    ✓ maker creates ask order, emits event (30ms)
-    ✓ bid sets Bid fields, emits event (41ms)
-    ✓ fill sets Fill fields and clears the Bid, emits event (89ms)
-    ✓ cancel order, emits event (38ms)
-    ✓ order fully filled, emits event (158ms)
+    ✓ maker creates ask order, emits event (26ms)
+    ✓ bid sets Bid fields, emits event (40ms)
+    ✓ fill sets Fill fields and clears the Bid, emits event (84ms)
+    ✓ cancel order, emits event (36ms)
+    ✓ order fully filled, emits event (147ms)
     History
-      ✓ find orders for maker (217ms)
+      ✓ find orders for maker (229ms)
 
   TWAP
-    ✓ single chunk (89ms)
-    ✓ mutiple chunks (289ms)
-    ✓ last chunk may be partial amount (213ms)
-    ✓ outbid current bid within pending period (113ms)
-    ✓ outbid current bid within pending period same path and amount but lower fee (73ms)
-    ✓ enforce bids 1% better than previous (83ms)
-    ✓ clears stale unfilled bid after max bidding window (85ms)
-    ✓ supports market orders, english auction incentivizes best competitive price (139ms)
-    ✓ prevent winning the bid by manipulating exchange price (86ms)
+    ✓ single chunk (80ms)
+    ✓ mutiple chunks (273ms)
+    ✓ last chunk may be partial amount (195ms)
+    ✓ outbid current bid within pending period (126ms)
+    ✓ outbid current bid within pending period same path and amount but lower fee (62ms)
+    ✓ enforce bids 1% better than previous (78ms)
+    ✓ clears stale unfilled bid after max bidding window (78ms)
+    ✓ supports market orders, english auction incentivizes best competitive price (130ms)
+    ✓ prevent winning the bid by manipulating exchange price (78ms)
+    ✓ slippage percent allows price slippage (129ms)
+    ✓ slippage percent at bid time is part of the bidding war (101ms)
     prune stale invalid order
-      ✓ when no approval (42ms)
-      ✓ when no balance (417ms)
+      ✓ when no approval (35ms)
+      ✓ when no balance (469ms)
+
+  TWAP with paraswap
+    ✓ Spiritswap E2E (8313ms)
 
 ·--------------------------------------------|---------------------------|-------------|-----------------------------·
 |            Solc version: 0.8.16            ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 15000000 gas  │
 ·············································|···························|·············|······························
-|  Methods                                   ·               25 gwei/gas               ·       1300.75 usd/eth       │
+|  Methods                                   ·               14 gwei/gas               ·       1313.22 usd/eth       │
 ··························|··················|·············|·············|·············|···············|··············
 |  Contract               ·  Method          ·  Min        ·  Max        ·  Avg        ·  # calls      ·  usd (avg)  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ERC20                  ·  approve         ·      38027  ·      60311  ·      57522  ·           48  ·       1.87  │
+|  ERC20                  ·  approve         ·      38027  ·      60311  ·      57666  ·           51  ·       1.06  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ERC20                  ·  transfer        ·      51618  ·      65625  ·      63322  ·           61  ·       2.06  │
+|  ERC20                  ·  transfer        ·      51618  ·      65625  ·      63072  ·           66  ·       1.16  │
 ··························|··················|·············|·············|·············|···············|··············
-|  MockDeflationaryToken  ·  approve         ·      46260  ·      46572  ·      46370  ·            6  ·       1.51  │
+|  MockDeflationaryToken  ·  approve         ·      46260  ·      46572  ·      46370  ·            6  ·       0.85  │
 ··························|··················|·············|·············|·············|···············|··············
-|  MockExchange           ·  setMockAmounts  ·      32144  ·      69156  ·      52960  ·           16  ·       1.72  │
+|  MockExchange           ·  setMockAmounts  ·      32144  ·      69156  ·      51531  ·           21  ·       0.95  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ParaswapExchange       ·  swap            ·          -  ·          -  ·     292675  ·            1  ·       9.52  │
+|  ParaswapExchange       ·  swap            ·          -  ·          -  ·     269819  ·            1  ·       4.96  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  ask             ·     236904  ·     308314  ·     282487  ·           43  ·       9.19  │
+|  TWAP                   ·  ask             ·     236904  ·     308314  ·     282856  ·           46  ·       5.20  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  bid             ·     115820  ·     297868  ·     265983  ·           41  ·       8.65  │
+|  TWAP                   ·  bid             ·     115583  ·     937554  ·     271585  ·           47  ·       4.99  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  cancel          ·      73539  ·      73601  ·      73560  ·            3  ·       2.39  │
+|  TWAP                   ·  cancel          ·      73539  ·      73601  ·      73560  ·            3  ·       1.35  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  fill            ·     274797  ·     354886  ·     330133  ·           18  ·      10.74  │
+|  TWAP                   ·  fill            ·     274789  ·     573865  ·     339553  ·           20  ·       6.24  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  prune           ·      86772  ·      90731  ·      88752  ·            2  ·       2.89  │
+|  TWAP                   ·  prune           ·      86772  ·      90731  ·      88752  ·            2  ·       1.63  │
 ··························|··················|·············|·············|·············|···············|··············
-|  UniswapV2Exchange      ·  swap            ·     166014  ·     186348  ·     176181  ·            2  ·       5.73  │
+|  UniswapV2Exchange      ·  swap            ·     166014  ·     186348  ·     176181  ·            2  ·       3.24  │
 ··························|··················|·············|·············|·············|···············|··············
 |  Deployments                               ·                                         ·  % of limit   ·             │
 ·············································|·············|·············|·············|···············|··············
-|  MockDeflationaryToken                     ·          -  ·          -  ·     733793  ·        4.9 %  ·      23.86  │
+|  MockDeflationaryToken                     ·          -  ·          -  ·     733793  ·        4.9 %  ·      13.49  │
 ·············································|·············|·············|·············|···············|··············
-|  MockExchange                              ·          -  ·          -  ·     503943  ·        3.4 %  ·      16.39  │
+|  MockExchange                              ·          -  ·          -  ·     503943  ·        3.4 %  ·       9.27  │
 ·············································|·············|·············|·············|···············|··············
-|  ParaswapExchange                          ·          -  ·          -  ·     621334  ·        4.1 %  ·      20.21  │
+|  ParaswapExchange                          ·          -  ·          -  ·     621334  ·        4.1 %  ·      11.42  │
 ·············································|·············|·············|·············|···············|··············
-|  TWAP                                      ·          -  ·          -  ·    2660714  ·       17.7 %  ·      86.52  │
+|  TWAP                                      ·          -  ·          -  ·    2649090  ·       17.7 %  ·      48.70  │
 ·············································|·············|·············|·············|···············|··············
-|  UniswapV2Exchange                         ·          -  ·          -  ·     717701  ·        4.8 %  ·      23.34  │
+|  UniswapV2Exchange                         ·          -  ·          -  ·     717701  ·        4.8 %  ·      13.19  │
 ·--------------------------------------------|-------------|-------------|-------------|---------------|-------------·
 
-  48 passing (1m)
+  51 passing (2m)
 
 
 > @orbs-network/twap@1.0.0 test:ftm
@@ -133,95 +138,100 @@
 
 
   Errors
-    ✓ cancel only from maker (213ms)
-    ✓ prune only invalid orders (5089ms)
-    ✓ bid params (15ms)
+    ✓ cancel only from maker (260ms)
+    ✓ prune only invalid orders (5394ms)
+    ✓ bid params (14ms)
     order
-      ✓ invalid id (8ms)
-      ✓ invalid params (28ms)
-      ✓ insufficient maker allowance (16ms)
-      ✓ insufficient maker balance (165ms)
+      ✓ invalid id (6ms)
+      ✓ invalid params (27ms)
+      ✓ insufficient maker allowance (25ms)
+      ✓ insufficient maker balance (171ms)
     verify bid
-      ✓ expired (68ms)
-      ✓ invalid exchange (843ms)
-      ✓ low bid (92ms)
-      ✓ recently filled (126ms)
-      ✓ recently filled custom delay (134ms)
+      ✓ expired (65ms)
+      ✓ invalid exchange (989ms)
+      ✓ low bid (86ms)
+      ✓ recently filled (119ms)
+      ✓ recently filled custom delay (136ms)
       ✓ insufficient amount out (35ms)
-      ✓ insufficient amount out with excess fee (36ms)
-      ✓ fee underflow protection (34ms)
+      ✓ insufficient amount out with excess fee (38ms)
+      ✓ fee underflow protection (37ms)
       ✓ insufficient amount out when last partial fill (119ms)
-      ✓ insufficient user allowance (44ms)
+      ✓ insufficient user allowance (42ms)
       ✓ insufficient user balance (42ms)
     perform fill
-      ✓ expired (47ms)
-      ✓ invalid taker when no existing bid (26ms)
+      ✓ expired (54ms)
+      ✓ invalid taker when no existing bid (29ms)
       ✓ invalid taker when not the winning taker (46ms)
-      ✓ pending bid when still in bidding window (46ms)
-      ✓ insufficient out (371ms)
-      ✓ insufficient out with excess fee (81ms)
-      ✓ fee subtracted from dstAmountOut underflow protection (77ms)
+      ✓ pending bid when still in bidding window (44ms)
+      ✓ insufficient out (399ms)
+      ✓ insufficient out with excess fee (72ms)
+      ✓ fee subtracted from dstAmountOut underflow protection (74ms)
 
   IExchange implementations
     UniswapV2Exchange
-      ✓ swap (204ms)
+      ✓ swap (231ms)
     ParaswapExchange
-      ✓ getAmountOut using pure encoded data from offchain (6ms)
-      ✓ swap with data from paraswap (11683ms)
+      ✓ getAmountOut using pure encoded data from offchain (9ms)
+      ✓ swap with data from paraswap (11846ms)
 
   FeeOnTransfer tokens
-    ✓ TWAP supports FOT tokens (536ms)
+    ✓ TWAP supports FOT tokens (538ms)
     UniswapV2Exchange supports FOT tokens
-      ✓ throws on normal swap (31ms)
-      ✓ sell tokens with FOT (38ms)
+      ✓ throws on normal swap (28ms)
+      ✓ sell tokens with FOT (36ms)
 
   Sanity
-    ✓ maker creates ask order, emits event (30ms)
-    ✓ bid sets Bid fields, emits event (43ms)
-    ✓ fill sets Fill fields and clears the Bid, emits event (91ms)
-    ✓ cancel order, emits event (37ms)
-    ✓ order fully filled, emits event (165ms)
+    ✓ maker creates ask order, emits event (27ms)
+    ✓ bid sets Bid fields, emits event (41ms)
+    ✓ fill sets Fill fields and clears the Bid, emits event (90ms)
+    ✓ cancel order, emits event (34ms)
+    ✓ order fully filled, emits event (161ms)
     History
-      ✓ find orders for maker (154ms)
+      ✓ find orders for maker (163ms)
 
   TWAP
-    ✓ single chunk (94ms)
-    ✓ mutiple chunks (311ms)
-    ✓ last chunk may be partial amount (230ms)
-    ✓ outbid current bid within pending period (100ms)
-    ✓ outbid current bid within pending period same path and amount but lower fee (68ms)
-    ✓ enforce bids 1% better than previous (88ms)
-    ✓ clears stale unfilled bid after max bidding window (84ms)
-    ✓ supports market orders, english auction incentivizes best competitive price (152ms)
-    ✓ prevent winning the bid by manipulating exchange price (79ms)
+    ✓ single chunk (93ms)
+    ✓ mutiple chunks (300ms)
+    ✓ last chunk may be partial amount (241ms)
+    ✓ outbid current bid within pending period (119ms)
+    ✓ outbid current bid within pending period same path and amount but lower fee (67ms)
+    ✓ enforce bids 1% better than previous (73ms)
+    ✓ clears stale unfilled bid after max bidding window (75ms)
+    ✓ supports market orders, english auction incentivizes best competitive price (137ms)
+    ✓ prevent winning the bid by manipulating exchange price (74ms)
+    ✓ slippage percent allows price slippage (125ms)
+    ✓ slippage percent at bid time is part of the bidding war (97ms)
     prune stale invalid order
       ✓ when no approval (34ms)
-      ✓ when no balance (181ms)
+      ✓ when no balance (203ms)
+
+  TWAP with paraswap
+    ✓ Spiritswap E2E (15435ms)
 
 ·--------------------------------------------|---------------------------|-------------|-----------------------------·
 |            Solc version: 0.8.16            ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 15000000 gas  │
 ·············································|···························|·············|······························
-|  Methods                                   ·               2 gwei/gas                ·        0.20 usd/ftm         │
+|  Methods                                   ·               1 gwei/gas                ·        0.20 usd/ftm         │
 ··························|··················|·············|·············|·············|···············|··············
 |  Contract               ·  Method          ·  Min        ·  Max        ·  Avg        ·  # calls      ·  usd (avg)  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ERC20                  ·  approve         ·      24299  ·      46583  ·      43794  ·           48  ·       0.00  │
+|  ERC20                  ·  approve         ·      24299  ·      46583  ·      43938  ·           51  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ERC20                  ·  transfer        ·      46731  ·      52345  ·      51415  ·           61  ·       0.00  │
+|  ERC20                  ·  transfer        ·      46731  ·      52345  ·      51448  ·           66  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
 |  MockDeflationaryToken  ·  approve         ·      46260  ·      46572  ·      46370  ·            6  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  MockExchange           ·  setMockAmounts  ·      32144  ·      69156  ·      52960  ·           16  ·       0.00  │
+|  MockExchange           ·  setMockAmounts  ·      32144  ·      69156  ·      51531  ·           21  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ParaswapExchange       ·  swap            ·          -  ·          -  ·     367858  ·            1  ·       0.00  │
+|  ParaswapExchange       ·  swap            ·          -  ·          -  ·     372386  ·            1  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  ask             ·     229096  ·     300506  ·     274861  ·           43  ·       0.00  │
+|  TWAP                   ·  ask             ·     229096  ·     300506  ·     275217  ·           46  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  bid             ·     111054  ·     322473  ·     284532  ·           41  ·       0.00  │
+|  TWAP                   ·  bid             ·     110817  ·    1963328  ·     309928  ·           47  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
 |  TWAP                   ·  cancel          ·      73539  ·      73601  ·      73560  ·            3  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  fill            ·     267388  ·     396959  ·     367499  ·           18  ·       0.00  │
+|  TWAP                   ·  fill            ·     267380  ·    1155395  ·     401888  ·           20  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
 |  TWAP                   ·  prune           ·      79682  ·      82923  ·      81303  ·            2  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
@@ -235,12 +245,12 @@
 ·············································|·············|·············|·············|···············|··············
 |  ParaswapExchange                          ·          -  ·          -  ·     621334  ·        4.1 %  ·       0.00  │
 ·············································|·············|·············|·············|···············|··············
-|  TWAP                                      ·          -  ·          -  ·    2660714  ·       17.7 %  ·       0.00  │
+|  TWAP                                      ·          -  ·          -  ·    2649090  ·       17.7 %  ·       0.00  │
 ·············································|·············|·············|·············|···············|··············
 |  UniswapV2Exchange                         ·          -  ·          -  ·     717701  ·        4.8 %  ·       0.00  │
 ·--------------------------------------------|-------------|-------------|-------------|---------------|-------------·
 
-  48 passing (1m)
+  51 passing (2m)
 
 
 > @orbs-network/twap@1.0.0 test:poly
@@ -252,95 +262,100 @@
 
 
   Errors
-    ✓ cancel only from maker (457ms)
-    ✓ prune only invalid orders (3968ms)
-    ✓ bid params (14ms)
+    ✓ cancel only from maker (485ms)
+    ✓ prune only invalid orders (4078ms)
+    ✓ bid params (13ms)
     order
-      ✓ invalid id (9ms)
-      ✓ invalid params (31ms)
-      ✓ insufficient maker allowance (18ms)
-      ✓ insufficient maker balance (412ms)
+      ✓ invalid id (8ms)
+      ✓ invalid params (27ms)
+      ✓ insufficient maker allowance (17ms)
+      ✓ insufficient maker balance (451ms)
     verify bid
-      ✓ expired (70ms)
-      ✓ invalid exchange (1023ms)
+      ✓ expired (65ms)
+      ✓ invalid exchange (1259ms)
       ✓ low bid (83ms)
-      ✓ recently filled (120ms)
-      ✓ recently filled custom delay (118ms)
-      ✓ insufficient amount out (37ms)
-      ✓ insufficient amount out with excess fee (37ms)
-      ✓ fee underflow protection (36ms)
-      ✓ insufficient amount out when last partial fill (122ms)
-      ✓ insufficient user allowance (43ms)
-      ✓ insufficient user balance (45ms)
+      ✓ recently filled (137ms)
+      ✓ recently filled custom delay (111ms)
+      ✓ insufficient amount out (30ms)
+      ✓ insufficient amount out with excess fee (55ms)
+      ✓ fee underflow protection (34ms)
+      ✓ insufficient amount out when last partial fill (110ms)
+      ✓ insufficient user allowance (39ms)
+      ✓ insufficient user balance (42ms)
     perform fill
-      ✓ expired (48ms)
-      ✓ invalid taker when no existing bid (27ms)
-      ✓ invalid taker when not the winning taker (47ms)
-      ✓ pending bid when still in bidding window (43ms)
-      ✓ insufficient out (649ms)
-      ✓ insufficient out with excess fee (78ms)
-      ✓ fee subtracted from dstAmountOut underflow protection (78ms)
+      ✓ expired (43ms)
+      ✓ invalid taker when no existing bid (25ms)
+      ✓ invalid taker when not the winning taker (41ms)
+      ✓ pending bid when still in bidding window (41ms)
+      ✓ insufficient out (782ms)
+      ✓ insufficient out with excess fee (73ms)
+      ✓ fee subtracted from dstAmountOut underflow protection (73ms)
 
   IExchange implementations
     UniswapV2Exchange
-      ✓ swap (256ms)
+      ✓ swap (284ms)
     ParaswapExchange
-      ✓ getAmountOut using pure encoded data from offchain (6ms)
-      ✓ swap with data from paraswap (26404ms)
+      ✓ getAmountOut using pure encoded data from offchain (7ms)
+      ✓ swap with data from paraswap (109988ms)
 
   FeeOnTransfer tokens
-    ✓ TWAP supports FOT tokens (667ms)
+    ✓ TWAP supports FOT tokens (659ms)
     UniswapV2Exchange supports FOT tokens
-      ✓ throws on normal swap (28ms)
-      ✓ sell tokens with FOT (37ms)
+      ✓ throws on normal swap (27ms)
+      ✓ sell tokens with FOT (38ms)
 
   Sanity
-    ✓ maker creates ask order, emits event (28ms)
+    ✓ maker creates ask order, emits event (27ms)
     ✓ bid sets Bid fields, emits event (40ms)
-    ✓ fill sets Fill fields and clears the Bid, emits event (88ms)
+    ✓ fill sets Fill fields and clears the Bid, emits event (83ms)
     ✓ cancel order, emits event (36ms)
-    ✓ order fully filled, emits event (157ms)
+    ✓ order fully filled, emits event (149ms)
     History
-      ✓ find orders for maker (230ms)
+      ✓ find orders for maker (279ms)
 
   TWAP
-    ✓ single chunk (91ms)
-    ✓ mutiple chunks (291ms)
+    ✓ single chunk (97ms)
+    ✓ mutiple chunks (303ms)
     ✓ last chunk may be partial amount (213ms)
-    ✓ outbid current bid within pending period (108ms)
-    ✓ outbid current bid within pending period same path and amount but lower fee (70ms)
-    ✓ enforce bids 1% better than previous (83ms)
-    ✓ clears stale unfilled bid after max bidding window (85ms)
-    ✓ supports market orders, english auction incentivizes best competitive price (136ms)
-    ✓ prevent winning the bid by manipulating exchange price (84ms)
+    ✓ outbid current bid within pending period (98ms)
+    ✓ outbid current bid within pending period same path and amount but lower fee (65ms)
+    ✓ enforce bids 1% better than previous (77ms)
+    ✓ clears stale unfilled bid after max bidding window (79ms)
+    ✓ supports market orders, english auction incentivizes best competitive price (131ms)
+    ✓ prevent winning the bid by manipulating exchange price (93ms)
+    ✓ slippage percent allows price slippage (172ms)
+    ✓ slippage percent at bid time is part of the bidding war (137ms)
     prune stale invalid order
-      ✓ when no approval (38ms)
-      ✓ when no balance (430ms)
+      ✓ when no approval (36ms)
+      ✓ when no balance (469ms)
+
+  TWAP with paraswap
+    ✓ Spiritswap E2E (53225ms)
 
 ·--------------------------------------------|---------------------------|-------------|-----------------------------·
 |            Solc version: 0.8.16            ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 15000000 gas  │
 ·············································|···························|·············|······························
-|  Methods                                   ·               61 gwei/gas               ·       0.82 usd/matic        │
+|  Methods                                   ·               62 gwei/gas               ·       0.83 usd/matic        │
 ··························|··················|·············|·············|·············|···············|··············
 |  Contract               ·  Method          ·  Min        ·  Max        ·  Avg        ·  # calls      ·  usd (avg)  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ERC20                  ·  approve         ·      36162  ·      58446  ·      55657  ·           48  ·       0.00  │
+|  ERC20                  ·  approve         ·      36162  ·      58446  ·      55801  ·           51  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ERC20                  ·  transfer        ·      51994  ·      63552  ·      61611  ·           61  ·       0.00  │
+|  ERC20                  ·  transfer        ·      51994  ·      63552  ·      61407  ·           66  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
 |  MockDeflationaryToken  ·  approve         ·      46260  ·      46572  ·      46370  ·            6  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  MockExchange           ·  setMockAmounts  ·      32144  ·      69156  ·      52960  ·           16  ·       0.00  │
+|  MockExchange           ·  setMockAmounts  ·      32144  ·      69156  ·      51531  ·           21  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  ParaswapExchange       ·  swap            ·          -  ·          -  ·     867376  ·            1  ·       0.04  │
+|  ParaswapExchange       ·  swap            ·          -  ·          -  ·    3058095  ·            1  ·       0.16  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  ask             ·     234673  ·     306083  ·     280308  ·           43  ·       0.01  │
+|  TWAP                   ·  ask             ·     234673  ·     306083  ·     280673  ·           46  ·       0.01  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  bid             ·     113589  ·     295637  ·     263807  ·           41  ·       0.01  │
+|  TWAP                   ·  bid             ·     113352  ·    4566852  ·     346669  ·           47  ·       0.02  │
 ··························|··················|·············|·············|·············|···············|··············
 |  TWAP                   ·  cancel          ·      73539  ·      73601  ·      73560  ·            3  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
-|  TWAP                   ·  fill            ·     276989  ·     358440  ·     333426  ·           18  ·       0.02  │
+|  TWAP                   ·  fill            ·     276981  ·    2260911  ·     426978  ·           20  ·       0.02  │
 ··························|··················|·············|·············|·············|···············|··············
 |  TWAP                   ·  prune           ·      84634  ·      88500  ·      86567  ·            2  ·       0.00  │
 ··························|··················|·············|·············|·············|···············|··············
@@ -354,11 +369,11 @@
 ·············································|·············|·············|·············|···············|··············
 |  ParaswapExchange                          ·          -  ·          -  ·     621334  ·        4.1 %  ·       0.03  │
 ·············································|·············|·············|·············|···············|··············
-|  TWAP                                      ·          -  ·          -  ·    2660714  ·       17.7 %  ·       0.13  │
+|  TWAP                                      ·          -  ·          -  ·    2649090  ·       17.7 %  ·       0.14  │
 ·············································|·············|·············|·············|···············|··············
 |  UniswapV2Exchange                         ·          -  ·          -  ·     717701  ·        4.8 %  ·       0.04  │
 ·--------------------------------------------|-------------|-------------|-------------|---------------|-------------·
 
-  48 passing (1m)
+  51 passing (4m)
 
 ```

@@ -42,7 +42,7 @@ export namespace Paraswap {
     return response.data.priceRoute;
   }
 
-  export async function buildSwapData(paraswapRoute: ParaswapRoute, dstMinOut: BigNumber, exchangeAdapter: string) {
+  export async function buildSwapData(dstMinOut: BigNumber, paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
     const response = await axios.post(`${URL}/transactions/${paraswapRoute.network}?ignoreChecks=true`, {
       priceRoute: paraswapRoute,
       srcToken: paraswapRoute.srcToken,
@@ -54,6 +54,6 @@ export namespace Paraswap {
       userAddress: exchangeAdapter,
     });
     expect(response.status).gte(200).lt(400);
-    return web3().eth.abi.encodeParameters(["uint256", "bytes"], [dstMinOut, response.data.data]);
+    return web3().eth.abi.encodeParameters(["uint256", "bytes"], [paraswapRoute.destAmount, response.data.data]);
   }
 }

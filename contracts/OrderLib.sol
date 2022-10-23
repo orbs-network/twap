@@ -30,7 +30,7 @@ library OrderLib {
         uint32 time; // bid creation timestamp
         address taker; // bidder
         address exchange; // execute bid on this exchange, never zero
-        uint256 dstAmount; // dstToken actual output amount for this bid after exchange fees, taker fee and buffer tolerance
+        uint256 dstAmount; // dstToken actual output amount for this bid after exchange fees, taker fee and slippage
         uint256 dstFee; // dstToken requested by taker for performing the bid and fill
         bytes data; // swap data to pass to exchange, out dstToken==dstAmount+dstFee
     }

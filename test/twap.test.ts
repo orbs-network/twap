@@ -7,14 +7,18 @@ import {
   setMockExchangeAmountOut,
   srcToken,
   swapDataForUniV2,
+  taker,
   twap,
   user,
   withMockExchange,
+  withParaswapExchange,
   withUniswapV2Exchange,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, expectFilled, fill, order } from "./twap-utils";
+import { Paraswap } from "./paraswap";
+import BigNumber from "bignumber.js";
 
 describe("TWAP", async () => {
   beforeEach(initFixture);
@@ -99,7 +103,7 @@ describe("TWAP", async () => {
     await withMockExchange(100);
     await bid(0);
 
-    await setMockExchangeAmountOut(100.001);
+    await setMockExchangeAmountOut(100.999);
     await expectRevert(() => bid(0), "low bid");
 
     await setMockExchangeAmountOut(101);
@@ -144,6 +148,34 @@ describe("TWAP", async () => {
     await expectRevert(() => fill(0), "min out"); // enforces won bid price
   });
 
+  it("slippage percent allows price slippage", async () => {
+    await ask(10_000, 2000, 0);
+    await withMockExchange(1000);
+    await bid(0, 1.234, 10); // %10 slippage
+    await mineBlock(10);
+
+    await setMockExchangeAmountOut(850);
+    await expectRevert(() => fill(0), "min out");
+    await setMockExchangeAmountOut(899);
+    await expectRevert(() => fill(0), "min out");
+
+    await setMockExchangeAmountOut(900);
+    await fill(0);
+    await expectFilled(0, 2000, 900 - 1.234);
+    await expect(await dstToken.methods.balanceOf(taker).call()).bignumber.eq(await dstToken.amount(1.234));
+  });
+
+  it("slippage percent at bid time is part of the bidding war", async () => {
+    await ask(10_000, 2000, 0);
+    await withMockExchange(100);
+    await bid(0, 1, 10); // output 89
+    await expectRevert(() => bid(0, 5, 10), "low bid"); // output 85
+    await expectRevert(() => bid(0, 6, 5), "low bid"); // output 89
+    await bid(0, 5, 5); // output 90
+    await bid(0, 5, 1); // output 94
+    await bid(0, 1, 1); // output 98
+  });
+
   describe("prune stale invalid order", async () => {
     it("when no approval", async () => {
       await ask(2000, 1000, 0.5);
@@ -165,5 +197,33 @@ describe("TWAP", async () => {
       await twap.methods.prune(0).send({ from: deployer });
       expect((await order(0)).status).eq(await twap.methods.STATUS_CANCELED().call());
     });
+  });
+});
+
+describe("TWAP with paraswap", async () => {
+  beforeEach("must run on latest block", async () => initFixture(true));
+  beforeEach(withParaswapExchange);
+
+  it("Spiritswap E2E", async () => {
+    const swapSrcAmountIn = await srcToken.amount(2000);
+    const paraswapRoute = await Paraswap.findRoute(srcToken, dstToken, swapSrcAmountIn, Paraswap.OnlyDex.Spiritswap);
+
+    const takerFee = BigNumber(paraswapRoute.destAmount).times(0.001).integerValue(BigNumber.ROUND_FLOOR);
+    const dstMinOut = BigNumber(paraswapRoute.destAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
+    expect(dstMinOut).bignumber.gt(0);
+
+    await ask(10_000, 2000, (await dstToken.mantissa(dstMinOut)).toNumber());
+
+    await bid(
+      0,
+      (await dstToken.mantissa(takerFee)).toNumber(),
+      0.5, // 0.5%, enough for slippage but still higher than user's dstMinOut
+      await Paraswap.buildSwapData(dstMinOut, paraswapRoute, exchange.options.address)
+    );
+
+    await mineBlock(10);
+    await fill(0);
+
+    await expectFilled(0, 2000, (await dstToken.mantissa(dstMinOut)).toNumber());
   });
 });

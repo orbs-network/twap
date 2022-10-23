@@ -30,9 +30,9 @@ export async function ask(
     .send({ from: _user });
 }
 
-export async function bid(id: number, fee: number = 0.01, bufferPercent = 0, swapData: string = swapDataForUniV2) {
+export async function bid(id: number, fee: number = 0.01, slippagePercent = 0, swapData: string = swapDataForUniV2) {
   return twap.methods
-    .bid(id, exchange.options.address, await dstToken.amount(fee), bufferPercent * 1000, swapData)
+    .bid(id, exchange.options.address, await dstToken.amount(fee), slippagePercent * 1000, swapData)
     .send({ from: taker });
 }
 
