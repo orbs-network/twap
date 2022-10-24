@@ -168,6 +168,6 @@ COINMARKETCAP="81***************************36"
 - workflow:
   - `npm install`
   - `npm run build`
-  - `npm run test` (runs tests on all supported chains, currently Ethereum and Polygon)
+  - `npm run test`
 
 [see tests output](./TEST_OUTPUT.md)
