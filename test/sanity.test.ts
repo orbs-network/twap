@@ -172,5 +172,9 @@ describe("Sanity", () => {
       expect((await order(1)).ask.srcAmount).bignumber.eq(await srcToken.amount(4000));
       expect((await order(3)).ask.srcAmount).bignumber.eq(await srcToken.amount(1000));
     });
+
+    it("makerOrders has mapping of order ids by maker address, to avoid relying on events", async () => {
+      expect(await twap.methods.orderIdsByMaker(user).call()).deep.eq(["0", "1", "3"]);
+    });
   });
 });

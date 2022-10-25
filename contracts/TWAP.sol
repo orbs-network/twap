@@ -75,6 +75,7 @@ contract TWAP is ReentrancyGuard {
 
     OrderLib.Order[] public book;
     uint32[] public status; // STATUS or deadline timestamp by order id, used for gas efficient order filtering
+    mapping(address => uint64[]) public makerOrders;
 
     // -------- views --------
 
@@ -91,6 +92,10 @@ contract TWAP is ReentrancyGuard {
      */
     function length() public view returns (uint64) {
         return uint64(book.length);
+    }
+
+    function orderIdsByMaker(address maker) external view returns (uint64[] memory) {
+        return makerOrders[maker];
     }
 
     // -------- actions --------
@@ -146,6 +151,7 @@ contract TWAP is ReentrancyGuard {
 
         book.push(o);
         status.push(deadline);
+        makerOrders[msg.sender].push(o.id);
         emit OrderCreated(o.id, msg.sender, exchange, o.ask);
         return o.id;
     }
