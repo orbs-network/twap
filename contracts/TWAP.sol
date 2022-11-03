@@ -65,9 +65,8 @@ contract TWAP is ReentrancyGuard {
 
     uint32 public constant PERCENT_BASE = 100_000;
     uint32 public constant MIN_OUTBID_PERCENT = 101_000;
-
-    uint32 public constant MIN_BID_WINDOW_SECONDS = 10;
-    uint32 public constant MAX_BID_WINDOW_SECONDS = 60;
+    uint32 public constant STALE_BID_DELAY_MUL = 5; // multiplier on bidDelay before a bid is considered stale
+    uint32 public constant MIN_BID_DELAY_SECONDS = 10;
     uint32 public constant MIN_FILL_DELAY_SECONDS = 60;
 
     uint32 public constant STATUS_CANCELED = 1;
@@ -109,7 +108,8 @@ contract TWAP is ReentrancyGuard {
      * srcBidAmount: chunk size in srcToken
      * dstMinAmount: minimum amount out per chunk in dstToken
      * deadline: order expiration
-     * delay: minimum seconds between chunk fills
+     * bidDelay: minimum seconds before a bid can be filled
+     * fillDelay: minimum seconds between chunk fills
      * returns order id, emits OrderCreated
      */
     function ask(
@@ -120,7 +120,8 @@ contract TWAP is ReentrancyGuard {
         uint256 srcBidAmount,
         uint256 dstMinAmount,
         uint32 deadline,
-        uint32 delay
+        uint32 bidDelay,
+        uint32 fillDelay
     ) external nonReentrant returns (uint64 id) {
         require(
             srcToken != address(0) &&
@@ -131,14 +132,17 @@ contract TWAP is ReentrancyGuard {
                 srcBidAmount <= srcAmount &&
                 dstMinAmount > 0 &&
                 deadline > block.timestamp &&
-                delay >= MIN_FILL_DELAY_SECONDS,
+                bidDelay >= MIN_BID_DELAY_SECONDS &&
+                fillDelay >= MIN_FILL_DELAY_SECONDS &&
+                bidDelay <= fillDelay,
             "params"
         );
 
         OrderLib.Order memory o = OrderLib.newOrder(
             length(),
             deadline,
-            delay,
+            bidDelay,
+            fillDelay,
             exchange,
             srcToken,
             dstToken,
@@ -225,7 +229,7 @@ contract TWAP is ReentrancyGuard {
     function prune(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
         require(block.timestamp < o.status, "status");
-        require(block.timestamp > o.filledTime + o.ask.delay, "delay");
+        require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
         require(
             ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) < o.srcBidAmountNext() ||
                 ERC20(o.ask.srcToken).balanceOf(o.ask.maker) < o.srcBidAmountNext(),
@@ -253,7 +257,7 @@ contract TWAP is ReentrancyGuard {
         bytes calldata data
     ) private view returns (uint256 dstAmountOut) {
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
-        require(block.timestamp > o.filledTime + o.ask.delay, "delay");
+        require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
         dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcToken, o.ask.dstToken, o.srcBidAmountNext(), data);
@@ -261,8 +265,8 @@ contract TWAP is ReentrancyGuard {
         dstAmountOut -= dstFee;
 
         require(
-            block.timestamp > o.bid.time + MAX_BID_WINDOW_SECONDS || // stale bid
-                dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE, // or outbid by more than MIN_OUTBID_PERCENT
+            dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE || // outbid by more than MIN_OUTBID_PERCENT
+                block.timestamp > o.bid.time + (o.ask.bidDelay * STALE_BID_DELAY_MUL), // or stale bid
             "low bid"
         );
         require(dstAmountOut >= o.dstMinAmountNext(), "min out");
@@ -285,7 +289,7 @@ contract TWAP is ReentrancyGuard {
     {
         require(msg.sender == o.bid.taker, "taker");
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
-        require(block.timestamp > o.bid.time + MIN_BID_WINDOW_SECONDS, "pending bid");
+        require(block.timestamp > o.bid.time + o.ask.bidDelay, "bid delay");
 
         exchange = o.bid.exchange;
         dstFee = o.bid.dstFee;

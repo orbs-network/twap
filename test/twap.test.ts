@@ -110,18 +110,22 @@ describe("TWAP", async () => {
     await bid(0);
   });
 
-  it("clears stale unfilled bid after max bidding window", async () => {
-    expect(await twap.methods.MAX_BID_WINDOW_SECONDS().call()).bignumber.eq("60");
-    await ask(2000, 1000, 0.5);
+  it("clears stale unfilled bid after max bidding window = bidDelay * STALE_BID_DELAY_MUL", async () => {
+    expect(await twap.methods.STALE_BID_DELAY_MUL().call()).bignumber.eq(5);
+    const bidDelay = 60;
+    await ask(2000, 1000, 0.5, undefined, undefined, bidDelay);
+
     await withMockExchange(1);
     await bid(0);
     await setMockExchangeAmountOut(0.6);
 
-    await mineBlock(58);
+    const notStaleYet = bidDelay * 5 - 5;
+    expect(notStaleYet).eq(295);
+    await mineBlock(295);
     await expectRevert(() => bid(0), "low bid");
 
-    await mineBlock(1);
-    await bid(0);
+    await mineBlock(5); // stale
+    await bid(0); // lower bid won
   });
 
   it("supports market orders, english auction incentivizes best competitive price", async () => {

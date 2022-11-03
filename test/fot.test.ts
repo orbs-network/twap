@@ -2,7 +2,7 @@ import { exchange, initFixture, nativeToken, taker, twap, user, withUniswapV2Exc
 import { Abi, bn18, contract, erc20, maxUint256, Token, web3, zero, zeroAddress } from "@defi.org/web3-candies";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { endTime, time } from "./twap-utils";
+import { endTime } from "./twap-utils";
 
 describe("FeeOnTransfer tokens", async () => {
   beforeEach(initFixture);
@@ -31,6 +31,7 @@ describe("FeeOnTransfer tokens", async () => {
         await token.amount(10),
         await nativeToken.amount(1),
         endTime(),
+        10,
         60
       )
       .send({ from: user });

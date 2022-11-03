@@ -31,7 +31,7 @@ describe("Sanity", () => {
     expect(events[0].event).eq("OrderCreated");
     expect(events[0].returnValues.id).eq("0");
     expect(events[0].returnValues.maker).eq(user);
-    expect(events[0].returnValues.ask[5]).eq(srcToken.address);
+    expect(events[0].returnValues.ask[6]).eq(srcToken.address);
     expect(await twap.methods.length().call()).bignumber.eq("1");
 
     const o = await order(0);
@@ -41,7 +41,8 @@ describe("Sanity", () => {
 
     expect(o.ask.time).bignumber.eq(blockTimeAtCreation.toString());
     expect(o.ask.deadline).bignumber.eq(deadline.toString());
-    expect(o.ask.delay).bignumber.eq("60");
+    expect(o.ask.bidDelay).bignumber.eq(10);
+    expect(o.ask.fillDelay).bignumber.eq(60);
     expect(o.ask.maker).eq(user);
     expect(o.ask.exchange).eq(zeroAddress);
     expect(o.ask.srcToken).eq(srcToken.address);
@@ -157,7 +158,7 @@ describe("Sanity", () => {
       await twap.methods.cancel(1).send({ from: user });
 
       await fundSrcTokenFromWhale(await account(6), 8000);
-      await ask(8000, 4000, 2, undefined, undefined, undefined, await account(6));
+      await ask(8000, 4000, 2, undefined, undefined, undefined, undefined, await account(6));
 
       await ask(1000, 1000, 0.5, (await time()) + 10);
       await mineBlock(10);

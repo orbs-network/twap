@@ -57,7 +57,7 @@ Dollar-cost averaging (DCA) is an investing strategy where the investor purchase
 Users should take the following into account when using the TWAP contract for this purpose:
 * By setting duration to be very long in the future (even years in advance), setting a high allowance and holding the entire amount of tokens, a maker can effectively implement 
   an automated DCA bot that is resilient to price manipulations and requires no other action from the maker.
-* Assuming there is one honest taker, setting a market order (near `0 dstMinAmount`) and a long delay will create a bidding war on the next chunk on a periodic basis (can be 
+* Assuming there is one honest taker, setting a market order (near `0 dstMinAmount`) and a long fill delay will create a bidding war on the next chunk on a periodic basis (can be 
   daily, weekly or monthly), while ensuring a price that is very close to spot market price.
 * The order will be visible on chain, and as bidding and execution can be predicted, some orders may be large enough to create an incentive for bidders to attempt to manipulate 
   price across all markets just before it is executed. Due to this issue, utilizing TWAP for DCA is better reserved for large-cap "base" assets that are not easily susceptible to price manipulation of their entire market cap.
@@ -94,7 +94,8 @@ As a result of this process, an `Order` is generated and held in the `TWAP` cont
 * `Ask`: holds the order parameters requested by the maker in the `ask` transaction
   * `time`: order creation timestamp
   * `deadline`: order duration timestamp, required
-  * `delay`: minimum delay in seconds between chunks, required, must be `>MIN_FILL_DELAY_SECONDS`
+  * `bidDelay`: minimum delay in seconds before a bid can be filled, must be `>=MIN_BID_DELAY_SECONDS`
+  * `fillDelay`: minimum delay in seconds between chunks, required, must be `>=MIN_FILL_DELAY_SECONDS`
   * `maker`: order creator (`msg.sender`)
   * `exchange`: swap only on this exchange, or zero for any exchange
   * `srcToken`: input token, required
@@ -118,7 +119,7 @@ As a result of this process, an `Order` is generated and held in the `TWAP` cont
 * The maker granted the TWAP contract an `allowance` to swap the `srcToken`, with the approval covering an amount that is high enough to fill the next chunk.
 * The maker has a high enough `balance` of the `srcToken` to be swapped (for the next chunk).
 * The last chunk of the order was not filled too recently and there has been a sufficient delay between chunks.
-  * The `delay` is set by the order maker, minimum `MIN_FILL_DELAY_SECONDS`
+  * The `fillDelay` is set by the order maker, minimum `MIN_FILL_DELAY_SECONDS`
 * If the order maker specified that a particular `exchange` would be utilized for the order, only that `exchange` can be used to swap. If the value is set to `zero`, any exchange can be used.
 * The current bid output after fees is higher than the previous winning bid.
 * The current bid output after fees is higher or equal to the minimum set by the order maker.
@@ -126,7 +127,7 @@ As a result of this process, an `Order` is generated and held in the `TWAP` cont
 
 Any invalid constraint will revert the `bid` transaction, so a successful transaction implies a win
 
-#### A winning bid can be filled (executed) only after a minimum delay of `MIN_BID_WINDOW_SECONDS`, with the specific time period set by the maker.
+#### A winning bid can be filled (executed) only after a minimum delay of a specific time period set by the maker.
 This delay gives other bidders an opportunity to make a competing bid, allowing for a bidding war on the applicable chunk.
 
 * Each succesfsul bid allows for another `MIN_BID_WINDOW_SECONDS` interval to challenge it.

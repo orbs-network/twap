@@ -16,7 +16,8 @@ library OrderLib {
     struct Ask {
         uint32 time; // order creation timestamp
         uint32 deadline; // order duration timestamp
-        uint32 delay; // minimum delay in seconds between chunks
+        uint32 bidDelay; // minimum delay in seconds before a bid can be filled
+        uint32 fillDelay; // minimum delay in seconds between chunks
         address maker; // order creator
         address exchange; // swap only on this exchange, or zero for any exchange
         address srcToken; // input token
@@ -41,7 +42,8 @@ library OrderLib {
     function newOrder(
         uint64 id,
         uint32 deadline,
-        uint32 delay,
+        uint32 bidDelay,
+        uint32 fillDelay,
         address exchange,
         address srcToken,
         address dstToken,
@@ -50,7 +52,7 @@ library OrderLib {
         uint256 dstMinAmount
     ) internal view returns (Order memory) {
         require(block.timestamp < type(uint32).max, "time");
-        require(deadline < type(uint32).max && delay < type(uint32).max, "uint32");
+        require(deadline < type(uint32).max && bidDelay < type(uint32).max && fillDelay < type(uint32).max, "uint32");
         return
             Order(
                 id,
@@ -60,7 +62,8 @@ library OrderLib {
                 Ask(
                     uint32(block.timestamp),
                     deadline,
-                    delay,
+                    bidDelay,
+                    fillDelay,
                     msg.sender,
                     exchange,
                     srcToken,

@@ -29,22 +29,25 @@ describe("Errors", () => {
     });
 
     it("invalid params", async () => {
+      expect(await twap.methods.MIN_BID_DELAY_SECONDS().call().then(parseInt)).eq(10);
       expect(await twap.methods.MIN_FILL_DELAY_SECONDS().call().then(parseInt)).eq(60);
-      twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 60); //valid
+      twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60); //valid
 
       const now = await time();
 
       await Promise.all(
         [
-          twap.methods.ask(zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, zeroAddress, 10, 5, 10, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 59),
+          twap.methods.ask(zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, zeroAddress, 10, 5, 10, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 10, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 5, 60),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 10, 59),
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 61, 60),
         ].map((c) => expectRevert(() => c.call(), "params"))
       );
     });
@@ -54,7 +57,7 @@ describe("Errors", () => {
       await expectRevert(
         () =>
           twap.methods
-            .ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 60)
+            .ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 10, 60)
             .send({ from: user }),
         "maker allowance"
       );
@@ -66,7 +69,7 @@ describe("Errors", () => {
       await expectRevert(
         () =>
           twap.methods
-            .ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 60)
+            .ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 10, 60)
             .send({ from: user }),
         "maker balance"
       );
@@ -111,22 +114,22 @@ describe("Errors", () => {
       await mineBlock(30);
       await fill(0);
 
-      await expectRevert(() => bid(0), "delay");
+      await expectRevert(() => bid(0), "fill delay");
 
-      await mineBlock(parseInt((await order(0)).ask.delay));
+      await mineBlock(parseInt((await order(0)).ask.fillDelay));
       await bid(0);
     });
 
-    it("recently filled custom delay", async () => {
-      await ask(2000, 1000, 0.5, undefined, undefined, 600);
+    it("recently filled custom fill delay", async () => {
+      await ask(2000, 1000, 0.5, undefined, undefined, 10, 600);
       await bid(0);
       await mineBlock(30);
       await fill(0);
 
-      await expectRevert(() => bid(0), "delay");
+      await expectRevert(() => bid(0), "fill delay");
 
       await mineBlock(60);
-      await expectRevert(() => bid(0), "delay");
+      await expectRevert(() => bid(0), "fill delay");
 
       await mineBlock(600);
       await bid(0);
@@ -192,10 +195,21 @@ describe("Errors", () => {
       await expectRevert(() => twap.methods.fill(0).send({ from: otherTaker }), "taker");
     });
 
-    it("pending bid when still in bidding window", async () => {
+    it("pending bid when still in bidding window of bid delay", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
-      await expectRevert(() => fill(0), "pending bid");
+      await expectRevert(() => fill(0), "bid delay");
+    });
+
+    it("pending bid with custom delay", async () => {
+      await ask(2000, 1000, 0.5, endTime(), undefined, 1234, 9999);
+      await bid(0);
+
+      await mineBlock(1000);
+      await expectRevert(() => fill(0), "bid delay");
+
+      await mineBlock(234);
+      await fill(0);
     });
 
     it("insufficient out", async () => {
@@ -247,7 +261,7 @@ describe("Errors", () => {
     await bid(0, 0);
     await mineBlock(10);
     await fill(0);
-    await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "delay");
+    await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "fill delay");
 
     await twap.methods.cancel(0).send({ from: user });
     await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "status");

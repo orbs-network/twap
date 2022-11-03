@@ -8,7 +8,8 @@ export async function ask(
   dstMinAmount: number,
   deadline: number = 0,
   exchange: string = zeroAddress,
-  delay: number = 60,
+  bidDelay: number = 10,
+  fillDelay: number = 60,
   _user: string = user
 ) {
   deadline = deadline || (await time()) + 1000;
@@ -25,7 +26,8 @@ export async function ask(
       _srcRate,
       _dstRate.isZero() ? 1 : _dstRate,
       deadline,
-      delay
+      bidDelay,
+      fillDelay
     )
     .send({ from: _user });
 }
