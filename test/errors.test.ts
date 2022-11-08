@@ -19,10 +19,10 @@ import { ask, bid, endTime, fill, order, time } from "./twap-utils";
 import { MockExchange } from "../typechain-hardhat/contracts/test";
 
 describe("Errors", () => {
-  beforeEach(initFixture);
-  beforeEach(withUniswapV2Exchange);
+  beforeEach(() => initFixture());
+  beforeEach(() => withUniswapV2Exchange());
 
-  describe("order", async () => {
+  describe("order", () => {
     it("invalid id", async () => {
       await expectRevert(() => twap.methods.order(0).call(), "invalid id");
       await expectRevert(() => twap.methods.order(123).call(), "invalid id");
@@ -76,7 +76,7 @@ describe("Errors", () => {
     });
   });
 
-  describe("verify bid", async () => {
+  describe("verify bid", () => {
     it("expired", async () => {
       await ask(2000, 2000, 1, (await time()) + 10);
       await mineBlock(10);
@@ -174,7 +174,7 @@ describe("Errors", () => {
     });
   });
 
-  describe("perform fill", async () => {
+  describe("perform fill", () => {
     it("expired", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);

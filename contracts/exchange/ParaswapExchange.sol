@@ -23,12 +23,7 @@ contract ParaswapExchange is IExchange {
     /**
      * data = amountOut, swap data from paraswap api
      */
-    function getAmountOut(
-        address,
-        address,
-        uint256,
-        bytes calldata data
-    ) public pure returns (uint256 dstAmountOut) {
+    function getAmountOut(address, address, uint256, bytes calldata data) public pure returns (uint256 dstAmountOut) {
         (dstAmountOut, ) = decode(data);
     }
 

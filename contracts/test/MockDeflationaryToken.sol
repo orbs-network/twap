@@ -11,11 +11,7 @@ contract MockDeflationaryToken is ERC20("MockDeflationaryToken", "MDT") {
         _mint(msg.sender, 100e18);
     }
 
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override {
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal override {
         if (from != address(0) && to != address(0)) {
             _burn(to, amount / 10);
         }

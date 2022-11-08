@@ -21,8 +21,8 @@ import { Paraswap } from "./paraswap";
 import BigNumber from "bignumber.js";
 
 describe("TWAP", async () => {
-  beforeEach(initFixture);
-  beforeEach(withUniswapV2Exchange);
+  beforeEach(() => initFixture());
+  beforeEach(() => withUniswapV2Exchange());
 
   it("single chunk", async () => {
     await ask(2000, 2000, 1);
@@ -204,9 +204,9 @@ describe("TWAP", async () => {
   });
 });
 
-describe("TWAP with paraswap", async () => {
+describe("TWAP with Paraswap", async () => {
   beforeEach("must run on latest block", async () => initFixture(true));
-  beforeEach(withParaswapExchange);
+  beforeEach(() => withParaswapExchange());
 
   it("Spiritswap E2E", async () => {
     const swapSrcAmountIn = await srcToken.amount(2000);
@@ -229,5 +229,25 @@ describe("TWAP with paraswap", async () => {
     await fill(0);
 
     await expectFilled(0, 2000, (await dstToken.mantissa(dstMinOut)).toNumber());
+  });
+});
+
+describe("TWAP with SpookySwap on Fantom", () => {
+  before("on Fantom only", function () {
+    if (process.env.NETWORK!.toLowerCase() !== "ftm") return this.skip();
+  });
+
+  beforeEach(() => initFixture());
+
+  beforeEach(async () => {
+    await withUniswapV2Exchange("0xF491e7B69E4244ad4002BC14e878a34207E38c29"); //spooky router
+  });
+
+  it("Spookyswap E2E", async () => {
+    await ask(2000, 1000, 0.5);
+    await bid(0);
+    await mineBlock(60);
+    await fill(0);
+    await expectFilled(0, 1000, 0.5);
   });
 });

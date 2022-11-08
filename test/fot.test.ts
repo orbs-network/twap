@@ -5,8 +5,8 @@ import { expect } from "chai";
 import { endTime } from "./twap-utils";
 
 describe("FeeOnTransfer tokens", async () => {
-  beforeEach(initFixture);
-  beforeEach(withUniswapV2Exchange);
+  beforeEach(() => initFixture());
+  beforeEach(() => withUniswapV2Exchange());
 
   let token: Token;
 

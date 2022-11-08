@@ -278,15 +278,9 @@ contract TWAP is ReentrancyGuard {
      * transfers next chunk srcToken amount from maker, swaps via bid exchange with bid data, transfers dstFee to taker (msg.sender) and
      * transfers all other dstToken amount to maker
      */
-    function performFill(OrderLib.Order memory o)
-        private
-        returns (
-            address exchange,
-            uint256 srcAmountIn,
-            uint256 dstAmountOut,
-            uint256 dstFee
-        )
-    {
+    function performFill(
+        OrderLib.Order memory o
+    ) private returns (address exchange, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee) {
         require(msg.sender == o.bid.taker, "taker");
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
         require(block.timestamp > o.bid.time + o.ask.bidDelay, "bid delay");

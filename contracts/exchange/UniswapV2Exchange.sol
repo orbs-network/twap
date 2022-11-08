@@ -35,13 +35,7 @@ contract UniswapV2Exchange is IExchange {
     /**
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
-    function swap(
-        address _srcToken,
-        address,
-        uint256 amountIn,
-        uint256 amountOutMin,
-        bytes calldata data
-    ) public {
+    function swap(address _srcToken, address, uint256 amountIn, uint256 amountOutMin, bytes calldata data) public {
         (bool fotTokens, address[] memory path) = decode(data);
         ERC20 srcToken = ERC20(_srcToken);
 

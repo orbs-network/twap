@@ -16,8 +16,8 @@ import BigNumber from "bignumber.js";
 
 describe("IExchange implementations", async () => {
   describe("UniswapV2Exchange", () => {
-    beforeEach(initFixture);
-    beforeEach(withUniswapV2Exchange);
+    beforeEach(() => initFixture());
+    beforeEach(() => withUniswapV2Exchange());
 
     it("swap", async () => {
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
@@ -47,7 +47,7 @@ describe("IExchange implementations", async () => {
       await initFixture(true);
     });
 
-    beforeEach(withParaswapExchange);
+    beforeEach(() => withParaswapExchange());
 
     it("getAmountOut using pure encoded data from offchain", async () => {
       const encodedSwapData = web3().eth.abi.encodeParameters(

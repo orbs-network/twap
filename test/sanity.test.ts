@@ -17,8 +17,8 @@ import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
 describe("Sanity", () => {
-  beforeEach(initFixture);
-  beforeEach(withUniswapV2Exchange);
+  beforeEach(() => initFixture());
+  beforeEach(() => withUniswapV2Exchange());
 
   it("maker creates ask order, emits event", async () => {
     expect(await twap.methods.length().call()).bignumber.zero;

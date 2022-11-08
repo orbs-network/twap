@@ -81,16 +81,20 @@ async function initTokens() {
   }
 }
 
-export async function withUniswapV2Exchange() {
+export async function withUniswapV2Exchange(uniswapAddress?: string) {
   const network = await currentNetwork();
-  const impls = {
-    eth: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", // UniswapV2
-    ftm: "0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52", // Spiritswap V1
-    poly: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
-  };
-  exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [
-    _.find(impls, (impl, k) => k === network!.shortname),
-  ]);
+
+  const exchangeAddress =
+    uniswapAddress ||
+    _.find(
+      {
+        eth: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", // UniswapV2
+        ftm: "0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52", // Spiritswap V1
+        poly: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
+      },
+      (impl, k) => k === network!.shortname
+    );
+  exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [exchangeAddress]);
 
   const paths = {
     eth: [srcToken.address, dstToken.address],
