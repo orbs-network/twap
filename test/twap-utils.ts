@@ -9,7 +9,7 @@ export async function ask(
   deadline: number = 0,
   exchange: string = zeroAddress,
   bidDelay: number = 10,
-  fillDelay: number = 60,
+  fillDelay: number = 0,
   _user: string = user
 ) {
   deadline = deadline || (await time()) + 1000;

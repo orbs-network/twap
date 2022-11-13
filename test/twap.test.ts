@@ -41,15 +41,13 @@ describe("TWAP", async () => {
       await mineBlock(10);
       await fill(0);
       await expectFilled(0, 2500 * i, 1.25 * i);
-
-      await mineBlock(60);
     }
 
     await expectFilled(0, 10_000, 5);
   });
 
   it("last chunk may be partial amount", async () => {
-    await ask(10_000, 4000, 2);
+    await ask(10_000, 4000, 2, undefined, undefined, undefined, 60);
 
     await bid(0);
     await mineBlock(10);

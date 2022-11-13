@@ -106,7 +106,7 @@ describe("Errors", () => {
     });
 
     it("recently filled", async () => {
-      await ask(2000, 1000, 0.5);
+      await ask(2000, 1000, 0.5, undefined, undefined, undefined, 60);
       await bid(0);
       await mineBlock(30);
       await fill(0);
@@ -152,7 +152,6 @@ describe("Errors", () => {
       await bid(0);
       await mineBlock(10);
       await fill(0);
-      await mineBlock(60);
 
       await withMockExchange(0.1);
       await expectRevert(() => bid(0), "min out");
@@ -252,7 +251,7 @@ describe("Errors", () => {
   });
 
   it("prune only invalid orders", async () => {
-    await ask(1000, 100, 0.01);
+    await ask(1000, 100, 0.01, undefined, undefined, undefined, 60);
     await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "valid");
 
     await bid(0, 0);

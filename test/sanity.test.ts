@@ -42,7 +42,7 @@ describe("Sanity", () => {
     expect(o.ask.time).bignumber.eq(blockTimeAtCreation.toString());
     expect(o.ask.deadline).bignumber.eq(deadline.toString());
     expect(o.ask.bidDelay).bignumber.eq(10);
-    expect(o.ask.fillDelay).bignumber.eq(60);
+    expect(o.ask.fillDelay).bignumber.eq(0);
     expect(o.ask.maker).eq(user);
     expect(o.ask.exchange).eq(zeroAddress);
     expect(o.ask.srcToken).eq(srcToken.address);
