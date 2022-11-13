@@ -30,7 +30,6 @@ describe("Errors", () => {
 
     it("invalid params", async () => {
       expect(await twap.methods.MIN_BID_DELAY_SECONDS().call().then(parseInt)).eq(10);
-      expect(await twap.methods.MIN_FILL_DELAY_SECONDS().call().then(parseInt)).eq(60);
       twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60); //valid
 
       const now = await time();
@@ -46,8 +45,6 @@ describe("Errors", () => {
           twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 10, 60),
           twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 10, 60),
           twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 5, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 10, 59),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 61, 60),
         ].map((c) => expectRevert(() => c.call(), "params"))
       );
     });

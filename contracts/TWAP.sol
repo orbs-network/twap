@@ -67,7 +67,6 @@ contract TWAP is ReentrancyGuard {
     uint32 public constant MIN_OUTBID_PERCENT = 101_000;
     uint32 public constant STALE_BID_DELAY_MUL = 5; // multiplier on bidDelay before a bid is considered stale
     uint32 public constant MIN_BID_DELAY_SECONDS = 10;
-    uint32 public constant MIN_FILL_DELAY_SECONDS = 60;
 
     uint32 public constant STATUS_CANCELED = 1;
     uint32 public constant STATUS_COMPLETED = 2;
@@ -132,9 +131,7 @@ contract TWAP is ReentrancyGuard {
                 srcBidAmount <= srcAmount &&
                 dstMinAmount > 0 &&
                 deadline > block.timestamp &&
-                bidDelay >= MIN_BID_DELAY_SECONDS &&
-                fillDelay >= MIN_FILL_DELAY_SECONDS &&
-                bidDelay <= fillDelay,
+                bidDelay >= MIN_BID_DELAY_SECONDS,
             "params"
         );
 

@@ -6,8 +6,8 @@
     "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "noEmit": true
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist"
   },
-  "include": ["./test"],
-  "files": ["./hardhat.config.ts"]
+  "include": ["./src", "hardhat.config.ts"]
 }

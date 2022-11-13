@@ -6,12 +6,18 @@
     "type": "git",
     "url": "git+https://github.com/orbs-network/twap.git"
   },
+  "author": "Orbs",
   "license": "MIT",
   "dependencies": {
     "@defi.org/web3-candies": "4.x"
   },
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
-    "clean": "rm -rf artifacts cache typechain-hardhat",
+    "clean": "rm -rf artifacts cache typechain-hardhat dist",
     "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
     "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
