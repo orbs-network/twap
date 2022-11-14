@@ -19,19 +19,19 @@ export interface Config {
 }
 
 const ChainConfigs = {
-  // eth: {
-  //   chainId: 1,
-  //   twapAddress: "0x85253417E9BF576980318E7882147618C4980969",
-  //   lensAddress: "0x1c4b5371dfDF424a162974C2361a6405b1F772cf",
-  //   bidDelaySeconds: 60,
-  //   minChunkSizeUsd: 100,
-  //   wToken: {
-  //     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  //     decimals: 18,
-  //     symbol: "WETH",
-  //     logoUrl: "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
-  //   },
-  // },
+  eth: {
+    chainId: 1,
+    twapAddress: "",
+    lensAddress: "",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 100,
+    wToken: {
+      address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      decimals: 18,
+      symbol: "WETH",
+      logoUrl: "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
+    },
+  },
   ftm: {
     chainId: 250,
     twapAddress: "0xdE2ed02ef21895B97a937E82068F28390fF464aC",
@@ -60,17 +60,17 @@ const ChainConfigs = {
   },
 };
 
-// export const UniswapV2Config: Config = {
-//   ...ChainConfigs.eth,
-//   partner: "UniswapV2",
-//   exchangeAddress: "0xE83df5BfA9F14a84e550c38c4ec505cB22C6A0d7",
-// };
-//
-// export const SushiSwapConfig: Config = {
-//   ...ChainConfigs.eth,
-//   partner: "SushiSwap",
-//   exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
-// };
+export const UniswapV2Config: Config = {
+  ...ChainConfigs.eth,
+  partner: "UniswapV2",
+  exchangeAddress: "0xE83df5BfA9F14a84e550c38c4ec505cB22C6A0d7",
+};
+
+export const SushiSwapConfig: Config = {
+  ...ChainConfigs.eth,
+  partner: "SushiSwap",
+  exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
+};
 
 export const QuickSwapConfig: Config = {
   ...ChainConfigs.poly,

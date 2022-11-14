@@ -2,7 +2,6 @@ import { Config, nativeTokenAddresses, TokenData } from "./configs";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import {
-  Abi,
   contract,
   convertDecimals,
   eqIgnoreCase,
@@ -19,14 +18,17 @@ import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import _ from "lodash";
 
+export const twapAbi = twapArtifact.abi as any;
+export const lensAbi = lensArtifact.abi as any;
+
 export class TWAPLib {
   public twap: TWAP;
   public lens: Lens;
 
   constructor(public config: Config, public provider: any, public maker: string) {
     setWeb3Instance(new Web3(provider));
-    this.twap = contract<TWAP>(twapArtifact.abi as Abi, this.config.twapAddress);
-    this.lens = contract<Lens>(lensArtifact.abi as Abi, this.config.lensAddress);
+    this.twap = contract<TWAP>(twapAbi, this.config.twapAddress);
+    this.lens = contract<Lens>(lensAbi, this.config.lensAddress);
   }
 
   dstAmount = (srcAmount: BN.Value, srcUsd: BN.Value, dstUsd: BN.Value) => BN(srcAmount).times(srcUsd).idiv(dstUsd);

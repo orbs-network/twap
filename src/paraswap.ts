@@ -9,6 +9,8 @@ export namespace Paraswap {
   export enum OnlyDex {
     SpiritSwap = "SpiritSwap,SpiritSwapV2",
     SpookySwap = "SpookySwap",
+    Quickswap = "Quickswap",
+    Sushiswap = "Sushiswap",
   }
 
   export interface ParaswapRoute {
