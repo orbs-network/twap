@@ -13,7 +13,10 @@
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "files": [
-    "./dist"
+    "./dist",
+    "LICENSE",
+    "TOS.md",
+    "README.md"
   ],
   "scripts": {
     "clean": "rm -rf artifacts cache typechain-hardhat dist",
