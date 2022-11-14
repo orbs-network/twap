@@ -27,8 +27,8 @@ export class TWAPLib {
 
   constructor(public config: Config, public provider: any, public maker: string) {
     setWeb3Instance(new Web3(provider));
-    this.twap = contract<TWAP>(twapAbi, this.config.twapAddress);
-    this.lens = contract<Lens>(lensAbi, this.config.lensAddress);
+    this.twap = contract<TWAP>(twapAbi, config.twapAddress);
+    this.lens = contract<Lens>(lensAbi, config.lensAddress);
   }
 
   dstAmount = (srcAmount: BN.Value, srcUsd: BN.Value, dstUsd: BN.Value) => BN(srcAmount).times(srcUsd).idiv(dstUsd);
