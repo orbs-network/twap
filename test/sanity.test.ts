@@ -20,6 +20,10 @@ describe("Sanity", () => {
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
 
+  it("version", async () => {
+    expect(await twap.methods.VERSION().call()).bignumber.eq(2);
+  });
+
   it("maker creates ask order, emits event", async () => {
     expect(await twap.methods.length().call()).bignumber.zero;
 

@@ -55,7 +55,7 @@ export namespace Paraswap {
       network: chainId.toString(),
       side: "SELL",
       includeDEXS: onlyDex || "",
-      partner: "chucknorris",
+      // partner: "chucknorris",
       // otherExchangePrices: "true",
     });
     const response = await axios.get(`${URL}/prices/?${params}`);
@@ -63,7 +63,7 @@ export namespace Paraswap {
     return response.data.priceRoute;
   }
 
-  export async function buildSwapData(dstMinOut: BN.Value, paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
+  export async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
     const response = await axios.post(`${URL}/transactions/${paraswapRoute.network}?ignoreChecks=true`, {
       priceRoute: paraswapRoute,
       srcToken: paraswapRoute.srcToken,
@@ -71,7 +71,7 @@ export namespace Paraswap {
       srcDecimals: paraswapRoute.srcDecimals,
       destDecimals: paraswapRoute.destDecimals,
       srcAmount: paraswapRoute.srcAmount,
-      destAmount: BN(dstMinOut).toFixed(0),
+      destAmount: "1",
       userAddress: exchangeAdapter,
     });
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);

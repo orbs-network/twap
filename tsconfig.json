@@ -10,5 +10,5 @@
     "declaration": true,
     "outDir": "dist"
   },
-  "include": ["./src", "./contracts", "./artifacts"]
+  "include": ["src"]
 }

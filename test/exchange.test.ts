@@ -71,7 +71,7 @@ describe("IExchange implementations", async () => {
       expect(paraswapRoute.destAmount).bignumber.gte(await dstToken.amount(1));
       const dstMinOut = BigNumber(paraswapRoute.destAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
 
-      const swapData = await Paraswap.buildSwapData(dstMinOut, paraswapRoute, exchange.options.address);
+      const swapData = await Paraswap.buildSwapData(paraswapRoute, exchange.options.address);
 
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       await exchange.methods

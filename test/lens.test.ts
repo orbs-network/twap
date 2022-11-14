@@ -3,13 +3,14 @@ import {
   dstToken,
   fundSrcTokenFromWhale,
   initFixture,
+  lens,
   srcToken,
   taker,
   twap,
   user,
   withUniswapV2Exchange,
 } from "./fixture";
-import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { ask, bid, endTime, fill } from "./twap-utils";
 import { expect } from "chai";
 import { account, maxUint256, zeroAddress } from "@defi.org/web3-candies";
@@ -17,14 +18,9 @@ import type { Lens } from "../typechain-hardhat/contracts/periphery";
 
 describe("Lens", async () => {
   const PAGE_SIZE = 2000; // under 15m gas
-  let lens: Lens;
 
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
-
-  beforeEach(async () => {
-    lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
-  });
 
   async function takerBiddableOrders() {
     const length = await lens.methods.length().call().then(parseInt);

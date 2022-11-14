@@ -227,7 +227,7 @@ describe("TWAP with Paraswap", async () => {
       0,
       (await dstToken.mantissa(takerFee)).toNumber(),
       0.5, // 0.5%, enough for slippage but still higher than user's dstMinOut
-      await Paraswap.buildSwapData(dstMinOut, paraswapRoute, exchange.options.address)
+      await Paraswap.buildSwapData(paraswapRoute, exchange.options.address)
     );
 
     await mineBlock(10);

@@ -40,7 +40,7 @@ contract TWAP is ReentrancyGuard {
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    uint8 public constant VERSION = 1;
+    uint8 public constant VERSION = 2;
 
     event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
     event OrderBid(

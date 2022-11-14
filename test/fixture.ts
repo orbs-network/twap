@@ -11,6 +11,7 @@ import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
 import _ from "lodash";
+import { Lens } from "../typechain-hardhat/contracts/periphery";
 
 useChaiBigNumber();
 
@@ -27,6 +28,7 @@ let srcTokenWhale: string;
 let dstTokenWhale: string;
 
 export let twap: TWAP;
+export let lens: Lens;
 
 export let exchange: IExchange;
 export let swapDataForUniV2: string;
@@ -36,6 +38,7 @@ export async function initFixture(latestBlock = false) {
   await initAccounts();
   await initTokens();
   twap = await deployArtifact<TWAP>("TWAP", { from: deployer });
+  lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
 
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
   expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;

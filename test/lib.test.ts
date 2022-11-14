@@ -4,9 +4,11 @@ import {
   asTokenData,
   dstToken,
   initFixture,
+  lens,
   nativeToken,
   srcToken,
   taker,
+  twap,
   user,
   userSrcTokenStartBalance,
 } from "./fixture";
@@ -28,7 +30,11 @@ describe("TWAPLib", () => {
     });
 
     beforeEach(async () => {
-      lib = new TWAPLib(SpiritSwapConfig, web3(), user);
+      lib = new TWAPLib(
+        { ...SpiritSwapConfig, twapAddress: twap.options.address, lensAddress: lens.options.address },
+        web3(),
+        user
+      );
       sToken = await asTokenData(srcToken);
       dToken = await asTokenData(dstToken);
     });
@@ -100,7 +106,7 @@ describe("TWAPLib", () => {
           await srcToken.amount(500),
           await dstToken.amount(0.01),
           Date.now() + 1e6,
-          60,
+          0,
           1
         );
       });
@@ -147,17 +153,15 @@ describe("TWAPLib", () => {
           await srcToken.amount(500),
           Paraswap.OnlyDex.SpiritSwap
         );
-        const data = await Paraswap.buildSwapData(BN(1), route, lib.config.twapAddress);
+        const data = await Paraswap.buildSwapData(route, lib.config.twapAddress);
 
-        await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 1000, data).send({ from: taker });
+        await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 2000, data).send({ from: taker });
         await mineBlock(60);
         await lib.twap.methods.fill(orderId).send({ from: taker });
-        await mineBlock(60);
 
-        await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 1000, data).send({ from: taker });
+        await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 2000, data).send({ from: taker });
         await mineBlock(60);
         await lib.twap.methods.fill(orderId).send({ from: taker });
-        await mineBlock(60);
 
         const order = await lib.getOrder(orderId);
         expect(lib.status(order)).eq(Status.Completed).eq("Completed");

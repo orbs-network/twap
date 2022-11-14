@@ -1,9 +1,8 @@
 import { expect } from "chai";
 import hardhatConfig from "../hardhat.config";
 import { ask, endTime, time } from "./twap-utils";
-import { deployer, dstToken, exchange, initFixture, srcToken, taker, twap, user } from "./fixture";
-import { deployArtifact, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import type { Lens } from "../typechain-hardhat/contracts/periphery";
+import { dstToken, exchange, initFixture, lens, srcToken, taker, twap, user } from "./fixture";
+import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
 /**
@@ -13,14 +12,9 @@ describe("maxgas: special test: large order history, paginated reads", async () 
   const ASSUME_MAX_GAS = 15_000_000;
   const EXPIRED_ASKS = 5_000;
 
-  let lens: Lens;
   const PAGE_SIZE = 2500; // under 15m gas
 
   beforeEach(() => initFixture());
-
-  beforeEach(async () => {
-    lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
-  });
 
   beforeEach(async () => {
     expect(hardhatConfig.networks?.hardhat?.blockGasLimit).eq(ASSUME_MAX_GAS);
