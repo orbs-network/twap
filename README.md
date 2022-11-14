@@ -95,7 +95,7 @@ As a result of this process, an `Order` is generated and held in the `TWAP` cont
   * `time`: order creation timestamp
   * `deadline`: order duration timestamp, required
   * `bidDelay`: minimum delay in seconds before a bid can be filled, must be `>=MIN_BID_DELAY_SECONDS`
-  * `fillDelay`: minimum delay in seconds between chunks, required, must be `>=MIN_FILL_DELAY_SECONDS`
+  * `fillDelay`: minimum delay in seconds between chunks
   * `maker`: order creator (`msg.sender`)
   * `exchange`: swap only on this exchange, or zero for any exchange
   * `srcToken`: input token, required
