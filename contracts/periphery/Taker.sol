@@ -46,12 +46,7 @@ contract Taker is Ownable {
      * @param feeMinAmountOut optional native token minimum out, can be 0
      * @param feeData optional data to pass to feeExchange, can be empty
      */
-    function fill(
-        uint64 id,
-        address feeExchange,
-        uint256 feeMinAmountOut,
-        bytes calldata feeData
-    ) external onlyOwner {
+    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData) external onlyOwner {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 

@@ -1,5 +1,6 @@
-import { account, parseEvents } from "@defi.org/web3-candies";
+import { account, currentNetwork, parseEvents } from "@defi.org/web3-candies";
 import {
+  asTokenData,
   deployer,
   dstToken,
   exchange,
@@ -17,7 +18,7 @@ import {
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, expectFilled, fill, order } from "./twap-utils";
-import { Paraswap } from "./paraswap";
+import { Paraswap } from "../src/paraswap";
 import BigNumber from "bignumber.js";
 
 describe("TWAP", async () => {
@@ -208,7 +209,13 @@ describe("TWAP with Paraswap", async () => {
 
   it("Spiritswap E2E", async () => {
     const swapSrcAmountIn = await srcToken.amount(2000);
-    const paraswapRoute = await Paraswap.findRoute(srcToken, dstToken, swapSrcAmountIn, Paraswap.OnlyDex.Spiritswap);
+    const paraswapRoute = await Paraswap.findRoute(
+      (await currentNetwork())!.id,
+      await asTokenData(srcToken),
+      await asTokenData(dstToken),
+      swapSrcAmountIn,
+      Paraswap.OnlyDex.SpiritSwap
+    );
 
     const takerFee = BigNumber(paraswapRoute.destAmount).times(0.001).integerValue(BigNumber.ROUND_FLOOR);
     const dstMinOut = BigNumber(paraswapRoute.destAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);

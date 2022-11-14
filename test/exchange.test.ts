@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import {
+  asTokenData,
   dstToken,
   exchange,
   initFixture,
@@ -10,8 +11,8 @@ import {
   withParaswapExchange,
   withUniswapV2Exchange,
 } from "./fixture";
-import { maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
-import { Paraswap } from "./paraswap";
+import { currentNetwork, maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
+import { Paraswap } from "../src";
 import BigNumber from "bignumber.js";
 
 describe("IExchange implementations", async () => {
@@ -61,7 +62,12 @@ describe("IExchange implementations", async () => {
     it("swap with data from paraswap", async () => {
       const amountIn = await srcToken.amount(10_000);
 
-      const paraswapRoute = await Paraswap.findRoute(srcToken, dstToken, amountIn);
+      const paraswapRoute = await Paraswap.findRoute(
+        (await currentNetwork())!.id,
+        await asTokenData(srcToken),
+        await asTokenData(dstToken),
+        amountIn
+      );
       expect(paraswapRoute.destAmount).bignumber.gte(await dstToken.amount(1));
       const dstMinOut = BigNumber(paraswapRoute.destAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
 

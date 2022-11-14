@@ -21,8 +21,8 @@ import BigNumber from "bignumber.js";
 describe("Taker", async () => {
   let takerContract: Taker;
 
-  beforeEach(initFixture);
-  beforeEach(withUniswapV2Exchange);
+  beforeEach(() => initFixture());
+  beforeEach(() => withUniswapV2Exchange());
 
   beforeEach(async () => {
     takerContract = await deployArtifact<Taker>("Taker", { from: taker }, [twap.options.address, nativeToken.address]);

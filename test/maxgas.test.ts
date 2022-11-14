@@ -16,7 +16,7 @@ describe("maxgas: special test: large order history, paginated reads", async () 
   let lens: Lens;
   const PAGE_SIZE = 2500; // under 15m gas
 
-  beforeEach(initFixture);
+  beforeEach(() => initFixture());
 
   beforeEach(async () => {
     lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);

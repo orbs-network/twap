@@ -19,8 +19,8 @@ describe("Lens", async () => {
   const PAGE_SIZE = 2000; // under 15m gas
   let lens: Lens;
 
-  beforeEach(initFixture);
-  beforeEach(withUniswapV2Exchange);
+  beforeEach(() => initFixture());
+  beforeEach(() => withUniswapV2Exchange());
 
   beforeEach(async () => {
     lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);

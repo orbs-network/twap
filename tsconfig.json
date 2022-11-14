@@ -9,5 +9,5 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "dist"
   },
-  "include": ["./src", "hardhat.config.ts"]
+  "include": ["./src"]
 }

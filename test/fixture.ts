@@ -139,3 +139,7 @@ export async function setMockExchangeAmountOut(dstAmountOut: number) {
     .setMockAmounts([0, await dstToken.amount(dstAmountOut)])
     .send({ from: deployer });
 }
+
+export async function asTokenData(t: Token) {
+  return { address: t.address, decimals: await t.decimals(), symbol: t.name, name: t.name };
+}
