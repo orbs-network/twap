@@ -34,8 +34,8 @@ const ChainConfigs = {
   // },
   ftm: {
     chainId: 250,
-    twapAddress: "0xf77Ad005aBF7e31f669ce89a6568B2f39Ca92cDe",
-    lensAddress: "0x715181517a576eA382E4351F10EAE693Cfe4471a",
+    twapAddress: "0xdE2ed02ef21895B97a937E82068F28390fF464aC",
+    lensAddress: "0xbF8e5B3Af58b041c0ADf0c3DEA933e7D32b8D5ef",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
@@ -47,8 +47,8 @@ const ChainConfigs = {
   },
   poly: {
     chainId: 137,
-    twapAddress: "0x48423e62acbfEF7779b5b4a5E7d6Fbd39E623d78",
-    lensAddress: "0xe84CaEc86eCF3f0AB4267dC6130D9a5510e73DFb",
+    twapAddress: "0x50482c3BDb5f257C04620C73F1Be9b30090E9e5D",
+    lensAddress: "0xd209419e822E3d68929B33E2CB5A66Ea089005C6",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
