@@ -31,7 +31,10 @@ export class TWAPLib {
     this.lens = contract<Lens>(lensAbi, config.lensAddress);
   }
 
-  dstAmount = (srcAmount: BN.Value, srcUsd: BN.Value, dstUsd: BN.Value) => BN(srcAmount).times(srcUsd).idiv(dstUsd);
+  dstAmount = (srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value, srcUsd: BN.Value, dstUsd: BN.Value) =>
+    convertDecimals(BN(srcAmount).times(srcUsd).div(dstUsd), srcToken.decimals, dstToken.decimals).integerValue(
+      BN.ROUND_FLOOR
+    );
 
   isNativeToken = (token: TokenData) => !!_.find(nativeTokenAddresses, (a) => eqIgnoreCase(a, token.address));
 

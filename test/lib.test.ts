@@ -232,7 +232,12 @@ describe("TWAPLib", () => {
       });
 
       it("dstAmount = srcAmount * (srcUsd/dstUsd)", async () => {
-        expect(lib.dstAmount(123456.789, 1.234, 5.678)).bignumber.eq(Math.floor(123456.789 * (1.234 / 5.678)));
+        expect(sToken.decimals).eq(6);
+        expect(dToken.decimals).eq(18);
+        expect(lib.dstAmount(sToken, dToken, 123 * 1e6, 1.234, 5.678)).bignumber.closeTo(
+          26_731595632300000000,
+          0.001 * 1e18
+        );
       });
 
       it("max possible chunk count", async () => {
