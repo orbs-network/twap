@@ -279,7 +279,7 @@ describe("TWAPLib", () => {
         expect(lib.fillDelayMillis(4, hour)).bignumber.eq(14 * minute);
         expect(lib.fillDelayMillis(3, hour)).bignumber.eq(19 * minute);
         expect(lib.fillDelayMillis(2, hour)).bignumber.eq(29 * minute);
-        expect(lib.fillDelayMillis(1, hour)).bignumber.eq(59 * minute);
+        expect(lib.fillDelayMillis(1, hour)).bignumber.eq(0);
         expect(lib.fillDelayMillis(100, hour)).bignumber.eq(0);
         expect(lib.fillDelayMillis(5, 5 * hour)).bignumber.eq(59 * minute);
       });
