@@ -301,6 +301,11 @@ describe("TWAPLib", () => {
         const price = await Paraswap.priceUsd(lib.config.chainId, sToken);
         expect(price).bignumber.closeTo(1, 0.01);
       });
+
+      it("priceUsd for native token uses wToken", async () => {
+        const price = await Paraswap.priceUsd(lib.config.chainId, { address: zeroAddress, symbol: "", decimals: 1 });
+        expect(price).bignumber.gt(0);
+      });
     });
   });
 });

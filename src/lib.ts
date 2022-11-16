@@ -1,10 +1,9 @@
-import { Config, nativeTokenAddresses, TokenData } from "./configs";
+import { Config, isNativeAddress, TokenData } from "./configs";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import {
   contract,
   convertDecimals,
-  eqIgnoreCase,
   erc20,
   iwethabi,
   parseEvents,
@@ -36,7 +35,7 @@ export class TWAPLib {
       BN.ROUND_FLOOR
     );
 
-  isNativeToken = (token: TokenData) => !!_.find(nativeTokenAddresses, (a) => eqIgnoreCase(a, token.address));
+  isNativeToken = (token: TokenData) => isNativeAddress(token.address);
 
   isValidChain = (chainId: number) => chainId === this.config.chainId;
 

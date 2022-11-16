@@ -1,4 +1,5 @@
-import { zeroAddress } from "@defi.org/web3-candies";
+import { eqIgnoreCase, zeroAddress } from "@defi.org/web3-candies";
+import _ from "lodash";
 
 export interface TokenData {
   address: string;
@@ -95,3 +96,6 @@ export const nativeTokenAddresses = [
   "0x0000000000000000000000000000000000001010",
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 ];
+
+export const isNativeAddress = (address: string) => !!_.find(nativeTokenAddresses, (a) => eqIgnoreCase(a, address));
+export const chainConfig = (chainId: number) => _.find(ChainConfigs, (c) => c.chainId === chainId)!;

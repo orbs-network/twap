@@ -1,7 +1,7 @@
 import BN from "bignumber.js";
 import axios from "axios";
 import { web3 } from "@defi.org/web3-candies";
-import { TokenData } from "./configs";
+import { chainConfig, isNativeAddress, nativeTokenAddresses, TokenData } from "./configs";
 
 export namespace Paraswap {
   const URL = "https://apiv5.paraswap.io";
@@ -37,11 +37,12 @@ export namespace Paraswap {
   }
 
   export async function priceUsd(chainId: number, token: TokenData) {
+    const _token = isNativeAddress(token.address) ? chainConfig(chainId).wToken : token;
     const r = await findRoute(
       chainId,
-      token,
-      { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "NATIVE", decimals: 18 },
-      BN(10).pow(token.decimals)
+      _token,
+      { address: nativeTokenAddresses[2], symbol: "NATIVE", decimals: 18 },
+      BN(10).pow(_token.decimals)
     );
     return BN(r.srcUSD);
   }
