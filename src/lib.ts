@@ -35,7 +35,7 @@ export class TWAPLib {
 
   isNativeToken = (token: TokenData) => !!_.find(nativeTokenAddresses, (a) => eqIgnoreCase(a, token.address));
 
-  isValidNetwork = (chainId: number) => chainId === this.config.chainId;
+  isValidChain = (chainId: number) => chainId === this.config.chainId;
 
   maxPossibleChunks = (srcToken: TokenData, srcAmount: BN.Value, srcUsd: BN.Value) =>
     BN.max(1, BN(srcAmount).div(BN(10).pow(srcToken.decimals).div(srcUsd).times(this.config.minChunkSizeUsd)))

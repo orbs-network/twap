@@ -191,8 +191,8 @@ describe("TWAPLib", () => {
       });
 
       it("isValidNetwork", async () => {
-        expect(lib.isValidNetwork(0)).false;
-        expect(lib.isValidNetwork(lib.config.chainId)).true;
+        expect(lib.isValidChain(0)).false;
+        expect(lib.isValidChain(lib.config.chainId)).true;
       });
 
       it("maker balance", async () => {

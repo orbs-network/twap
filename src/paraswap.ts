@@ -37,7 +37,12 @@ export namespace Paraswap {
   }
 
   export async function priceUsd(chainId: number, token: TokenData) {
-    const r = await findRoute(chainId, token, token, BN(10).pow(token.decimals));
+    const r = await findRoute(
+      chainId,
+      token,
+      { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "NATIVE", decimals: 18 },
+      BN(10).pow(token.decimals)
+    );
     return BN(r.srcUSD);
   }
 
