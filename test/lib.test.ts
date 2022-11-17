@@ -285,6 +285,7 @@ describe("TWAPLib", () => {
       });
 
       it("dstMinAmountOut", async () => {
+        expect(lib.dstMinAmountOut(sToken, dToken, 1, 0, false)).bignumber.eq(1);
         const srcChunkAmount = await srcToken.amount(100);
         expect(lib.dstMinAmountOut(sToken, dToken, srcChunkAmount, 1, true)).bignumber.eq(1);
         expect(lib.dstMinAmountOut(sToken, dToken, srcChunkAmount, 1, false)).bignumber.eq(await dstToken.amount(100));

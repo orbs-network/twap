@@ -69,11 +69,14 @@ export class TWAPLib {
   ) =>
     isMarketOrder
       ? BN(1)
-      : convertDecimals(
-          BN(srcChunkAmount).times(limitDstPriceFor1Src),
-          srcToken.decimals,
-          dstToken.decimals
-        ).integerValue(BN.ROUND_FLOOR);
+      : BN.max(
+          1,
+          convertDecimals(
+            BN(srcChunkAmount).times(limitDstPriceFor1Src),
+            srcToken.decimals,
+            dstToken.decimals
+          ).integerValue(BN.ROUND_FLOOR)
+        );
 
   isMarketOrder = (order: Order) => order.ask.dstMinAmount.lte(1);
 
