@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "./OrderLib.sol";
 import "./IExchange.sol";
+import "./IWETH.sol";
 
 /**
  * ---------------------------
@@ -40,7 +41,7 @@ contract TWAP is ReentrancyGuard {
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    uint8 public constant VERSION = 2;
+    uint8 public constant VERSION = 3;
 
     event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
     event OrderBid(
@@ -74,6 +75,12 @@ contract TWAP is ReentrancyGuard {
     OrderLib.Order[] public book;
     uint32[] public status; // STATUS or deadline timestamp by order id, used for gas efficient order filtering
     mapping(address => uint64[]) public makerOrders;
+
+    address public immutable iweth;
+
+    constructor(address _iweth) {
+        iweth = _iweth;
+    }
 
     // -------- views --------
 
@@ -124,8 +131,8 @@ contract TWAP is ReentrancyGuard {
     ) external nonReentrant returns (uint64 id) {
         require(
             srcToken != address(0) &&
-                dstToken != address(0) &&
                 srcToken != dstToken &&
+                (srcToken != iweth || dstToken != address(0)) &&
                 srcAmount > 0 &&
                 srcBidAmount > 0 &&
                 srcBidAmount <= srcAmount &&
@@ -257,7 +264,7 @@ contract TWAP is ReentrancyGuard {
         require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
-        dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcToken, o.ask.dstToken, o.srcBidAmountNext(), data);
+        dstAmountOut = IExchange(exchange).getAmountOut(o.ask.srcToken, _dstToken(o), o.srcBidAmountNext(), data);
         dstAmountOut -= (dstAmountOut * slippagePercent) / PERCENT_BASE;
         dstAmountOut -= dstFee;
 
@@ -291,13 +298,15 @@ contract TWAP is ReentrancyGuard {
         srcAmountIn = ERC20(o.ask.srcToken).balanceOf(address(this)); // support FoT tokens
         ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
 
-        IExchange(exchange).swap(o.ask.srcToken, o.ask.dstToken, srcAmountIn, minOut + dstFee, o.bid.data);
-        dstAmountOut = ERC20(o.ask.dstToken).balanceOf(address(this)); // support FoT tokens
+        IExchange(exchange).swap(o.ask.srcToken, _dstToken(o), srcAmountIn, minOut + dstFee, o.bid.data);
+        if (o.ask.dstToken == address(0)) IWETH(iweth).withdraw(address(this).balance);
+
+        dstAmountOut = ERC20(_dstToken(o)).balanceOf(address(this)); // support FoT tokens
         dstAmountOut -= dstFee;
         require(dstAmountOut >= minOut, "min out");
 
-        ERC20(o.ask.dstToken).safeTransfer(o.bid.taker, dstFee);
-        ERC20(o.ask.dstToken).safeTransfer(o.ask.maker, dstAmountOut);
+        ERC20(_dstToken(o)).safeTransfer(o.bid.taker, dstFee);
+        ERC20(_dstToken(o)).safeTransfer(o.ask.maker, dstAmountOut);
     }
 
     /**
@@ -306,5 +315,9 @@ contract TWAP is ReentrancyGuard {
     function verifyMakerBalance(OrderLib.Order memory o) private view {
         require(ERC20(o.ask.srcToken).allowance(o.ask.maker, address(this)) >= o.srcBidAmountNext(), "maker allowance");
         require(ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext(), "maker balance");
+    }
+
+    function _dstToken(OrderLib.Order memory o) private view returns (address) {
+        return o.ask.dstToken == address(0) ? iweth : o.ask.dstToken;
     }
 }

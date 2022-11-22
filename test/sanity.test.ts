@@ -21,7 +21,7 @@ describe("Sanity", () => {
   beforeEach(() => withUniswapV2Exchange());
 
   it("version", async () => {
-    expect(await twap.methods.VERSION().call()).bignumber.eq(2);
+    expect(await twap.methods.VERSION().call()).bignumber.eq(3);
   });
 
   it("maker creates ask order, emits event", async () => {

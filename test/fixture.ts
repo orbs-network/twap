@@ -37,7 +37,7 @@ export async function initFixture(latestBlock = false) {
   await resetNetworkFork(latestBlock ? "latest" : undefined);
   await initAccounts();
   await initTokens();
-  twap = await deployArtifact<TWAP>("TWAP", { from: deployer });
+  twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [nativeToken.address]);
   lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
 
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);

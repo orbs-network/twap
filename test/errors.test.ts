@@ -3,6 +3,7 @@ import {
   dstToken,
   exchange,
   initFixture,
+  nativeToken,
   setMockExchangeAmountOut,
   srcToken,
   swapDataForUniV2,
@@ -28,24 +29,74 @@ describe("Errors", () => {
       await expectRevert(() => twap.methods.order(123).call(), "invalid id");
     });
 
-    it("invalid params", async () => {
-      expect(await twap.methods.MIN_BID_DELAY_SECONDS().call().then(parseInt)).eq(10);
-      twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60); //valid
-
-      const now = await time();
-
-      await Promise.all(
-        [
-          twap.methods.ask(zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, zeroAddress, 10, 5, 10, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 10, 60),
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 5, 60),
-        ].map((c) => expectRevert(() => c.call(), "params"))
+    describe("invalid params", () => {
+      [
+        {
+          name: "srcToken zero",
+          act: async () =>
+            twap.methods.ask(zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "same tokens",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "srcAmount zero",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "srcBidAmount zero",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "srcBidAmount>srcAmount",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "dstMinAmount zero",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "expired",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, await time(), 10, 60),
+        },
+        {
+          name: "bid delay lower than minimum",
+          act: async () =>
+            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 5, 60),
+        },
+        {
+          name: "weth to native",
+          act: async () =>
+            twap.methods.ask(zeroAddress, nativeToken.address, zeroAddress, 10, 5, 10, (await time()) + 10, 10, 60),
+        },
+        {
+          name: "same tokens native",
+          act: async () =>
+            twap.methods.ask(
+              zeroAddress,
+              nativeToken.address,
+              nativeToken.address,
+              10,
+              5,
+              10,
+              (await time()) + 10,
+              10,
+              60
+            ),
+        },
+      ].map((i) =>
+        it(i.name, async () => {
+          expect(await twap.methods.MIN_BID_DELAY_SECONDS().call().then(parseInt)).eq(10);
+          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60); //valid
+          await expectRevert(async () => (await i.act()).call(), "params");
+        })
       );
     });
 

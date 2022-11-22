@@ -24,8 +24,8 @@ export class TWAPLib {
   public twap: TWAP;
   public lens: Lens;
 
-  constructor(public config: Config, public provider: any, public maker: string) {
-    setWeb3Instance(new Web3(provider));
+  constructor(public config: Config, public maker: string, public provider?: any) {
+    if (provider) setWeb3Instance(new Web3(provider));
     this.twap = contract<TWAP>(twapAbi, config.twapAddress);
     this.lens = contract<Lens>(lensAbi, config.lensAddress);
   }
@@ -96,10 +96,18 @@ export class TWAPLib {
     else return erc20(token.symbol, token.address, token.decimals).methods.balanceOf(this.maker).call().then(BN);
   }
 
-  async wrapNativeToken(amount: BN.Value) {
-    return erc20<any>(this.config.wToken.symbol, this.config.wToken.address, this.config.wToken.decimals, iwethabi)
-      .methods.deposit()
-      .send({ from: this.maker, value: BN(amount).toFixed(0) });
+  async wrapNativeToken(amount: BN.Value, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    return await this.sendTx(
+      erc20<any>(
+        this.config.wToken.symbol,
+        this.config.wToken.address,
+        this.config.wToken.decimals,
+        iwethabi
+      ).methods.deposit(),
+      priorityFeePerGas,
+      maxFeePerGas,
+      amount
+    );
   }
 
   async waitForConfirmation<T>(fn: () => Promise<T>) {
@@ -117,9 +125,13 @@ export class TWAPLib {
     return allowance.gte(amount);
   }
 
-  async approve(srcToken: TokenData, amount: BN.Value) {
+  async approve(srcToken: TokenData, amount: BN.Value, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
     const token = erc20(srcToken.symbol, srcToken.address, srcToken.decimals);
-    await token.methods.approve(this.config.twapAddress, amount.toString()).send({ from: this.maker });
+    await this.sendTx(
+      token.methods.approve(this.config.twapAddress, amount.toString()),
+      priorityFeePerGas,
+      maxFeePerGas
+    );
   }
 
   validateOrderInputs(
@@ -163,7 +175,9 @@ export class TWAPLib {
     dstMinChunkAmountOut: BN.Value,
     deadline: number,
     fillDelaySeconds: number,
-    srcUsd: BN.Value
+    srcUsd: BN.Value,
+    priorityFeePerGas?: BN.Value,
+    maxFeePerGas?: BN.Value
   ): Promise<number> {
     let validation = this.validateOrderInputs(
       srcToken,
@@ -177,8 +191,8 @@ export class TWAPLib {
     );
     if (validation !== OrderInputValidation.valid) throw new Error(`invalid inputs: ${validation}`);
 
-    const tx = await this.twap.methods
-      .ask(
+    const tx = await this.sendTx(
+      this.twap.methods.ask(
         this.config.exchangeAddress,
         srcToken.address,
         dstToken.address,
@@ -188,8 +202,10 @@ export class TWAPLib {
         BN(deadline).div(1000).toFixed(0),
         BN(this.config.bidDelaySeconds).toFixed(0),
         BN(fillDelaySeconds).toFixed(0)
-      )
-      .send({ from: this.maker });
+      ),
+      priorityFeePerGas,
+      maxFeePerGas
+    );
 
     const events = parseEvents(tx, this.twap.options.jsonInterface);
     return Number(events[0].returnValues.id);
@@ -199,15 +215,26 @@ export class TWAPLib {
     return this.parseOrder(await this.twap.methods.order(id).call());
   }
 
-  async cancelOrder(id: number) {
-    await this.twap.methods.cancel(id).send({ from: this.maker });
+  async cancelOrder(id: number, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    await this.sendTx(this.twap.methods.cancel(id), priorityFeePerGas, maxFeePerGas);
   }
 
   async getAllOrders() {
     return _.map(await this.lens.methods.makerOrders(this.maker).call(), (o) => this.parseOrder(o));
   }
 
-  parseOrder(r: any) {
+  private async sendTx(tx: any, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value, amount?: BN.Value) {
+    const gas = await tx.estimateGas();
+    return await tx.send({
+      from: this.maker,
+      gas: Math.floor(gas * 1.2),
+      maxPriorityFeePerGas: priorityFeePerGas ? BN(priorityFeePerGas).toFixed(0) : undefined,
+      maxFeePerGas: maxFeePerGas ? BN(maxFeePerGas).toFixed(0) : undefined,
+      value: amount ? BN(amount).toFixed(0) : undefined,
+    });
+  }
+
+  parseOrder(r: any): Order {
     return {
       id: Number(r.id),
       status: Number(r.status),

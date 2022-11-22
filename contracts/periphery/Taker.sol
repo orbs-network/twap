@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "./IWETH.sol";
 import "../IExchange.sol";
 import "../OrderLib.sol";
 import "../TWAP.sol";
@@ -18,11 +17,9 @@ contract Taker is Ownable {
     using SafeERC20 for ERC20;
 
     TWAP public immutable twap;
-    address public immutable weth;
 
-    constructor(address _twap, address _weth) {
+    constructor(address _twap) {
         twap = TWAP(_twap);
-        weth = _weth;
     }
 
     /**
@@ -50,10 +47,10 @@ contract Taker is Ownable {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 
-        if (o.ask.dstToken != weth && feeExchange != address(0)) {
+        if (o.ask.dstToken != twap.iweth() && o.ask.dstToken != address(0) && feeExchange != address(0)) {
             uint256 dstAmount = ERC20(o.ask.dstToken).balanceOf(address(this));
             ERC20(o.ask.dstToken).safeIncreaseAllowance(feeExchange, dstAmount);
-            IExchange(feeExchange).swap(o.ask.dstToken, weth, dstAmount, feeMinAmountOut, feeData);
+            IExchange(feeExchange).swap(o.ask.dstToken, twap.iweth(), dstAmount, feeMinAmountOut, feeData);
         }
 
         rescue(o.ask.dstToken);
@@ -63,8 +60,8 @@ contract Taker is Ownable {
      * Unwrap and withdraw native token, along with optional token (can be 0), to owner
      */
     function rescue(address token) public {
-        if (ERC20(weth).balanceOf(address(this)) > 0) {
-            IWETH(weth).withdraw(ERC20(weth).balanceOf(address(this)));
+        if (ERC20(twap.iweth()).balanceOf(address(this)) > 0) {
+            IWETH(twap.iweth()).withdraw(ERC20(twap.iweth()).balanceOf(address(this)));
         }
 
         if (address(this).balance > 0) {

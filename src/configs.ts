@@ -1,5 +1,6 @@
 import { eqIgnoreCase, zeroAddress } from "@defi.org/web3-candies";
 import _ from "lodash";
+import { Paraswap } from "./paraswap";
 
 export interface TokenData {
   address: string;
@@ -9,14 +10,17 @@ export interface TokenData {
 }
 
 export interface Config {
-  partner: string;
   chainId: number;
   twapAddress: string;
   lensAddress: string;
-  exchangeAddress: string;
   bidDelaySeconds: number;
   minChunkSizeUsd: number;
   wToken: TokenData;
+
+  partner: string;
+  exchangeAddress: string;
+  exchangeContract: "UniswapV2Exchange" | "ParaswapExchange";
+  pathfidingKey: Paraswap.OnlyDex;
 }
 
 const ChainConfigs = {
@@ -48,8 +52,8 @@ const ChainConfigs = {
   },
   poly: {
     chainId: 137,
-    twapAddress: "0x50482c3BDb5f257C04620C73F1Be9b30090E9e5D",
-    lensAddress: "0xd209419e822E3d68929B33E2CB5A66Ea089005C6",
+    twapAddress: "",
+    lensAddress: "",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
@@ -59,36 +63,53 @@ const ChainConfigs = {
       logoUrl: "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png",
     },
   },
+  avax: {
+    chainId: 43114,
+    twapAddress: "",
+    lensAddress: "",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 10,
+    wToken: {
+      address: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+      decimals: 18,
+      symbol: "WAVAX",
+      logoUrl: "https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png",
+    },
+  },
 };
 
-export const UniswapV2Config: Config = {
-  ...ChainConfigs.eth,
-  partner: "UniswapV2",
-  exchangeAddress: "0xE83df5BfA9F14a84e550c38c4ec505cB22C6A0d7",
-};
+// export const UniswapV2Config: Config = {
+//   ...ChainConfigs.eth,
+//   partner: "UniswapV2",
+//   exchangeAddress: "0xE83df5BfA9F14a84e550c38c4ec505cB22C6A0d7",
+// };
 
-export const SushiSwapConfig: Config = {
-  ...ChainConfigs.eth,
-  partner: "SushiSwap",
-  exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
-};
+// export const SushiSwapConfig: Config = {
+//   ...ChainConfigs.eth,
+//   partner: "SushiSwap",
+//   exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
+// };
 
-export const QuickSwapConfig: Config = {
-  ...ChainConfigs.poly,
-  partner: "QuickSwap",
-  exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
-};
+// export const QuickSwapConfig: Config = {
+//   ...ChainConfigs.poly,
+//   partner: "QuickSwap",
+//   exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
+// };
 
 export const SpiritSwapConfig: Config = {
   ...ChainConfigs.ftm,
   partner: "SpiritSwap",
   exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
+  exchangeContract: "ParaswapExchange",
+  pathfidingKey: Paraswap.OnlyDex.SpiritSwap,
 };
 
 export const SpookySwapConfig: Config = {
   ...ChainConfigs.ftm,
   partner: "SpookySwap",
   exchangeAddress: "0x37F427DA0D12Fe2C80aCa09EE08e7e92A1B2B114",
+  exchangeContract: "UniswapV2Exchange",
+  pathfidingKey: Paraswap.OnlyDex.SpookySwap,
 };
 
 export const nativeTokenAddresses = [
