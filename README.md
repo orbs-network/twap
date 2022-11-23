@@ -99,7 +99,7 @@ As a result of this process, an `Order` is generated and held in the `TWAP` cont
   * `maker`: order creator (`msg.sender`)
   * `exchange`: swap only on this exchange, or zero for any exchange
   * `srcToken`: input token, required
-  * `dstToken`: output token, required
+  * `dstToken`: output token, required. If zero address, will unwrap to native token on each chunk.
   * `srcAmount`: input total order amount in `srcToken`, required
   * `srcBidAmount`: input chunk size in `srcToken`, required
   * `dstMinAmount`: minimum output chunk size, in `dstToken`, required. Can be higher than market output (implies a limit order), or as low as 1 wei
