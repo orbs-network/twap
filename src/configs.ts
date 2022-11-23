@@ -39,8 +39,8 @@ const ChainConfigs = {
   },
   ftm: {
     chainId: 250,
-    twapAddress: "0xdE2ed02ef21895B97a937E82068F28390fF464aC",
-    lensAddress: "0xbF8e5B3Af58b041c0ADf0c3DEA933e7D32b8D5ef",
+    twapAddress: "0xBb9F828E34A1327607c3e4eA3dD35891398DD5EE",
+    lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
