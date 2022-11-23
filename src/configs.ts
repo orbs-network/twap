@@ -20,7 +20,7 @@ export interface Config {
   partner: string;
   exchangeAddress: string;
   exchangeContract: "UniswapV2Exchange" | "ParaswapExchange";
-  pathfidingKey: Paraswap.OnlyDex;
+  pathfinderKey: Paraswap.OnlyDex;
 }
 
 const ChainConfigs = {
@@ -101,7 +101,7 @@ export const SpiritSwapConfig: Config = {
   partner: "SpiritSwap",
   exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
   exchangeContract: "ParaswapExchange",
-  pathfidingKey: Paraswap.OnlyDex.SpiritSwap,
+  pathfinderKey: Paraswap.OnlyDex.SpiritSwap,
 };
 
 export const SpookySwapConfig: Config = {
@@ -109,7 +109,7 @@ export const SpookySwapConfig: Config = {
   partner: "SpookySwap",
   exchangeAddress: "0x37F427DA0D12Fe2C80aCa09EE08e7e92A1B2B114",
   exchangeContract: "UniswapV2Exchange",
-  pathfidingKey: Paraswap.OnlyDex.SpookySwap,
+  pathfinderKey: Paraswap.OnlyDex.SpookySwap,
 };
 
 export const nativeTokenAddresses = [

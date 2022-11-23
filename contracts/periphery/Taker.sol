@@ -10,16 +10,18 @@ import "../OrderLib.sol";
 import "../TWAP.sol";
 
 /**
- * Helper contract for TWAP taker
+ * Helper contract for TWAP takers
  * optionally swaps fee to native token at fill
  */
-contract Taker is Ownable {
+contract Taker {
     using SafeERC20 for ERC20;
 
     TWAP public immutable twap;
+    mapping(address => bool) public owners;
 
-    constructor(TWAP _twap) {
+    constructor(TWAP _twap, address[] memory _owners) {
         twap = _twap;
+        for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = true;
     }
 
     /**
@@ -31,7 +33,7 @@ contract Taker is Ownable {
         uint256 dstFee,
         uint32 slippagePercent,
         bytes calldata data
-    ) external onlyOwner {
+    ) external onlyOwners {
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
 
@@ -43,7 +45,7 @@ contract Taker is Ownable {
      * @param feeMinAmountOut optional native token minimum out, can be 0
      * @param feeData optional data to pass to feeExchange, can be empty
      */
-    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData) external onlyOwner {
+    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData) external onlyOwners {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 
@@ -57,21 +59,26 @@ contract Taker is Ownable {
     }
 
     /**
-     * Unwrap and withdraw native token, along with optional token (can be 0), to owner
+     * Send all balance of token, wrapped native and native to sender
      */
-    function rescue(address token) public {
+    function rescue(address token) public onlyOwners {
         if (ERC20(twap.iweth()).balanceOf(address(this)) > 0) {
             IWETH(twap.iweth()).withdraw(ERC20(twap.iweth()).balanceOf(address(this)));
         }
 
         if (address(this).balance > 0) {
-            Address.sendValue(payable(owner()), address(this).balance);
+            Address.sendValue(payable(msg.sender), address(this).balance);
         }
 
         if (token != address(0) && ERC20(token).balanceOf(address(this)) > 0) {
-            ERC20(token).safeTransfer(owner(), ERC20(token).balanceOf(address(this)));
+            ERC20(token).safeTransfer(msg.sender, ERC20(token).balanceOf(address(this)));
         }
     }
 
     receive() external payable {} // solhint-disable-line no-empty-blocks
+
+    modifier onlyOwners() {
+        require(owners[msg.sender], "onlyOwners");
+        _;
+    }
 }

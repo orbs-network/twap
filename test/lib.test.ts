@@ -319,7 +319,7 @@ async function swapData(lib: TWAPLib, orderId: number) {
     await asTokenData(srcToken),
     await asTokenData(dstToken),
     amountIn,
-    lib.config.pathfidingKey
+    lib.config.pathfinderKey
   );
   switch (lib.config.exchangeContract) {
     case "UniswapV2Exchange":

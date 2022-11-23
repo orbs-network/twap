@@ -4,12 +4,14 @@ import BN from "bignumber.js";
 import {
   contract,
   convertDecimals,
+  eqIgnoreCase,
   erc20,
   iwethabi,
   parseEvents,
   setWeb3Instance,
   web3,
   zero,
+  zeroAddress,
 } from "@defi.org/web3-candies";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
@@ -46,6 +48,8 @@ export class TWAPLib {
     ).integerValue(BN.ROUND_FLOOR);
 
   isNativeToken = (token: TokenData) => isNativeAddress(token.address);
+
+  isWrappedToken = (token: TokenData) => eqIgnoreCase(token.address, this.config.wToken.address); //TODO
 
   isValidChain = (chainId: number) => chainId === this.config.chainId;
 
@@ -147,6 +151,23 @@ export class TWAPLib {
     );
   }
 
+  validateTokens(srcToken: TokenData, dstToken: TokenData) {
+    if (_.isEqual(srcToken, dstToken)) return TokensValidation.invalid;
+    if (isNativeAddress(srcToken.address)) {
+      if (isNativeAddress(dstToken.address)) return TokensValidation.invalid;
+      if (this.isWrappedToken(dstToken)) return TokensValidation.wrapOnly;
+      return TokensValidation.wrapAndOrder;
+    }
+    if (this.isWrappedToken(srcToken)) {
+      if (isNativeAddress(dstToken.address)) return TokensValidation.unwrapOnly;
+      return TokensValidation.valid;
+    }
+    if (isNativeAddress(dstToken.address)) {
+      return TokensValidation.dstTokenZero;
+    }
+    return TokensValidation.valid;
+  }
+
   validateOrderInputs(
     srcToken: TokenData,
     dstToken: TokenData,
@@ -157,7 +178,7 @@ export class TWAPLib {
     fillDelaySeconds: BN.Value,
     srcUsd: BN.Value
   ): OrderInputValidation {
-    if (_.isEqual(srcToken, dstToken)) return OrderInputValidation.equalTokens;
+    if (this.validateTokens(srcToken, dstToken) !== TokensValidation.valid) return OrderInputValidation.invalidTokens; // TODO
 
     if (BN(srcAmount).lte(0)) return OrderInputValidation.invalidSrcAmount;
 
@@ -318,7 +339,7 @@ export enum Status {
 
 export enum OrderInputValidation {
   valid = "valid",
-  equalTokens = "equalTokens",
+  invalidTokens = "invalidTokens",
   invalidSrcAmount = "invalidSrcAmount",
   invalidSrcChunkAmount = "invalidSrcChunkAmount",
   invalidDstMinChunkAmountOut = "invalidDstMinChunkAmountOut",
@@ -326,4 +347,13 @@ export enum OrderInputValidation {
   invalidFillDelaySeconds = "invalidFillDelaySeconds",
   invalidSrcUsd = "invalidSrcUsd",
   invalidSmallestSrcChunkUsd = "invalidSmallestSrcChunkUsd",
+}
+
+export enum TokensValidation {
+  valid = "valid",
+  invalid = "invalid",
+  wrapOnly = "wrapOnly",
+  unwrapOnly = "unwrapOnly",
+  wrapAndOrder = "wrapAndOrder",
+  dstTokenZero = "dstTokenZero",
 }

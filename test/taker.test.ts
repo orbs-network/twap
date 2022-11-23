@@ -10,6 +10,7 @@ import {
   twap,
   user,
   withUniswapV2Exchange,
+  deployer,
 } from "./fixture";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
@@ -25,7 +26,7 @@ describe("Taker", async () => {
   beforeEach(() => withUniswapV2Exchange());
 
   beforeEach(async () => {
-    takerContract = await deployArtifact<Taker>("Taker", { from: taker }, [twap.options.address]);
+    takerContract = await deployArtifact<Taker>("Taker", { from: taker }, [twap.options.address, [taker, deployer]]);
     await ask(2000, 1000, 0.5);
   });
 
@@ -36,19 +37,25 @@ describe("Taker", async () => {
   });
 
   it("sanity", async () => {
-    expect(await takerContract.methods.owner().call()).eq(taker);
     expect(await takerContract.methods.twap().call()).eq(twap.options.address);
+    expect(await takerContract.methods.owners(taker).call()).eq(true);
+    expect(await takerContract.methods.owners(deployer).call()).eq(true);
+    expect(await takerContract.methods.owners(user).call()).eq(false);
   });
 
-  it("onlyOwner", async () => {
+  it("onlyOwners", async () => {
     await expectRevert(
-      () => takerContract.methods.bid(0, zeroAddress, 0, 0, []).send({ from: user }),
-      "caller is not the owner"
+      async () =>
+        takerContract.methods
+          .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapDataForUniV2)
+          .send({ from: user }),
+      "onlyOwners"
     );
-    await expectRevert(
-      () => takerContract.methods.fill(0, zeroAddress, 0, []).send({ from: user }),
-      "caller is not the owner"
-    );
+    await expectRevert(() => takerContract.methods.fill(0, zeroAddress, 0, []).send({ from: user }), "onlyOwners");
+    await expectRevert(() => takerContract.methods.rescue(zeroAddress).send({ from: user }), "onlyOwners");
+    await takerContract.methods
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapDataForUniV2)
+      .send({ from: deployer }); // other owner
   });
 
   it("bid & fill, gas rebate as dstToken without swapping", async () => {
@@ -85,7 +92,7 @@ describe("Taker", async () => {
   });
 
   describe("rescue", async () => {
-    it("sends native token balance to owner", async () => {
+    it("sends native token balance to caller", async () => {
       const sombody = await account(6);
       await web3().eth.sendTransaction({
         value: bn18(10).toString(),
@@ -95,7 +102,7 @@ describe("Taker", async () => {
       expect(await web3().eth.getBalance(takerContract.options.address)).bignumber.eq(bn18(10));
 
       const startBalance = await web3().eth.getBalance(taker);
-      await takerContract.methods.rescue(zeroAddress).send({ from: sombody });
+      await takerContract.methods.rescue(zeroAddress).send({ from: taker });
       expect(await web3().eth.getBalance(taker)).bignumber.closeTo(bn(startBalance).plus(bn18(10)), bn18(0.01));
     });
 
@@ -107,7 +114,7 @@ describe("Taker", async () => {
       );
 
       const startBalance = await srcToken.methods.balanceOf(taker).call().then(BigNumber);
-      await takerContract.methods.rescue(srcToken.address).send({ from: sombody });
+      await takerContract.methods.rescue(srcToken.address).send({ from: taker });
       expect(await srcToken.methods.balanceOf(taker).call()).bignumber.eq(startBalance.plus(await srcToken.amount(10)));
     });
   });

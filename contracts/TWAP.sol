@@ -326,5 +326,5 @@ contract TWAP is ReentrancyGuard {
         return o.ask.dstToken == address(0) ? iweth : o.ask.dstToken;
     }
 
-    receive() external payable {}
+    receive() external payable {} // solhint-disable-line no-empty-blocks
 }
