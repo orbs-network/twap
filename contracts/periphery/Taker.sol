@@ -18,8 +18,8 @@ contract Taker is Ownable {
 
     TWAP public immutable twap;
 
-    constructor(address _twap) {
-        twap = TWAP(_twap);
+    constructor(TWAP _twap) {
+        twap = _twap;
     }
 
     /**

@@ -3,7 +3,7 @@ import {
   exchange,
   fundSrcTokenFromWhale,
   initFixture,
-  nativeToken,
+  wNativeToken,
   srcToken,
   swapDataForUniV2,
   taker,
@@ -25,20 +25,19 @@ describe("Taker", async () => {
   beforeEach(() => withUniswapV2Exchange());
 
   beforeEach(async () => {
-    takerContract = await deployArtifact<Taker>("Taker", { from: taker }, [twap.options.address, nativeToken.address]);
+    takerContract = await deployArtifact<Taker>("Taker", { from: taker }, [twap.options.address]);
     await ask(2000, 1000, 0.5);
   });
 
   afterEach(async () => {
     expect(await dstToken.methods.balanceOf(takerContract.options.address).call()).bignumber.zero;
-    expect(await nativeToken.methods.balanceOf(takerContract.options.address).call()).bignumber.zero;
+    expect(await wNativeToken.methods.balanceOf(takerContract.options.address).call()).bignumber.zero;
     expect(await web3().eth.getBalance(takerContract.options.address)).bignumber.zero;
   });
 
   it("sanity", async () => {
     expect(await takerContract.methods.owner().call()).eq(taker);
     expect(await takerContract.methods.twap().call()).eq(twap.options.address);
-    expect(await takerContract.methods.weth().call()).eq(nativeToken.address);
   });
 
   it("onlyOwner", async () => {
@@ -77,7 +76,7 @@ describe("Taker", async () => {
         0,
         exchange.options.address,
         1,
-        web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, nativeToken.address]])
+        web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, wNativeToken.address]])
       )
       .send({ from: taker });
 

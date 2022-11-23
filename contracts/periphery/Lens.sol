@@ -15,8 +15,8 @@ contract Lens {
 
     TWAP public immutable twap;
 
-    constructor(address _twap) {
-        twap = TWAP(_twap);
+    constructor(TWAP _twap) {
+        twap = _twap;
     }
 
     function length() public view returns (uint64) {

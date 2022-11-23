@@ -1,23 +1,25 @@
-import { account, currentNetwork, parseEvents } from "@defi.org/web3-candies";
+import { account, chainId, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import {
   asTokenData,
   deployer,
   dstToken,
   exchange,
   initFixture,
+  wNativeToken,
   setMockExchangeAmountOut,
   srcToken,
   swapDataForUniV2,
   taker,
   twap,
   user,
+  userSrcTokenStartBalance,
   withMockExchange,
   withParaswapExchange,
   withUniswapV2Exchange,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, expectFilled, fill, order } from "./twap-utils";
+import { ask, bid, endTime, expectFilled, fill, order } from "./twap-utils";
 import { Paraswap } from "../src/paraswap";
 import BigNumber from "bignumber.js";
 
@@ -179,6 +181,38 @@ describe("TWAP", async () => {
     await bid(0, 1, 1); // output 98
   });
 
+  it("native token output support", async () => {
+    await srcToken.methods.approve(twap.options.address, await srcToken.amount(100)).send({ from: user });
+    await twap.methods
+      .ask(
+        exchange.options.address,
+        srcToken.address,
+        zeroAddress,
+        await srcToken.amount(100),
+        await srcToken.amount(100),
+        1,
+        endTime(),
+        60,
+        0
+      )
+      .send({ from: user });
+    await bid(
+      0,
+      undefined,
+      undefined,
+      web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [srcToken.address, wNativeToken.address]])
+    );
+    await mineBlock(60);
+    const balanceBefore = await web3().eth.getBalance(user);
+    await fill(0);
+    expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
+      (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(100))
+    );
+    expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.zero;
+    expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
+    expect(await web3().eth.getBalance(user)).bignumber.gt(balanceBefore);
+  });
+
   describe("prune stale invalid order", async () => {
     it("when no approval", async () => {
       await ask(2000, 1000, 0.5);
@@ -200,59 +234,5 @@ describe("TWAP", async () => {
       await twap.methods.prune(0).send({ from: deployer });
       expect((await order(0)).status).eq(await twap.methods.STATUS_CANCELED().call());
     });
-  });
-});
-
-describe("TWAP with Paraswap", async () => {
-  beforeEach("must run on latest block", async () => initFixture(true));
-  beforeEach(() => withParaswapExchange());
-
-  it("Spiritswap E2E", async () => {
-    const swapSrcAmountIn = await srcToken.amount(2000);
-    const paraswapRoute = await Paraswap.findRoute(
-      (await currentNetwork())!.id,
-      await asTokenData(srcToken),
-      await asTokenData(dstToken),
-      swapSrcAmountIn,
-      Paraswap.OnlyDex.SpiritSwap
-    );
-
-    const takerFee = BigNumber(paraswapRoute.destAmount).times(0.001).integerValue(BigNumber.ROUND_FLOOR);
-    const dstMinOut = BigNumber(paraswapRoute.destAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
-    expect(dstMinOut).bignumber.gt(0);
-
-    await ask(10_000, 2000, (await dstToken.mantissa(dstMinOut)).toNumber());
-
-    await bid(
-      0,
-      (await dstToken.mantissa(takerFee)).toNumber(),
-      0.5, // 0.5%, enough for slippage but still higher than user's dstMinOut
-      await Paraswap.buildSwapData(paraswapRoute, exchange.options.address)
-    );
-
-    await mineBlock(10);
-    await fill(0);
-
-    await expectFilled(0, 2000, (await dstToken.mantissa(dstMinOut)).toNumber());
-  });
-});
-
-describe("TWAP with SpookySwap on Fantom", () => {
-  before("on Fantom only", function () {
-    if (process.env.NETWORK!.toLowerCase() !== "ftm") return this.skip();
-  });
-
-  beforeEach(() => initFixture());
-
-  beforeEach(async () => {
-    await withUniswapV2Exchange("0xF491e7B69E4244ad4002BC14e878a34207E38c29"); //spooky router
-  });
-
-  it("Spookyswap E2E", async () => {
-    await ask(2000, 1000, 0.5);
-    await bid(0);
-    await mineBlock(60);
-    await fill(0);
-    await expectFilled(0, 1000, 0.5);
   });
 });

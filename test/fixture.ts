@@ -21,7 +21,7 @@ export let deployer: string;
 
 export let srcToken: Token;
 export let dstToken: Token;
-export let nativeToken: Token;
+export let wNativeToken: Token;
 export const userSrcTokenStartBalance = 1_000_000;
 
 let srcTokenWhale: string;
@@ -37,7 +37,7 @@ export async function initFixture(latestBlock = false) {
   await resetNetworkFork(latestBlock ? "latest" : undefined);
   await initAccounts();
   await initTokens();
-  twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [nativeToken.address]);
+  twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [wNativeToken.address]);
   lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
 
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
@@ -58,7 +58,7 @@ async function initTokens() {
     case "ETH":
       srcToken = erc20s.eth.USDC();
       dstToken = erc20s.eth.WETH();
-      nativeToken = dstToken;
+      wNativeToken = dstToken;
       srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
       dstTokenWhale = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
       return;
@@ -66,7 +66,7 @@ async function initTokens() {
     case "POLY":
       srcToken = erc20s.poly.USDC();
       dstToken = erc20s.poly.WETH();
-      nativeToken = erc20s.poly.WMATIC();
+      wNativeToken = erc20s.poly.WMATIC();
       srcTokenWhale = "0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245";
       dstTokenWhale = "0x72A53cDBBcc1b9efa39c834A540550e23463AAcB";
       return;
@@ -74,7 +74,7 @@ async function initTokens() {
     case "FTM":
       srcToken = erc20s.ftm.USDC();
       dstToken = erc20s.ftm.WETH();
-      nativeToken = erc20s.ftm.WFTM();
+      wNativeToken = erc20s.ftm.WFTM();
       srcTokenWhale = "0x95bf7E307BC1ab0BA38ae10fc27084bC36FcD605";
       dstTokenWhale = "0x25c130B2624CF12A4Ea30143eF50c5D68cEFA22f";
       return;
@@ -101,7 +101,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
 
   const paths = {
     eth: [srcToken.address, dstToken.address],
-    ftm: [srcToken.address, nativeToken.address, dstToken.address],
+    ftm: [srcToken.address, wNativeToken.address, dstToken.address],
     poly: [srcToken.address, dstToken.address],
   };
   const path = _.find(paths, (p, k) => k === network!.shortname)!;
@@ -117,7 +117,7 @@ export async function withParaswapExchange() {
 export async function fundSrcTokenFromWhale(target: string, amount: number) {
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
-  await setBalance(srcTokenWhale, await nativeToken.amount(10e6));
+  await setBalance(srcTokenWhale, await wNativeToken.amount(10e6));
   expect(await srcToken.methods.balanceOf(srcTokenWhale).call()).bignumber.gte(await srcToken.amount(amount));
   await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
   expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
@@ -126,7 +126,7 @@ export async function fundSrcTokenFromWhale(target: string, amount: number) {
 async function fundDstTokenFromWhale(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
-  await setBalance(dstTokenWhale, await nativeToken.amount(10e6));
+  await setBalance(dstTokenWhale, await wNativeToken.amount(10e6));
   await dstToken.methods.transfer(target, await dstToken.amount(amount)).send({ from: dstTokenWhale });
   expect(await dstToken.methods.balanceOf(target).call()).bignumber.eq(await dstToken.amount(amount));
 }

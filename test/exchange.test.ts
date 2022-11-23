@@ -11,7 +11,7 @@ import {
   withParaswapExchange,
   withUniswapV2Exchange,
 } from "./fixture";
-import { currentNetwork, maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
+import { chainId, maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
 import { Paraswap } from "../src";
 import BigNumber from "bignumber.js";
 
@@ -63,7 +63,7 @@ describe("IExchange implementations", async () => {
       const amountIn = await srcToken.amount(10_000);
 
       const paraswapRoute = await Paraswap.findRoute(
-        (await currentNetwork())!.id,
+        await chainId(),
         await asTokenData(srcToken),
         await asTokenData(dstToken),
         amountIn

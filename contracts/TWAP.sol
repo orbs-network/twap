@@ -299,14 +299,19 @@ contract TWAP is ReentrancyGuard {
         ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
 
         IExchange(exchange).swap(o.ask.srcToken, _dstToken(o), srcAmountIn, minOut + dstFee, o.bid.data);
-        if (o.ask.dstToken == address(0)) IWETH(iweth).withdraw(address(this).balance);
 
         dstAmountOut = ERC20(_dstToken(o)).balanceOf(address(this)); // support FoT tokens
         dstAmountOut -= dstFee;
         require(dstAmountOut >= minOut, "min out");
 
-        ERC20(_dstToken(o)).safeTransfer(o.bid.taker, dstFee);
-        ERC20(_dstToken(o)).safeTransfer(o.ask.maker, dstAmountOut);
+        if (o.ask.dstToken == address(0)) {
+            IWETH(iweth).withdraw(ERC20(iweth).balanceOf(address(this)));
+            Address.sendValue(payable(o.bid.taker), dstFee);
+            Address.sendValue(payable(o.ask.maker), dstAmountOut);
+        } else {
+            ERC20(_dstToken(o)).safeTransfer(o.bid.taker, dstFee);
+            ERC20(_dstToken(o)).safeTransfer(o.ask.maker, dstAmountOut);
+        }
     }
 
     /**
@@ -320,4 +325,6 @@ contract TWAP is ReentrancyGuard {
     function _dstToken(OrderLib.Order memory o) private view returns (address) {
         return o.ask.dstToken == address(0) ? iweth : o.ask.dstToken;
     }
+
+    receive() external payable {}
 }

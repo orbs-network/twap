@@ -1,4 +1,4 @@
-import { exchange, initFixture, nativeToken, taker, twap, user, withUniswapV2Exchange } from "./fixture";
+import { exchange, initFixture, wNativeToken, taker, twap, user, withUniswapV2Exchange } from "./fixture";
 import { Abi, bn18, contract, erc20, maxUint256, Token, web3, zero, zeroAddress } from "@defi.org/web3-candies";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
@@ -26,10 +26,10 @@ describe("FeeOnTransfer tokens", async () => {
       .ask(
         zeroAddress,
         token.address,
-        nativeToken.address,
+        wNativeToken.address,
         await token.amount(10),
         await token.amount(10),
-        await nativeToken.amount(1),
+        await wNativeToken.amount(1),
         endTime(),
         10,
         60
@@ -42,7 +42,7 @@ describe("FeeOnTransfer tokens", async () => {
         exchange.options.address,
         0,
         30_000,
-        web3().eth.abi.encodeParameters(["bool", "address[]"], [true, [token.options.address, nativeToken.address]])
+        web3().eth.abi.encodeParameters(["bool", "address[]"], [true, [token.options.address, wNativeToken.address]])
       )
       .send({ from: taker });
 
@@ -55,10 +55,10 @@ describe("FeeOnTransfer tokens", async () => {
       await token.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       const data = web3().eth.abi.encodeParameters(
         ["bool", "address[]"],
-        [false, [token.options.address, nativeToken.address]]
+        [false, [token.options.address, wNativeToken.address]]
       );
       await expectRevert(
-        () => exchange.methods.swap(token.options.address, nativeToken.address, 100, 0, data).send({ from: user }),
+        () => exchange.methods.swap(token.options.address, wNativeToken.address, 100, 0, data).send({ from: user }),
         /(UniswapV2|Pancake): K/
       );
     });
@@ -67,21 +67,21 @@ describe("FeeOnTransfer tokens", async () => {
       const amountIn = bn18(10);
       const data = web3().eth.abi.encodeParameters(
         ["bool", "address[]"],
-        [true, [token.options.address, nativeToken.address]]
+        [true, [token.options.address, wNativeToken.address]]
       );
 
       expect(
-        await exchange.methods.getAmountOut(token.options.address, nativeToken.address, amountIn, data).call()
+        await exchange.methods.getAmountOut(token.options.address, wNativeToken.address, amountIn, data).call()
       ).bignumber.closeTo(bn18(18.1), bn18(0.1)); // including exchange fee ~ 0.2-0.3%
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(50));
-      expect(await nativeToken.methods.balanceOf(user).call()).bignumber.eq(zero);
+      expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.eq(zero);
       await token.methods.approve(exchange.options.address, amountIn).send({ from: user });
-      await exchange.methods.swap(token.options.address, nativeToken.address, amountIn, 0, data).send({ from: user });
+      await exchange.methods.swap(token.options.address, wNativeToken.address, amountIn, 0, data).send({ from: user });
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(40));
-      expect(await nativeToken.methods.balanceOf(user).call()).bignumber.closeTo(
-        await nativeToken.amount(15.2),
+      expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.closeTo(
+        await wNativeToken.amount(15.2),
         bn18(0.1)
       );
     });
@@ -90,7 +90,7 @@ describe("FeeOnTransfer tokens", async () => {
 
 async function addLiquidityETH(depositor: string, token: Token, tokens: number, eths: number) {
   const amountToken = await token.amount(tokens);
-  const amountEth = await nativeToken.amount(eths);
+  const amountEth = await wNativeToken.amount(eths);
   const abi = [
     {
       inputs: [

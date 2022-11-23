@@ -87,6 +87,9 @@ export namespace Paraswap {
   export async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
     const response = await fetch(`${URL}/transactions/${paraswapRoute.network}?ignoreChecks=true`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         priceRoute: paraswapRoute,
         srcToken: paraswapRoute.srcToken,

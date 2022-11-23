@@ -3,7 +3,7 @@ import {
   dstToken,
   exchange,
   initFixture,
-  nativeToken,
+  wNativeToken,
   setMockExchangeAmountOut,
   srcToken,
   swapDataForUniV2,
@@ -74,15 +74,15 @@ describe("Errors", () => {
         {
           name: "weth to native",
           act: async () =>
-            twap.methods.ask(zeroAddress, nativeToken.address, zeroAddress, 10, 5, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask(zeroAddress, wNativeToken.address, zeroAddress, 10, 5, 10, (await time()) + 10, 10, 60),
         },
         {
           name: "same tokens native",
           act: async () =>
             twap.methods.ask(
               zeroAddress,
-              nativeToken.address,
-              nativeToken.address,
+              wNativeToken.address,
+              wNativeToken.address,
               10,
               5,
               10,

@@ -224,10 +224,13 @@ export class TWAPLib {
   }
 
   private async sendTx(tx: any, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value, amount?: BN.Value) {
-    const gas = await tx.estimateGas();
+    let gas = 500_000;
+    try {
+      gas = Math.max(gas, Math.floor((await tx.estimateGas()) * 1.2));
+    } catch (ignore) {}
     return await tx.send({
       from: this.maker,
-      gas: Math.floor(gas * 1.2),
+      gas,
       maxPriorityFeePerGas: priorityFeePerGas ? BN(priorityFeePerGas).toFixed(0) : undefined,
       maxFeePerGas: maxFeePerGas ? BN(maxFeePerGas).toFixed(0) : undefined,
       value: amount ? BN(amount).toFixed(0) : undefined,

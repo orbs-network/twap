@@ -4,14 +4,14 @@ import {
   asTokenData,
   dstToken,
   initFixture,
-  nativeToken,
+  wNativeToken,
   srcToken,
   taker,
   user,
   userSrcTokenStartBalance,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { currentNetwork, erc20, web3, zeroAddress } from "@defi.org/web3-candies";
+import { chainId, erc20, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 
 describe("TWAPLib with production addresses", () => {
@@ -25,7 +25,7 @@ describe("TWAPLib with production addresses", () => {
       let dToken: TokenData;
 
       before(async function () {
-        if ((await currentNetwork())?.id !== c.chainId) return this.skip();
+        if ((await chainId()) !== c.chainId) return this.skip();
       });
 
       beforeEach(async () => {
@@ -44,6 +44,7 @@ describe("TWAPLib with production addresses", () => {
         expect(await lib.hasAllowance(sToken, 123456789)).false;
         await lib.approve(sToken, 123456789);
         expect(await lib.hasAllowance(sToken, 123456789)).true;
+        expect(await srcToken.methods.allowance(user, lib.config.twapAddress).call()).bignumber.eq(123456789);
         expect(await lib.hasAllowance(sToken, 123456790)).false;
       });
 
@@ -189,7 +190,7 @@ describe("TWAPLib with production addresses", () => {
         it("maker balance", async () => {
           expect(await lib.makerBalance(sToken)).bignumber.eq(await srcToken.amount(userSrcTokenStartBalance));
           expect(await lib.makerBalance(dToken)).bignumber.zero;
-          expect(await lib.makerBalance(await asTokenData(nativeToken))).bignumber.zero;
+          expect(await lib.makerBalance(await asTokenData(wNativeToken))).bignumber.zero;
           expect(await lib.makerBalance({ address: zeroAddress, symbol: "", decimals: 1 })).bignumber.eq(
             BN(1e6).times(1e18)
           );
@@ -197,8 +198,8 @@ describe("TWAPLib with production addresses", () => {
 
         it("wrap native", async () => {
           expect(await lib.makerBalance(lib.config.wToken)).bignumber.zero;
-          await lib.wrapNativeToken(100);
-          expect(await lib.makerBalance(lib.config.wToken)).bignumber.eq(100);
+          await lib.wrapNativeToken(await wNativeToken.amount(100));
+          expect(await lib.makerBalance(lib.config.wToken)).bignumber.eq(await wNativeToken.amount(100));
         });
 
         it("waitForConfirmation", async () => {
@@ -310,7 +311,10 @@ async function swapData(lib: TWAPLib, orderId: number) {
     case "UniswapV2Exchange":
       return {
         dstAmountOut: BN(route.destAmount),
-        data: web3().eth.abi.encodeParameters(["bool", "address[]"], [false, route.bestRoute[0]]),
+        data: web3().eth.abi.encodeParameters(
+          ["bool", "address[]"],
+          [false, route.bestRoute[0].swaps[0].swapExchanges[0].data.path]
+        ),
       };
     case "ParaswapExchange":
       return {
