@@ -1,4 +1,4 @@
-import { Paraswap, SpiritSwapConfig, SpookySwapConfig, Status, TokenData, TWAPLib } from "../src";
+import { nativeTokenAddresses, Paraswap, SpiritSwapConfig, SpookySwapConfig, Status, TokenData, TWAPLib } from "../src";
 import { expect } from "chai";
 import {
   asTokenData,
@@ -14,7 +14,7 @@ import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { chainId, erc20, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 
-describe("TWAPLib with production addresses", () => {
+describe("TWAPLib with production config", () => {
   beforeEach(() => initFixture(true));
 
   [SpiritSwapConfig, SpookySwapConfig].map((c) => {
@@ -48,8 +48,39 @@ describe("TWAPLib with production addresses", () => {
         expect(await lib.hasAllowance(sToken, 123456790)).false;
       });
 
+      it("validate tokens", async () => {
+        expect(lib.validateTokens(sToken, dToken)).eq("valid");
+        expect(lib.validateTokens(sToken, sToken)).eq("invalid");
+        expect(lib.validateTokens(lib.config.wToken, sToken)).eq("valid");
+        expect(lib.validateTokens(lib.config.wToken, lib.config.wToken)).eq("invalid");
+        expect(
+          lib.validateTokens({ address: nativeTokenAddresses[1], symbol: "", decimals: 18 }, lib.config.wToken)
+        ).eq("wrapOnly");
+        expect(
+          lib.validateTokens({ address: nativeTokenAddresses[0], symbol: "", decimals: 18 }, lib.config.wToken)
+        ).eq("wrapOnly");
+        expect(
+          lib.validateTokens(
+            { address: nativeTokenAddresses[2], symbol: "", decimals: 18 },
+            { address: nativeTokenAddresses[0], symbol: "", decimals: 18 }
+          )
+        ).eq("invalid");
+
+        expect(lib.validateTokens({ address: nativeTokenAddresses[1], symbol: "", decimals: 18 }, dToken)).eq(
+          "wrapAndOrder"
+        );
+
+        expect(
+          lib.validateTokens(lib.config.wToken, { address: nativeTokenAddresses[1], symbol: "", decimals: 18 })
+        ).eq("unwrapOnly");
+
+        expect(lib.validateTokens(dToken, { address: nativeTokenAddresses[1], symbol: "", decimals: 18 })).eq(
+          "dstTokenZero"
+        );
+      });
+
       it("submitOrder validations", async () => {
-        await expectRevert(() => lib.submitOrder(sToken, sToken, 0, 0, 0, 0, 0, 0), "invalid inputs: equalTokens");
+        await expectRevert(() => lib.submitOrder(sToken, sToken, 0, 0, 0, 0, 0, 0), "invalid inputs: invalidTokens");
         await expectRevert(() => lib.submitOrder(sToken, dToken, 0, 0, 0, 0, 0, 0), "invalid inputs: invalidSrcAmount");
         await expectRevert(
           () => lib.submitOrder(sToken, dToken, 1, 0, 0, 0, 0, 0),
@@ -182,6 +213,12 @@ describe("TWAPLib with production addresses", () => {
           expect(lib.isNativeToken({ address: zeroAddress, symbol: "", decimals: 1 })).true;
         });
 
+        it("isWrappedToken", async () => {
+          expect(lib.isWrappedToken(sToken)).false;
+          expect(lib.isWrappedToken(lib.config.wToken)).true;
+          expect(lib.isWrappedToken({ address: zeroAddress, symbol: "", decimals: 1 })).false;
+        });
+
         it("isValidNetwork", async () => {
           expect(lib.isValidChain(0)).false;
           expect(lib.isValidChain(lib.config.chainId)).true;
@@ -198,8 +235,21 @@ describe("TWAPLib with production addresses", () => {
 
         it("wrap native", async () => {
           expect(await lib.makerBalance(lib.config.wToken)).bignumber.zero;
-          await lib.wrapNativeToken(await wNativeToken.amount(100));
-          expect(await lib.makerBalance(lib.config.wToken)).bignumber.eq(await wNativeToken.amount(100));
+          await lib.wrapNativeToken(100 * 1e18);
+          expect(await lib.makerBalance(lib.config.wToken)).bignumber.eq(100 * 1e18);
+        });
+
+        it("unwrap to native", async () => {
+          await lib.wrapNativeToken(100 * 1e18);
+          expect(await lib.makerBalance(lib.config.wToken)).bignumber.eq(100 * 1e18);
+
+          const balance = await web3().eth.getBalance(lib.maker);
+          await lib.unwrapNativeToken(100 * 1e18);
+          expect(await lib.makerBalance(lib.config.wToken)).bignumber.zero;
+          expect(await web3().eth.getBalance(lib.maker)).bignumber.closeTo(
+            BN(balance).plus(BN(100).times(1e18)),
+            0.01 * 1e18
+          );
         });
 
         it("waitForConfirmation", async () => {

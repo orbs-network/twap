@@ -49,7 +49,7 @@ export class TWAPLib {
 
   isNativeToken = (token: TokenData) => isNativeAddress(token.address);
 
-  isWrappedToken = (token: TokenData) => eqIgnoreCase(token.address, this.config.wToken.address); //TODO
+  isWrappedToken = (token: TokenData) => eqIgnoreCase(token.address, this.config.wToken.address);
 
   isValidChain = (chainId: number) => chainId === this.config.chainId;
 
@@ -127,6 +127,19 @@ export class TWAPLib {
     );
   }
 
+  async unwrapNativeToken(amount: BN.Value, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    return await this.sendTx(
+      erc20<any>(
+        this.config.wToken.symbol,
+        this.config.wToken.address,
+        this.config.wToken.decimals,
+        iwethabi
+      ).methods.withdraw(BN(amount).toFixed(0)),
+      priorityFeePerGas,
+      maxFeePerGas
+    );
+  }
+
   async waitForConfirmation<T>(fn: () => Promise<T>) {
     const nonceBefore = await web3().eth.getTransactionCount(this.maker);
     const result = await fn();
@@ -152,19 +165,18 @@ export class TWAPLib {
   }
 
   validateTokens(srcToken: TokenData, dstToken: TokenData) {
-    if (_.isEqual(srcToken, dstToken)) return TokensValidation.invalid;
-    if (isNativeAddress(srcToken.address)) {
-      if (isNativeAddress(dstToken.address)) return TokensValidation.invalid;
+    if (_.isEqual(srcToken, dstToken) || (this.isNativeToken(srcToken) && this.isNativeToken(dstToken)))
+      return TokensValidation.invalid;
+
+    if (this.isNativeToken(srcToken)) {
       if (this.isWrappedToken(dstToken)) return TokensValidation.wrapOnly;
       return TokensValidation.wrapAndOrder;
     }
-    if (this.isWrappedToken(srcToken)) {
-      if (isNativeAddress(dstToken.address)) return TokensValidation.unwrapOnly;
-      return TokensValidation.valid;
-    }
-    if (isNativeAddress(dstToken.address)) {
-      return TokensValidation.dstTokenZero;
-    }
+
+    if (this.isWrappedToken(srcToken) && this.isNativeToken(dstToken)) return TokensValidation.unwrapOnly;
+
+    if (this.isNativeToken(dstToken)) return TokensValidation.dstTokenZero;
+
     return TokensValidation.valid;
   }
 
@@ -178,7 +190,7 @@ export class TWAPLib {
     fillDelaySeconds: BN.Value,
     srcUsd: BN.Value
   ): OrderInputValidation {
-    if (this.validateTokens(srcToken, dstToken) !== TokensValidation.valid) return OrderInputValidation.invalidTokens; // TODO
+    if (this.validateTokens(srcToken, dstToken) !== TokensValidation.valid) return OrderInputValidation.invalidTokens;
 
     if (BN(srcAmount).lte(0)) return OrderInputValidation.invalidSrcAmount;
 
