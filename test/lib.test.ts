@@ -48,6 +48,10 @@ describe("TWAPLib with production config", () => {
         expect(await lib.hasAllowance(sToken, 123456790)).false;
       });
 
+      it("native token allowance", async () => {
+        expect(await lib.hasAllowance({ address: zeroAddress, symbol: "", decimals: 0 }, 123456789)).true;
+      });
+
       it("validate tokens", async () => {
         expect(lib.validateTokens(sToken, dToken)).eq("valid");
         expect(lib.validateTokens(sToken, sToken)).eq("invalid");

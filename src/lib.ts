@@ -11,7 +11,6 @@ import {
   setWeb3Instance,
   web3,
   zero,
-  zeroAddress,
 } from "@defi.org/web3-candies";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
@@ -150,6 +149,7 @@ export class TWAPLib {
   }
 
   async hasAllowance(srcToken: TokenData, amount: BN.Value) {
+    if (this.isNativeToken(srcToken)) return true;
     const token = erc20(srcToken.symbol, srcToken.address, srcToken.decimals);
     const allowance = BN(await token.methods.allowance(this.maker, this.config.twapAddress).call());
     return allowance.gte(amount);
