@@ -211,7 +211,7 @@ describe("TWAPLib with production addresses", () => {
       describe("calculations helpers", async () => {
         it("orderProgress", async () => {
           const order = lib.parseOrder({ ask: { srcAmount: 1000 }, srcFilledAmount: 500 });
-          expect(lib.orderProgress(order)).bignumber.eq(0.5);
+          expect(lib.orderProgress(order)).eq(0.5);
         });
 
         it("isMarketOrder", async () => {
@@ -223,13 +223,27 @@ describe("TWAPLib with production addresses", () => {
           expect(lib.isMarketOrder(order)).false;
         });
 
-        it("dstAmount = srcAmount * (srcUsd/dstUsd)", async () => {
+        it("market price dstAmount = srcAmount * (srcUsd/dstUsd)", async () => {
           expect(sToken.decimals).eq(6);
           expect(dToken.decimals).eq(18);
-          expect(lib.dstAmount(sToken, dToken, 123 * 1e6, 1.234, 5.678)).bignumber.closeTo(
+          expect(lib.dstAmount(sToken, dToken, 123 * 1e6, 1.234, 5.678, 0, true)).bignumber.closeTo(
             26_731595632300000000,
             0.001 * 1e18
           );
+        });
+
+        it("limit price dstAmount = srcAmount * limitPrice", async () => {
+          expect(sToken.decimals).eq(6);
+          expect(dToken.decimals).eq(18);
+          expect(lib.dstAmount(sToken, dToken, 123 * 1e6, 1.234, 5.678, 1.2345, false)).bignumber.closeTo(
+            151_843500000000000000,
+            0.001 * 1e18
+          );
+        });
+
+        it("percent above/below market", async () => {
+          expect(lib.percentAboveMarket(1500, 20_000, 0.07)).eq(-0.0667);
+          expect(lib.percentAboveMarket(1500, 20_000, 0.08)).eq(0.0667);
         });
 
         it("max possible chunk count", async () => {

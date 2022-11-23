@@ -30,10 +30,20 @@ export class TWAPLib {
     this.lens = contract<Lens>(lensAbi, config.lensAddress);
   }
 
-  dstAmount = (srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value, srcUsd: BN.Value, dstUsd: BN.Value) =>
-    convertDecimals(BN(srcAmount).times(srcUsd).div(dstUsd), srcToken.decimals, dstToken.decimals).integerValue(
-      BN.ROUND_FLOOR
-    );
+  dstAmount = (
+    srcToken: TokenData,
+    dstToken: TokenData,
+    srcAmount: BN.Value,
+    srcUsdMarket: BN.Value,
+    dstUsdMarket: BN.Value,
+    limitDstPriceFor1Src: BN.Value,
+    isMarketOrder: boolean
+  ) =>
+    convertDecimals(
+      isMarketOrder ? BN(srcAmount).times(srcUsdMarket).div(dstUsdMarket) : BN(srcAmount).times(limitDstPriceFor1Src),
+      srcToken.decimals,
+      dstToken.decimals
+    ).integerValue(BN.ROUND_FLOOR);
 
   isNativeToken = (token: TokenData) => isNativeAddress(token.address);
 
@@ -80,7 +90,10 @@ export class TWAPLib {
 
   isMarketOrder = (order: Order) => order.ask.dstMinAmount.lte(1);
 
-  orderProgress = (order: Order) => order.srcFilledAmount.div(order.ask.srcAmount);
+  orderProgress = (order: Order) => parseFloat(order.srcFilledAmount.div(order.ask.srcAmount).toFixed(4));
+
+  percentAboveMarket = (srcUsdMarket: BN.Value, dstUsdMarket: BN.Value, limitDstPriceFor1Src: BN.Value) =>
+    parseFloat(BN(limitDstPriceFor1Src).div(BN(srcUsdMarket).div(dstUsdMarket)).minus(1).toFixed(4));
 
   status = (order: Order) =>
     order.status > Date.now() / 1000
