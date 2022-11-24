@@ -224,7 +224,7 @@ export class TWAPLib {
     const smallestChunkSize = BN(srcAmount).mod(srcChunkAmount).gt(0)
       ? BN(srcAmount).mod(srcChunkAmount)
       : BN(srcChunkAmount);
-    if (smallestChunkSize.times(srcUsd).lt(this.config.minChunkSizeUsd))
+    if (smallestChunkSize.times(srcUsd).lt(BN(this.config.minChunkSizeUsd).times(BN(10).pow(srcToken.decimals))))
       return OrderInputValidation.invalidSmallestSrcChunkUsd;
 
     return OrderInputValidation.valid;

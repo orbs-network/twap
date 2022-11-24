@@ -96,39 +96,39 @@ describe("TWAPLib with production config", () => {
           "invalid inputs: invalidSrcChunkAmount"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 11, 0, 0, 0, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 11 * 1e6, 0, 0, 0, 0),
           "invalid inputs: invalidSrcChunkAmount"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 10, 0, 0, 0, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 10 * 1e6, 0, 0, 0, 0),
           "invalid inputs: invalidDstMinChunkAmountOut"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 10, 1, 0, 0, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 10 * 1e6, 1, 0, 0, 0),
           "invalid inputs: invalidDeadline"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 10, 1, 100, 0, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 10 * 1e6, 1, 100, 0, 0),
           "invalid inputs: invalidDeadline"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 10, 1, Date.now(), 0, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 10 * 1e6, 1, Date.now(), 0, 0),
           "invalid inputs: invalidDeadline"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 10, 1, Date.now() + 1e6, -1, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 10 * 1e6, 1, Date.now() + 1e6, -1, 0),
           "invalid inputs: invalidFillDelaySeconds"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 10, 1, Date.now() + 1e6, 60, 0),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 10 * 1e6, 1, Date.now() + 1e6, 60, 0),
           "invalid inputs: invalidSrcUsd"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 10, 5, 1, Date.now() + 1e6, 60, 1),
+          () => lib.submitOrder(sToken, dToken, 10 * 1e6, 5 * 1e6, 1, Date.now() + 1e6, 60, 1),
           "invalid inputs: invalidSmallestSrcChunk"
         );
         await expectRevert(
-          () => lib.submitOrder(sToken, dToken, 100, 33, 1, Date.now() + 1e6, 60, 1),
+          () => lib.submitOrder(sToken, dToken, 100 * 1e6, 33 * 1e6, 1, Date.now() + 1e6, 60, 1),
           "invalid inputs: invalidSmallestSrcChunk"
         );
       });
