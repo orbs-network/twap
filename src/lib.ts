@@ -70,7 +70,7 @@ export class TWAPLib {
       : BN.max(
           BN(maxDurationMillis)
             .div(totalChunks)
-            .minus(BN(this.config.bidDelaySeconds * 1000)),
+            .minus(BN(this.config.bidDelaySeconds * 1000 * 2)),
           0
         ).toNumber();
 

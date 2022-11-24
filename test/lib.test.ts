@@ -386,7 +386,7 @@ describe("TWAPLib with production config", () => {
         expect(lib.totalChunks(srcAmount, await srcToken.amount(33))).bignumber.eq(4);
       });
 
-      it("fillDelayMillis for evenly distributed trades over maxDuration", async () => {
+      it("fillDelayMillis for evenly distributed trades over maxDuration, with buffer of bid and extra buffer", async () => {
         expect(lib.config.bidDelaySeconds).eq(60);
         const minute = 60 * 1000;
         const hour = 60 * minute;
@@ -394,13 +394,13 @@ describe("TWAPLib with production config", () => {
         expect(lib.fillDelayMillis(10, 0)).bignumber.eq(0);
         expect(lib.fillDelayMillis(10, 1000)).bignumber.eq(0);
         expect(lib.fillDelayMillis(10, minute)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(10, hour)).bignumber.eq(5 * minute);
-        expect(lib.fillDelayMillis(4, hour)).bignumber.eq(14 * minute);
-        expect(lib.fillDelayMillis(3, hour)).bignumber.eq(19 * minute);
-        expect(lib.fillDelayMillis(2, hour)).bignumber.eq(29 * minute);
+        expect(lib.fillDelayMillis(10, hour)).bignumber.eq(4 * minute);
+        expect(lib.fillDelayMillis(4, hour)).bignumber.eq(13 * minute);
+        expect(lib.fillDelayMillis(3, hour)).bignumber.eq(18 * minute);
+        expect(lib.fillDelayMillis(2, hour)).bignumber.eq(28 * minute);
         expect(lib.fillDelayMillis(1, hour)).bignumber.eq(0);
         expect(lib.fillDelayMillis(100, hour)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(5, 5 * hour)).bignumber.eq(59 * minute);
+        expect(lib.fillDelayMillis(5, 5 * hour)).bignumber.eq(58 * minute);
       });
 
       it("dstMinAmountOut", async () => {
