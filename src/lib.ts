@@ -336,6 +336,7 @@ export class TWAPLib {
   }
 
   async getToken(address: string) {
+    if (isNativeAddress(address)) return this.config.wToken;
     const t = erc20("", address);
     return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
   }
