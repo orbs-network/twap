@@ -221,6 +221,7 @@ export class TWAPLib {
     if (BN(fillDelaySeconds).integerValue(BN.ROUND_FLOOR).lt(0)) return OrderInputValidation.invalidFillDelaySeconds;
 
     if (BN(srcUsd).lte(0)) return OrderInputValidation.invalidSrcUsd;
+
     const smallestChunkSize = BN(srcAmount).mod(srcChunkAmount).gt(0)
       ? BN(srcAmount).mod(srcChunkAmount)
       : BN(srcChunkAmount);

@@ -128,6 +128,10 @@ describe("TWAPLib with production config", () => {
           "invalid inputs: invalidSmallestSrcChunk"
         );
         await expectRevert(
+          () => lib.submitOrder(sToken, dToken, 2 * 1e6, 2 * 1e6, 1, Date.now() + 1e6, 60, 1),
+          "invalid inputs: invalidSmallestSrcChunk"
+        );
+        await expectRevert(
           () => lib.submitOrder(sToken, dToken, 100 * 1e6, 33 * 1e6, 1, Date.now() + 1e6, 60, 1),
           "invalid inputs: invalidSmallestSrcChunk"
         );
