@@ -23,7 +23,7 @@ export interface Config {
   pathfinderKey: Paraswap.OnlyDex;
 }
 
-const ChainConfigs = {
+export const ChainConfigs = {
   eth: {
     chainId: 1,
     twapAddress: "",
@@ -78,6 +78,23 @@ const ChainConfigs = {
   },
 };
 
+export const Configs: { [integration: string]: Config } = {
+  SpiritSwap: {
+    ...ChainConfigs.ftm,
+    partner: "SpiritSwap",
+    exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
+    exchangeContract: "ParaswapExchange",
+    pathfinderKey: Paraswap.OnlyDex.SpiritSwap,
+  },
+  SpookySwap: {
+    ...ChainConfigs.ftm,
+    partner: "SpookySwap",
+    exchangeAddress: "0x37F427DA0D12Fe2C80aCa09EE08e7e92A1B2B114",
+    exchangeContract: "UniswapV2Exchange",
+    pathfinderKey: Paraswap.OnlyDex.SpookySwap,
+  },
+};
+
 // export const UniswapV2Config: Config = {
 //   ...ChainConfigs.eth,
 //   partner: "UniswapV2",
@@ -95,22 +112,6 @@ const ChainConfigs = {
 //   partner: "QuickSwap",
 //   exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
 // };
-
-export const SpiritSwapConfig: Config = {
-  ...ChainConfigs.ftm,
-  partner: "SpiritSwap",
-  exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
-  exchangeContract: "ParaswapExchange",
-  pathfinderKey: Paraswap.OnlyDex.SpiritSwap,
-};
-
-export const SpookySwapConfig: Config = {
-  ...ChainConfigs.ftm,
-  partner: "SpookySwap",
-  exchangeAddress: "0x37F427DA0D12Fe2C80aCa09EE08e7e92A1B2B114",
-  exchangeContract: "UniswapV2Exchange",
-  pathfinderKey: Paraswap.OnlyDex.SpookySwap,
-};
 
 export const nativeTokenAddresses = [
   zeroAddress,

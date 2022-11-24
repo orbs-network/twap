@@ -1,14 +1,15 @@
-import { nativeTokenAddresses, Paraswap, SpiritSwapConfig, SpookySwapConfig, Status, TWAPLib } from "../src";
+import { Configs, nativeTokenAddresses, Paraswap, Status, TWAPLib } from "../src";
 import { expect } from "chai";
 import { dstToken, initFixture, srcToken, taker, user, userSrcTokenStartBalance, wNativeToken } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { chainId, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
+import _ from "lodash";
 
 describe("TWAPLib with production config", () => {
   beforeEach(() => initFixture(true));
 
-  [SpiritSwapConfig, SpookySwapConfig].map((c) => {
+  _.map(Configs, (c) => {
     describe(`${c.partner} on ${c.chainId}`, () => {
       let lib: TWAPLib;
 

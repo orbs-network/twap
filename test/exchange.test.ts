@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import {
-  asTokenData,
   dstToken,
   exchange,
   initFixture,
@@ -64,8 +63,8 @@ describe("IExchange implementations", async () => {
 
       const paraswapRoute = await Paraswap.findRoute(
         await chainId(),
-        await asTokenData(srcToken),
-        await asTokenData(dstToken),
+        { address: srcToken.address, decimals: await srcToken.decimals(), symbol: "" },
+        { address: dstToken.address, decimals: await dstToken.decimals(), symbol: "" },
         amountIn
       );
       expect(paraswapRoute.destAmount).bignumber.gte(await dstToken.amount(1));

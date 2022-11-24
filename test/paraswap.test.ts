@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { Paraswap } from "../src";
 import { chainId, erc20s, networks, zeroAddress } from "@defi.org/web3-candies";
 import { useChaiBigNumber } from "@defi.org/web3-candies/dist/hardhat";
-import { asTokenData } from "./fixture";
 
 useChaiBigNumber();
 
@@ -18,7 +17,7 @@ describe("Paraswap", () => {
       });
 
       it("priceUsd", async () => {
-        const price = await Paraswap.priceUsd(c.chainId, await asTokenData(c.usdc()));
+        const price = await Paraswap.priceUsd(c.chainId, { address: c.usdc().address, decimals: 6, symbol: "USDC" });
         expect(price).bignumber.closeTo(1, 0.01);
       });
 
