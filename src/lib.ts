@@ -206,11 +206,7 @@ export class TWAPLib {
     srcUsd: BN.Value
   ): OrderInputValidation {
     const tokensValidation = this.validateTokens(srcToken, dstToken);
-    if (
-      (tokensValidation === TokensValidation.dstTokenZero && dstToken.address !== zeroAddress) ||
-      (tokensValidation !== TokensValidation.valid && tokensValidation !== TokensValidation.dstTokenZero)
-    )
-      return OrderInputValidation.invalidTokens;
+    if (tokensValidation === TokensValidation.invalid) return OrderInputValidation.invalidTokens;
 
     if (BN(srcAmount).lte(0)) return OrderInputValidation.invalidSrcAmount;
 
