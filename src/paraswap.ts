@@ -76,7 +76,7 @@ export namespace Paraswap {
       network: chainId.toString(),
       side: "SELL",
       includeDEXS: onlyDex || "",
-      // partner: "chucknorris",
+      partner: onlyDex?.toLowerCase()?.split(",")?.[0] || "",
       // otherExchangePrices: "true",
     });
     const response = await fetch(`${URL}/prices/?${params}`);

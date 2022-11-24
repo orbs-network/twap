@@ -15,12 +15,14 @@ import {
 } from "@defi.org/web3-candies";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
+import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import _ from "lodash";
 
 export const twapAbi = twapArtifact.abi as any;
 export const lensAbi = lensArtifact.abi as any;
+export const takerAbi = takerArtifact.abi as any;
 
 export class TWAPLib {
   public twap: TWAP;
@@ -65,7 +67,7 @@ export class TWAPLib {
     BN(srcAmount).div(srcChunkAmount).integerValue(BN.ROUND_CEIL).toNumber();
 
   fillDelayMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
-    BN(totalChunks).lte(1) || BN(maxDurationMillis).lte(this.config.bidDelaySeconds)
+    BN(totalChunks).lte(1) || BN(maxDurationMillis).lte(this.config.bidDelaySeconds * 1000 * 2)
       ? 0
       : BN.max(
           BN(maxDurationMillis)
