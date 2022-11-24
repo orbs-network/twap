@@ -19,7 +19,7 @@ export interface Config {
 
   partner: string;
   exchangeAddress: string;
-  exchangeContract: "UniswapV2Exchange" | "ParaswapExchange";
+  exchangeType: "UniswapV2Exchange" | "ParaswapExchange";
   pathfinderKey: Paraswap.OnlyDex;
 }
 
@@ -83,16 +83,16 @@ export const Configs = {
     ...ChainConfigs.ftm,
     partner: "SpiritSwap",
     exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
-    exchangeContract: "ParaswapExchange",
+    exchangeType: "ParaswapExchange",
     pathfinderKey: Paraswap.OnlyDex.SpiritSwap,
-  },
+  } as Config,
   SpookySwap: {
     ...ChainConfigs.ftm,
     partner: "SpookySwap",
     exchangeAddress: "0x37F427DA0D12Fe2C80aCa09EE08e7e92A1B2B114",
-    exchangeContract: "UniswapV2Exchange",
+    exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.SpookySwap,
-  },
+  } as Config,
 };
 
 // export const UniswapV2Config: Config = {

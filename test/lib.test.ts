@@ -460,7 +460,7 @@ async function swapData(lib: TWAPLib, orderId: number) {
     amountIn,
     lib.config.pathfinderKey
   );
-  switch (lib.config.exchangeContract) {
+  switch (lib.config.exchangeType) {
     case "UniswapV2Exchange":
       return {
         dstAmountOut: BN(route.destAmount),
@@ -475,6 +475,6 @@ async function swapData(lib: TWAPLib, orderId: number) {
         data: await Paraswap.buildSwapData(route, lib.config.twapAddress),
       };
     default:
-      throw new Error(`unhandled exchangeContract ${lib.config.exchangeContract}`);
+      throw new Error(`unhandled exchangeContract ${lib.config.exchangeType}`);
   }
 }
