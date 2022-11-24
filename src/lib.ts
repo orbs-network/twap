@@ -11,6 +11,7 @@ import {
   setWeb3Instance,
   web3,
   zero,
+  zeroAddress,
 } from "@defi.org/web3-candies";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
@@ -90,6 +91,18 @@ export class TWAPLib {
             dstToken.decimals
           ).integerValue(BN.ROUND_FLOOR)
         );
+
+  dstPriceFor1Src = (
+    srcToken: TokenData,
+    dstToken: TokenData,
+    srcUsdMarket: BN.Value,
+    dstUsdMarket: BN.Value,
+    srcChunkAmount: BN.Value,
+    dstMinAmountOut: BN.Value
+  ) =>
+    BN(dstMinAmountOut).eq(1)
+      ? BN(srcUsdMarket).div(dstUsdMarket)
+      : BN(dstMinAmountOut).div(convertDecimals(BN(srcChunkAmount), srcToken.decimals, dstToken.decimals));
 
   isMarketOrder = (order: Order) => order.ask.dstMinAmount.lte(1);
 
@@ -294,23 +307,28 @@ export class TWAPLib {
         deadline: Number(r.ask.deadline),
         bidDelay: Number(r.ask.bidDelay),
         fillDelay: Number(r.ask.fillDelay),
-        maker: r.ask.maker,
-        exchange: r.ask.exchange,
-        srcToken: r.ask.srcToken,
-        dstToken: r.ask.dstToken,
+        maker: Web3.utils.toChecksumAddress(r.ask.maker),
+        exchange: Web3.utils.toChecksumAddress(r.ask.exchange),
+        srcToken: Web3.utils.toChecksumAddress(r.ask.srcToken),
+        dstToken: Web3.utils.toChecksumAddress(r.ask.dstToken),
         srcAmount: BN(r.ask.srcAmount),
         srcBidAmount: BN(r.ask.srcBidAmount),
         dstMinAmount: BN(r.ask.dstMinAmount),
       },
       bid: {
         time: Number(r.bid?.time || 0),
-        taker: r.bid?.taker || "",
-        exchange: r.bid?.exchange || "",
+        taker: Web3.utils.toChecksumAddress(r.bid?.taker || zeroAddress),
+        exchange: Web3.utils.toChecksumAddress(r.bid?.exchange || zeroAddress),
         dstAmount: BN(r.bid?.dstAmount || zero),
         dstFee: BN(r.bid?.dstFee || zero),
         data: r.bid?.data || "",
       },
     };
+  }
+
+  async getToken(address: string) {
+    const t = erc20("", address);
+    return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
   }
 }
 
