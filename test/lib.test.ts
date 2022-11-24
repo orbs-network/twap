@@ -84,6 +84,11 @@ describe("TWAPLib with production config", () => {
       it("submitOrder validations", async () => {
         const sToken = await lib.getToken(srcToken.address);
         const dToken = await lib.getToken(dstToken.address);
+        await expectRevert(
+          () =>
+            lib.submitOrder(sToken, { address: nativeTokenAddresses[1], decimals: 18, symbol: "" }, 0, 0, 0, 0, 0, 0),
+          "invalid inputs: invalidTokens"
+        );
         await expectRevert(() => lib.submitOrder(sToken, dToken, 0, 0, 0, 0, 0, 0), "invalid inputs: invalidSrcAmount");
         await expectRevert(() => lib.submitOrder(sToken, dToken, 0, 0, 0, 0, 0, 0), "invalid inputs: invalidSrcAmount");
         await expectRevert(

@@ -203,7 +203,11 @@ export class TWAPLib {
     fillDelaySeconds: BN.Value,
     srcUsd: BN.Value
   ): OrderInputValidation {
-    if (this.validateTokens(srcToken, dstToken) !== TokensValidation.valid) return OrderInputValidation.invalidTokens;
+    if (
+      (this.validateTokens(srcToken, dstToken) === TokensValidation.dstTokenZero && dstToken.address !== zeroAddress) ||
+      this.validateTokens(srcToken, dstToken) !== TokensValidation.valid
+    )
+      return OrderInputValidation.invalidTokens;
 
     if (BN(srcAmount).lte(0)) return OrderInputValidation.invalidSrcAmount;
 
