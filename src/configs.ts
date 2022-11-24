@@ -78,7 +78,7 @@ export const ChainConfigs = {
   },
 };
 
-export const Configs: { [integration: string]: Config } = {
+export const Configs = {
   SpiritSwap: {
     ...ChainConfigs.ftm,
     partner: "SpiritSwap",
