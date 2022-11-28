@@ -93,6 +93,13 @@ export const Configs = {
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.SpookySwap,
   } as Config,
+  Pangolin: {
+    ...ChainConfigs.avax,
+    partner: "Pangolin",
+    exchangeAddress: "",
+    exchangeType: "UniswapV2Exchange",
+    pathfinderKey: Paraswap.OnlyDex.Pangolin,
+  } as Config,
 };
 
 // export const UniswapV2Config: Config = {

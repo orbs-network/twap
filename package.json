@@ -28,7 +28,8 @@
     "test": "for t in eth ftm poly; do npm run test:$t; done",
     "test:eth": "NETWORK=ETH BLOCK=14908980 hardhat test",
     "test:ftm": "NETWORK=FTM BLOCK=39838819 hardhat test",
-    "test:poly": "NETWORK=POLY BLOCK=29194866 hardhat test"
+    "test:poly": "NETWORK=POLY BLOCK=29194866 hardhat test",
+    "prepublishOnly": "npm run build"
   },
   "prettier": {
     "printWidth": 120
