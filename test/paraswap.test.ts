@@ -5,11 +5,12 @@ import { useChaiBigNumber } from "@defi.org/web3-candies/dist/hardhat";
 
 useChaiBigNumber();
 
-describe("Paraswap", () => {
+describe.only("Paraswap", () => {
   [
     { name: "Ethereum", chainId: networks.eth.id, usdc: erc20s.eth.USDC },
     { name: "Fantom", chainId: networks.ftm.id, usdc: erc20s.ftm.USDC },
     { name: "Polygon", chainId: networks.poly.id, usdc: erc20s.poly.USDC },
+    { name: "Avalance", chainId: networks.avax.id, usdc: erc20s.avax.USDC },
   ].map((c) => {
     describe(c.name, () => {
       before(async function () {

@@ -79,6 +79,14 @@ async function initTokens() {
       dstTokenWhale = "0x25c130B2624CF12A4Ea30143eF50c5D68cEFA22f";
       return;
 
+    case "AVAX":
+      srcToken = erc20s.avax.USDC();
+      dstToken = erc20s.avax.WETHe();
+      wNativeToken = erc20s.avax.WAVAX();
+      srcTokenWhale = "0x4aeFa39caEAdD662aE31ab0CE7c8C2c9c0a013E8";
+      dstTokenWhale = "0xa8FAB1c02978d9D1C10158A4534e0f8509Ec1BC5";
+      return;
+
     default:
       throw new Error(`unhandled NETWORK ${process.env.NETWORK}`);
   }
@@ -94,6 +102,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
         eth: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", // UniswapV2
         ftm: "0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52", // Spiritswap V1
         poly: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
+        avax: "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106", // Pangolin
       },
       (impl, k) => k === network!.shortname
     );
@@ -103,6 +112,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
     eth: [srcToken.address, dstToken.address],
     ftm: [srcToken.address, wNativeToken.address, dstToken.address],
     poly: [srcToken.address, dstToken.address],
+    avax: [srcToken.address, wNativeToken.address, dstToken.address],
   };
   const path = _.find(paths, (p, k) => k === network!.shortname)!;
   swapDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);

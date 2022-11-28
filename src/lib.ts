@@ -19,6 +19,7 @@ import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json
 import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import _ from "lodash";
+import { Paraswap } from "./paraswap";
 
 export const twapAbi = twapArtifact.abi as any;
 export const lensAbi = lensArtifact.abi as any;
@@ -333,6 +334,57 @@ export class TWAPLib {
     if (isNativeAddress(address)) return this.config.wToken;
     const t = erc20("", address);
     return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
+  }
+
+  // TODO
+  async deployTaker(priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    const taker = contract(takerAbi, "");
+    await this.sendTx(
+      taker.deploy({ data: takerArtifact.bytecode, arguments: [this.config.twapAddress, [this.maker]] }),
+      priorityFeePerGas,
+      maxFeePerGas
+    );
+  }
+
+  //TODO
+  async getSwapData(orderId: number) {
+    const order = await this.getOrder(orderId);
+    const srcAmountIn = order.ask.srcBidAmount;
+
+    const srcToken = await this.getToken(order.ask.srcToken);
+    const dstToken = await this.getToken(order.ask.dstToken);
+    const paraswapRoute = await Paraswap.findRoute(
+      this.config.chainId,
+      srcToken,
+      dstToken,
+      srcAmountIn,
+      this.config.pathfinderKey
+    );
+    const dstAmountOut = BN(paraswapRoute.destAmount);
+    const path = Paraswap.directPath(paraswapRoute, this.config.pathfinderKey);
+
+    switch (this.config.exchangeType) {
+      case "UniswapV2Exchange":
+        return {
+          srcToken,
+          dstToken,
+          srcAmountIn,
+          dstAmountOut,
+          path,
+          data: web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]),
+        };
+      case "ParaswapExchange":
+        return {
+          srcToken,
+          dstToken,
+          srcAmountIn,
+          dstAmountOut,
+          path,
+          data: await Paraswap.buildSwapData(paraswapRoute, this.config.twapAddress),
+        };
+      default:
+        throw new Error(`unhandled exchange ${this.config.exchangeType}`);
+    }
   }
 }
 

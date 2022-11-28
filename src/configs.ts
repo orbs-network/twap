@@ -65,8 +65,8 @@ export const ChainConfigs = {
   },
   avax: {
     chainId: 43114,
-    twapAddress: "",
-    lensAddress: "",
+    twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+    lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
@@ -86,6 +86,7 @@ export const Configs = {
     exchangeType: "ParaswapExchange",
     pathfinderKey: Paraswap.OnlyDex.SpiritSwap,
   } as Config,
+
   SpookySwap: {
     ...ChainConfigs.ftm,
     partner: "SpookySwap",
@@ -93,10 +94,11 @@ export const Configs = {
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.SpookySwap,
   } as Config,
+
   Pangolin: {
     ...ChainConfigs.avax,
     partner: "Pangolin",
-    exchangeAddress: "",
+    exchangeAddress: "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.Pangolin,
   } as Config,

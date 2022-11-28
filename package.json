@@ -24,12 +24,13 @@
     "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
     "build": "hardhat compile && solhint 'contracts/**/*.sol' && tsc",
-    "test:logs": "for t in eth ftm poly; do DEBUG=web3-candies npm run test:$t -- --logs; done",
-    "test": "for t in eth ftm poly; do npm run test:$t; done",
-    "test:eth": "NETWORK=ETH BLOCK=14908980 hardhat test",
-    "test:ftm": "NETWORK=FTM BLOCK=39838819 hardhat test",
-    "test:poly": "NETWORK=POLY BLOCK=29194866 hardhat test",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test:logs": "for t in eth ftm poly avax; do DEBUG=web3-candies npm run test:$t -- --logs; done",
+    "test": "for t in eth ftm poly avax; do npm run test:$t; done",
+    "test:eth": "NETWORK=ETH BLOCK=14905987 hardhat test",
+    "test:ftm": "NETWORK=FTM BLOCK=39800909 hardhat test",
+    "test:poly": "NETWORK=POLY BLOCK=29174252 hardhat test",
+    "test:avax": "NETWORK=AVAX BLOCK=15609313 hardhat test"
   },
   "prettier": {
     "printWidth": 120

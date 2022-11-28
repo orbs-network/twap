@@ -11,7 +11,8 @@ export namespace Paraswap {
     QuickSwap = "QuickSwap",
     SpiritSwap = "SpiritSwap,SpiritSwapV2",
     SpookySwap = "SpookySwap",
-    Pangolin = "PangolinDex",
+    Pangolin = "PangolinDEX",
+    TraderJoe = "TraderJoe",
   }
 
   export interface ParaswapRoute {
@@ -81,7 +82,11 @@ export namespace Paraswap {
     });
     const response = await fetch(`${URL}/prices/?${params}`);
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    return (await response.json()).priceRoute;
+    return (await response.json()).priceRoute; //TODO pangolin onlyDex not working?
+  }
+
+  export function directPath(route: ParaswapRoute, onlyDex: OnlyDex) {
+    return route.bestRoute[0].swaps[0].swapExchanges[0].data.path; // TODO find?
   }
 
   export async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {

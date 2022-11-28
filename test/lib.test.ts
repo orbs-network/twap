@@ -1,4 +1,4 @@
-import { Configs, nativeTokenAddresses, Paraswap, Status, TWAPLib } from "../src";
+import { Configs, nativeTokenAddresses, Status, TWAPLib } from "../src";
 import { expect } from "chai";
 import { dstToken, initFixture, srcToken, taker, user, userSrcTokenStartBalance, wNativeToken } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
@@ -6,7 +6,7 @@ import { chainId, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
-describe("TWAPLib with production config", () => {
+describe.only("TWAPLib with production config", () => {
   beforeEach(() => initFixture(true));
 
   _.map(Configs, (c) => {
@@ -179,8 +179,8 @@ describe("TWAPLib with production config", () => {
           Date.now = orig;
         });
 
-        it("status completed", async () => {
-          const { dstAmountOut, data } = await swapData(lib, orderId);
+        it.only("status completed", async () => {
+          const { dstAmountOut, data } = await lib.getSwapData(orderId);
 
           await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 2000, data).send({ from: taker });
           await mineBlock(60);
@@ -450,32 +450,3 @@ describe("TWAPLib with production config", () => {
     });
   });
 });
-
-async function swapData(lib: TWAPLib, orderId: number) {
-  const order = await lib.getOrder(orderId);
-  const amountIn = order.ask.srcBidAmount;
-  const route = await Paraswap.findRoute(
-    lib.config.chainId,
-    await lib.getToken(order.ask.srcToken),
-    await lib.getToken(order.ask.dstToken),
-    amountIn,
-    lib.config.pathfinderKey
-  );
-  switch (lib.config.exchangeType) {
-    case "UniswapV2Exchange":
-      return {
-        dstAmountOut: BN(route.destAmount),
-        data: web3().eth.abi.encodeParameters(
-          ["bool", "address[]"],
-          [false, route.bestRoute[0].swaps[0].swapExchanges[0].data.path]
-        ),
-      };
-    case "ParaswapExchange":
-      return {
-        dstAmountOut: BN(route.destAmount),
-        data: await Paraswap.buildSwapData(route, lib.config.twapAddress),
-      };
-    default:
-      throw new Error(`unhandled exchangeContract ${lib.config.exchangeType}`);
-  }
-}
