@@ -8,6 +8,7 @@ import {
   erc20,
   iwethabi,
   parseEvents,
+  sendAndWaitForConfirmations,
   setWeb3Instance,
   web3,
   zero,
@@ -18,8 +19,8 @@ import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
-import _ from "lodash";
 import { Paraswap } from "./paraswap";
+import _ from "lodash";
 
 export const twapAbi = twapArtifact.abi as any;
 export const lensAbi = lensArtifact.abi as any;
@@ -128,40 +129,28 @@ export class TWAPLib {
     else return erc20(token.symbol, token.address, token.decimals).methods.balanceOf(this.maker).call().then(BN);
   }
 
-  async wrapNativeToken(amount: BN.Value, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
-    return await this.sendTx(
+  async wrapNativeToken(amount: BN.Value, maxPriorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    await sendAndWaitForConfirmations(
       erc20<any>(
         this.config.wToken.symbol,
         this.config.wToken.address,
         this.config.wToken.decimals,
         iwethabi
       ).methods.deposit(),
-      priorityFeePerGas,
-      maxFeePerGas,
-      amount
+      { from: this.maker, maxPriorityFeePerGas, maxFeePerGas, value: amount }
     );
   }
 
-  async unwrapNativeToken(amount: BN.Value, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
-    return await this.sendTx(
+  async unwrapNativeToken(amount: BN.Value, maxPriorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    await sendAndWaitForConfirmations(
       erc20<any>(
         this.config.wToken.symbol,
         this.config.wToken.address,
         this.config.wToken.decimals,
         iwethabi
       ).methods.withdraw(BN(amount).toFixed(0)),
-      priorityFeePerGas,
-      maxFeePerGas
+      { from: this.maker, maxPriorityFeePerGas, maxFeePerGas }
     );
-  }
-
-  async waitForConfirmation<T>(fn: () => Promise<T>) {
-    const nonceBefore = await web3().eth.getTransactionCount(this.maker);
-    const result = await fn();
-    while ((await web3().eth.getTransactionCount(this.maker)) === nonceBefore) {
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-    return result;
   }
 
   async hasAllowance(srcToken: TokenData, amount: BN.Value) {
@@ -171,13 +160,13 @@ export class TWAPLib {
     return allowance.gte(amount);
   }
 
-  async approve(srcToken: TokenData, amount: BN.Value, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+  async approve(srcToken: TokenData, amount: BN.Value, maxPriorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
     const token = erc20(srcToken.symbol, srcToken.address, srcToken.decimals);
-    await this.sendTx(
-      token.methods.approve(this.config.twapAddress, amount.toString()),
-      priorityFeePerGas,
-      maxFeePerGas
-    );
+    await sendAndWaitForConfirmations(token.methods.approve(this.config.twapAddress, BN(amount).toFixed(0)), {
+      from: this.maker,
+      maxPriorityFeePerGas,
+      maxFeePerGas,
+    });
   }
 
   validateTokens(srcToken: TokenData, dstToken: TokenData) {
@@ -241,7 +230,7 @@ export class TWAPLib {
     deadline: number,
     fillDelaySeconds: number,
     srcUsd: BN.Value,
-    priorityFeePerGas?: BN.Value,
+    maxPriorityFeePerGas?: BN.Value,
     maxFeePerGas?: BN.Value
   ): Promise<number> {
     let validation = this.validateOrderInputs(
@@ -256,7 +245,7 @@ export class TWAPLib {
     );
     if (validation !== OrderInputValidation.valid) throw new Error(`invalid inputs: ${validation}`);
 
-    const tx = await this.sendTx(
+    const tx = await sendAndWaitForConfirmations(
       this.twap.methods.ask(
         this.config.exchangeAddress,
         srcToken.address,
@@ -268,8 +257,11 @@ export class TWAPLib {
         BN(this.config.bidDelaySeconds).toFixed(0),
         BN(fillDelaySeconds).toFixed(0)
       ),
-      priorityFeePerGas,
-      maxFeePerGas
+      {
+        from: this.maker,
+        maxPriorityFeePerGas,
+        maxFeePerGas,
+      }
     );
 
     const events = parseEvents(tx, this.twap.options.jsonInterface);
@@ -280,24 +272,16 @@ export class TWAPLib {
     return this.parseOrder(await this.twap.methods.order(id).call());
   }
 
-  async cancelOrder(id: number, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
-    await this.sendTx(this.twap.methods.cancel(id), priorityFeePerGas, maxFeePerGas);
+  async cancelOrder(id: number, maxPriorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
+    await sendAndWaitForConfirmations(this.twap.methods.cancel(id), {
+      from: this.maker,
+      maxPriorityFeePerGas,
+      maxFeePerGas,
+    });
   }
 
   async getAllOrders() {
     return _.map(await this.lens.methods.makerOrders(this.maker).call(), (o) => this.parseOrder(o));
-  }
-
-  private async sendTx(tx: any, priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value, amount?: BN.Value) {
-    return await tx.send({
-      from: this.maker,
-      gas: Math.floor(
-        (await tx.estimateGas({ from: this.maker, value: amount ? BN(amount).toFixed(0) : undefined })) * 1.2
-      ),
-      maxPriorityFeePerGas: priorityFeePerGas ? BN(priorityFeePerGas).toFixed(0) : undefined,
-      maxFeePerGas: maxFeePerGas ? BN(maxFeePerGas).toFixed(0) : undefined,
-      value: amount ? BN(amount).toFixed(0) : undefined,
-    });
   }
 
   parseOrder(r: any): Order {
@@ -334,16 +318,6 @@ export class TWAPLib {
     if (isNativeAddress(address)) return this.config.wToken;
     const t = erc20("", address);
     return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
-  }
-
-  // TODO
-  async deployTaker(priorityFeePerGas?: BN.Value, maxFeePerGas?: BN.Value) {
-    const taker = contract(takerAbi, "");
-    await this.sendTx(
-      taker.deploy({ data: takerArtifact.bytecode, arguments: [this.config.twapAddress, [this.maker]] }),
-      priorityFeePerGas,
-      maxFeePerGas
-    );
   }
 
   //TODO

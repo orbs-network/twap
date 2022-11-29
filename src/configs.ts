@@ -52,8 +52,8 @@ export const ChainConfigs = {
   },
   poly: {
     chainId: 137,
-    twapAddress: "",
-    lensAddress: "",
+    twapAddress: "0xBAFdE1cc254BB94Be5866d5a86ddafde4BB44EEF",
+    lensAddress: "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
@@ -102,6 +102,14 @@ export const Configs = {
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.Pangolin,
   } as Config,
+
+  QuickSwap: {
+    ...ChainConfigs.poly,
+    partner: "QuickSwap",
+    exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
+    exchangeType: "UniswapV2Exchange",
+    pathfinderKey: Paraswap.OnlyDex.QuickSwap,
+  } as Config,
 };
 
 // export const UniswapV2Config: Config = {
@@ -114,12 +122,6 @@ export const Configs = {
 //   ...ChainConfigs.eth,
 //   partner: "SushiSwap",
 //   exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
-// };
-
-// export const QuickSwapConfig: Config = {
-//   ...ChainConfigs.poly,
-//   partner: "QuickSwap",
-//   exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
 // };
 
 export const nativeTokenAddresses = [

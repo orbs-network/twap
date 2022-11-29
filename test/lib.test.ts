@@ -266,11 +266,6 @@ describe.only("TWAPLib with production config", () => {
             0.01 * 1e18
           );
         });
-
-        it("waitForConfirmation", async () => {
-          await lib.waitForConfirmation(() => lib.wrapNativeToken(100));
-          expect(await lib.makerBalance(lib.config.wToken)).bignumber.eq(100);
-        });
       });
 
       it("parseOrder", async () => {
