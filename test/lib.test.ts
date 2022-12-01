@@ -6,7 +6,7 @@ import { chainId, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
-describe.only("TWAPLib with production config", () => {
+describe("TWAPLib with production config", () => {
   beforeEach(() => initFixture(true));
 
   _.map(Configs, (c) => {
@@ -179,8 +179,8 @@ describe.only("TWAPLib with production config", () => {
           Date.now = orig;
         });
 
-        it.only("status completed", async () => {
-          const { dstAmountOut, data } = await lib.getSwapData(orderId);
+        it("status completed", async () => {
+          const { dstAmountOut, data } = await lib.findSwapDataForBid(orderId);
 
           await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 2000, data).send({ from: taker });
           await mineBlock(60);

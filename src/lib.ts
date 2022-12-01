@@ -315,37 +315,46 @@ export class TWAPLib {
   }
 
   async getToken(address: string) {
-    if (isNativeAddress(address)) return this.config.wToken;
+    if (isNativeAddress(address) || eqIgnoreCase(address, this.config.wToken.address)) return this.config.wToken;
     const t = erc20("", address);
     return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
   }
 
-  //TODO
-  async getSwapData(orderId: number) {
+  async findSwapDataForBid(orderId: number): Promise<{
+    srcToken: TokenData;
+    dstToken: TokenData;
+    srcAmountIn: BN;
+    dstAmountOut: BN;
+    raw: any;
+    data: string;
+  }> {
     const order = await this.getOrder(orderId);
-    const srcAmountIn = order.ask.srcBidAmount;
+    const srcAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.srcFilledAmount));
 
-    const srcToken = await this.getToken(order.ask.srcToken);
-    const dstToken = await this.getToken(order.ask.dstToken);
-    const paraswapRoute = await Paraswap.findRoute(
+    const [srcToken, dstToken] = await Promise.all([
+      this.getToken(order.ask.srcToken),
+      this.getToken(order.ask.dstToken),
+    ]);
+
+    const route = await Paraswap.findRoute(
       this.config.chainId,
       srcToken,
       dstToken,
       srcAmountIn,
       this.config.pathfinderKey
     );
-    const dstAmountOut = BN(paraswapRoute.destAmount);
-    const path = Paraswap.directPath(paraswapRoute, this.config.pathfinderKey);
+    const dstAmountOut = BN(route.destAmount);
 
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
+        const path = Paraswap.getDirectPath(route, this.config.pathfinderKey);
         return {
           srcToken,
           dstToken,
           srcAmountIn,
           dstAmountOut,
-          path,
-          data: web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]),
+          raw: path,
+          data: web3().eth.abi.encodeParameters(["bool", "address[]"], [true, path]),
         };
       case "ParaswapExchange":
         return {
@@ -353,8 +362,8 @@ export class TWAPLib {
           dstToken,
           srcAmountIn,
           dstAmountOut,
-          path,
-          data: await Paraswap.buildSwapData(paraswapRoute, this.config.twapAddress),
+          raw: route,
+          data: await Paraswap.buildSwapData(route, this.config.twapAddress),
         };
       default:
         throw new Error(`unhandled exchange ${this.config.exchangeType}`);

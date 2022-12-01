@@ -84,7 +84,7 @@ async function initTokens() {
       dstToken = erc20s.avax.WETHe();
       wNativeToken = erc20s.avax.WAVAX();
       srcTokenWhale = "0x4aeFa39caEAdD662aE31ab0CE7c8C2c9c0a013E8";
-      dstTokenWhale = "0xa8FAB1c02978d9D1C10158A4534e0f8509Ec1BC5";
+      dstTokenWhale = "0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8";
       return;
 
     default:

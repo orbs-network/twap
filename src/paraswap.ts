@@ -1,6 +1,7 @@
 import BN from "bignumber.js";
-import { web3 } from "@defi.org/web3-candies";
+import { eqIgnoreCase, web3 } from "@defi.org/web3-candies";
 import { chainConfig, isNativeAddress, nativeTokenAddresses, TokenData } from "./configs";
+import _ from "lodash";
 
 export namespace Paraswap {
   const URL = "https://apiv5.paraswap.io";
@@ -11,7 +12,7 @@ export namespace Paraswap {
     QuickSwap = "QuickSwap",
     SpiritSwap = "SpiritSwap,SpiritSwapV2",
     SpookySwap = "SpookySwap",
-    Pangolin = "PangolinDEX",
+    Pangolin = "PangolinSwap",
     TraderJoe = "TraderJoe",
   }
 
@@ -66,7 +67,8 @@ export namespace Paraswap {
     src: TokenData,
     dst: TokenData,
     amountIn: BN.Value,
-    onlyDex?: OnlyDex
+    onlyDex?: OnlyDex,
+    otherExchanges = false
   ): Promise<ParaswapRoute> {
     const params = new URLSearchParams({
       srcToken: src.address,
@@ -78,15 +80,30 @@ export namespace Paraswap {
       side: "SELL",
       includeDEXS: onlyDex || "",
       partner: onlyDex?.toLowerCase()?.split(",")?.[0] || "",
-      // otherExchangePrices: "true",
+      otherExchangePrices: otherExchanges.toString(),
     });
     const response = await fetch(`${URL}/prices/?${params}`);
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    return (await response.json()).priceRoute; //TODO pangolin onlyDex not working?
+    return (await response.json()).priceRoute;
   }
 
-  export function directPath(route: ParaswapRoute, onlyDex: OnlyDex) {
-    return route.bestRoute[0].swaps[0].swapExchanges[0].data.path; // TODO find?
+  export function getDirectPath(route: ParaswapRoute, onlyDex: OnlyDex) {
+    const bestRoute = _.sortBy(route.bestRoute, (r) => r.percent).reverse()[0];
+
+    if (bestRoute.swaps.length > 1) throw new Error(`invalid direct path more than 1 path`);
+    if (
+      !eqIgnoreCase(bestRoute.swaps[0].srcToken, route.srcToken) ||
+      !eqIgnoreCase(bestRoute.swaps[0].destToken, route.destToken)
+    )
+      throw new Error(`invalid direct path tokens`);
+
+    const bestSwap = _.sortBy(bestRoute.swaps[0].swapExchanges, (s) => s.percent).reverse()[0];
+    if (!onlyDex.split(",").includes(bestSwap.exchange)) throw new Error(`invalid direct path exchange`);
+
+    const path: string[] = bestSwap.data.path;
+    if (!path || path.length < 2) throw new Error(`invalid direct path`);
+
+    return path;
   }
 
   export async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {

@@ -1,5 +1,17 @@
-import { exchange, initFixture, wNativeToken, taker, twap, user, withUniswapV2Exchange } from "./fixture";
-import { Abi, bn18, contract, erc20, maxUint256, Token, web3, zero, zeroAddress } from "@defi.org/web3-candies";
+import { exchange, initFixture, taker, twap, user, withUniswapV2Exchange, wNativeToken } from "./fixture";
+import {
+  Abi,
+  bn18,
+  chainId,
+  contract,
+  erc20,
+  maxUint256,
+  networks,
+  Token,
+  web3,
+  zero,
+  zeroAddress,
+} from "@defi.org/web3-candies";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { endTime } from "./twap-utils";
@@ -59,7 +71,7 @@ describe("FeeOnTransfer tokens", async () => {
       );
       await expectRevert(
         () => exchange.methods.swap(token.options.address, wNativeToken.address, 100, 0, data).send({ from: user }),
-        /(UniswapV2|Pancake): K/
+        /(UniswapV2|Pancake|Pangolin): K/
       );
     });
 
@@ -89,8 +101,10 @@ describe("FeeOnTransfer tokens", async () => {
 });
 
 async function addLiquidityETH(depositor: string, token: Token, tokens: number, eths: number) {
+  const chain = await chainId();
   const amountToken = await token.amount(tokens);
   const amountEth = await wNativeToken.amount(eths);
+  const addLiquidityMethodName = `addLiquidity${chain === networks.avax.id ? "AVAX" : "ETH"}`;
   const abi = [
     {
       inputs: [
@@ -101,7 +115,7 @@ async function addLiquidityETH(depositor: string, token: Token, tokens: number, 
         { name: "to", type: "address" },
         { name: "deadline", type: "uint256" },
       ],
-      name: "addLiquidityETH",
+      name: addLiquidityMethodName,
       outputs: [
         { name: "amountToken", type: "uint256" },
         { name: "amountETH", type: "uint256" },
@@ -113,7 +127,12 @@ async function addLiquidityETH(depositor: string, token: Token, tokens: number, 
   ];
   const router = contract(abi as Abi, await (exchange as any).methods.uniswap().call());
   await token.methods.approve(router.options.address, amountToken).send({ from: depositor });
-  await router.methods
-    .addLiquidityETH(token.options.address, amountToken, amountToken, amountEth, depositor, maxUint256)
-    .send({ from: depositor, value: amountEth });
+  await router.methods[addLiquidityMethodName](
+    token.options.address,
+    amountToken,
+    amountToken,
+    amountEth,
+    depositor,
+    maxUint256
+  ).send({ from: depositor, value: amountEth });
 }

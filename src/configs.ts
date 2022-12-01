@@ -106,23 +106,11 @@ export const Configs = {
   QuickSwap: {
     ...ChainConfigs.poly,
     partner: "QuickSwap",
-    exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
+    exchangeAddress: "0x260922357Ea26cd5cB5d9A75f742fDF235847620",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.QuickSwap,
   } as Config,
 };
-
-// export const UniswapV2Config: Config = {
-//   ...ChainConfigs.eth,
-//   partner: "UniswapV2",
-//   exchangeAddress: "0xE83df5BfA9F14a84e550c38c4ec505cB22C6A0d7",
-// };
-
-// export const SushiSwapConfig: Config = {
-//   ...ChainConfigs.eth,
-//   partner: "SushiSwap",
-//   exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
-// };
 
 export const nativeTokenAddresses = [
   zeroAddress,
