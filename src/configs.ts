@@ -90,7 +90,7 @@ export const Configs = {
   SpookySwap: {
     ...ChainConfigs.ftm,
     partner: "SpookySwap",
-    exchangeAddress: "0x37F427DA0D12Fe2C80aCa09EE08e7e92A1B2B114",
+    exchangeAddress: "0x4b5815D263549Ff9b54a3838693C3DC0dbE7e597",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.SpookySwap,
   } as Config,
@@ -98,7 +98,7 @@ export const Configs = {
   Pangolin: {
     ...ChainConfigs.avax,
     partner: "Pangolin",
-    exchangeAddress: "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+    exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.Pangolin,
   } as Config,
@@ -106,7 +106,7 @@ export const Configs = {
   QuickSwap: {
     ...ChainConfigs.poly,
     partner: "QuickSwap",
-    exchangeAddress: "0x260922357Ea26cd5cB5d9A75f742fDF235847620",
+    exchangeAddress: "0x9369D5465d6D90AA3c06Af5B683e617EeA9078E4",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.QuickSwap,
   } as Config,
