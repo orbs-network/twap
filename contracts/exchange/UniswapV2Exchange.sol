@@ -23,12 +23,13 @@ contract UniswapV2Exchange is IExchange {
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
     function getAmountOut(
-        address,
-        address,
+        address srcToken,
+        address dstToken,
         uint256 amountIn,
         bytes calldata data
     ) public view returns (uint256 amountOut) {
         (, address[] memory path) = decode(data);
+        require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
         return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
     }
 

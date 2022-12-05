@@ -13,11 +13,27 @@ import {
 import { chainId, maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
 import { Paraswap } from "../src";
 import BigNumber from "bignumber.js";
+import { expectRevert } from "@defi.org/web3-candies/dist/hardhat";
 
 describe("IExchange implementations", async () => {
   describe("UniswapV2Exchange", () => {
     beforeEach(() => initFixture());
     beforeEach(() => withUniswapV2Exchange());
+
+    it("prevent invalid paths", async () => {
+      await expectRevert(
+        () =>
+          exchange.methods
+            .getAmountOut(
+              srcToken.address,
+              dstToken.address,
+              100000,
+              web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, srcToken.address]])
+            )
+            .call(),
+        "UE1"
+      );
+    });
 
     it("swap", async () => {
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
