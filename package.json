@@ -23,7 +23,7 @@
     "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
     "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
-    "build": "hardhat compile && solhint 'contracts/**/*.sol' && tsc",
+    "build": "hardhat compile && solhint 'contracts/**/*.sol' && tsc && hardhat github-pages",
     "prepublishOnly": "npm run build",
     "test:logs": "for t in eth ftm poly avax; do DEBUG=web3-candies npm run test:$t -- --logs; done",
     "test": "for t in eth ftm poly avax; do npm run test:$t; done",
