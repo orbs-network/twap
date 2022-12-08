@@ -11,6 +11,7 @@ export interface TokenData {
 
 export interface Config {
   chainId: number;
+  chainName: string;
   twapAddress: string;
   lensAddress: string;
   bidDelaySeconds: number;
@@ -25,6 +26,7 @@ export interface Config {
 
 export const ChainConfigs = {
   eth: {
+    chainName: "eth",
     chainId: 1,
     twapAddress: "",
     lensAddress: "",
@@ -38,6 +40,7 @@ export const ChainConfigs = {
     },
   },
   ftm: {
+    chainName: "ftm",
     chainId: 250,
     twapAddress: "0xBb9F828E34A1327607c3e4eA3dD35891398DD5EE",
     lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
@@ -51,6 +54,7 @@ export const ChainConfigs = {
     },
   },
   poly: {
+    chainName: "poly",
     chainId: 137,
     twapAddress: "0xBAFdE1cc254BB94Be5866d5a86ddafde4BB44EEF",
     lensAddress: "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
@@ -64,6 +68,7 @@ export const ChainConfigs = {
     },
   },
   avax: {
+    chainName: "avax",
     chainId: 43114,
     twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
     lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
