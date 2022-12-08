@@ -180,7 +180,7 @@ describe("TWAPLib with production config", () => {
         });
 
         it("status completed", async () => {
-          const { dstAmountOut, data } = await lib.findSwapDataForBid(orderId);
+          const { dstNextChunkAmountOut, data } = await lib.findSwapDataForBid(await lib.getOrder(orderId));
 
           await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 2000, data).send({ from: taker });
           await mineBlock(60);
@@ -198,8 +198,8 @@ describe("TWAPLib with production config", () => {
             await srcToken.amount(userSrcTokenStartBalance - 1000)
           );
           expect(await dstToken.methods.balanceOf(user).call()).bignumber.closeTo(
-            dstAmountOut.times(2),
-            dstAmountOut.times(0.05)
+            dstNextChunkAmountOut.times(2),
+            dstNextChunkAmountOut.times(0.05)
           );
         });
 

@@ -320,16 +320,18 @@ export class TWAPLib {
     return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
   }
 
-  async findSwapDataForBid(orderId: number): Promise<{
+  async findSwapDataForBid(order: Order): Promise<{
     srcToken: TokenData;
     dstToken: TokenData;
-    srcAmountIn: BN;
-    dstAmountOut: BN;
+    srcNextChunkAmountIn: BN;
+    dstNextChunkAmountOut: BN;
     raw: any;
     data: string;
   }> {
-    const order = await this.getOrder(orderId);
-    const srcAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.srcFilledAmount));
+    if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
+      throw new Error(`mismatched exchange and config`);
+
+    const srcNextChunkAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.srcFilledAmount));
 
     const [srcToken, dstToken] = await Promise.all([
       this.getToken(order.ask.srcToken),
@@ -340,10 +342,10 @@ export class TWAPLib {
       this.config.chainId,
       srcToken,
       dstToken,
-      srcAmountIn,
+      srcNextChunkAmountIn,
       this.config.pathfinderKey
     );
-    const dstAmountOut = BN(route.destAmount);
+    const dstNextChunkAmountOut = BN(route.destAmount);
 
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
@@ -351,8 +353,8 @@ export class TWAPLib {
         return {
           srcToken,
           dstToken,
-          srcAmountIn,
-          dstAmountOut,
+          srcNextChunkAmountIn,
+          dstNextChunkAmountOut,
           raw: path,
           data: web3().eth.abi.encodeParameters(["bool", "address[]"], [true, path]),
         };
@@ -360,8 +362,8 @@ export class TWAPLib {
         return {
           srcToken,
           dstToken,
-          srcAmountIn,
-          dstAmountOut,
+          srcNextChunkAmountIn,
+          dstNextChunkAmountOut,
           raw: route,
           data: await Paraswap.buildSwapData(route, this.config.twapAddress),
         };
