@@ -21,6 +21,7 @@ import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
+import ParaswapRoute = Paraswap.ParaswapRoute;
 
 export const twapAbi = twapArtifact.abi as any;
 export const lensAbi = lensArtifact.abi as any;
@@ -320,14 +321,7 @@ export class TWAPLib {
     return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
   }
 
-  async findSwapDataForBid(order: Order): Promise<{
-    srcToken: TokenData;
-    dstToken: TokenData;
-    srcNextChunkAmountIn: BN;
-    dstNextChunkAmountOut: BN;
-    raw: any;
-    data: string;
-  }> {
+  async findSwapDataForBid(order: Order) {
     if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
       throw new Error(`mismatched exchange and config`);
 
@@ -347,23 +341,21 @@ export class TWAPLib {
     );
     const dstNextChunkAmountOut = BN(route.destAmount);
 
+    const { raw, data } = await this.convertRouteToSwapData(route);
+
+    return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
+  }
+
+  async convertRouteToSwapData(route: ParaswapRoute) {
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
         const path = Paraswap.getDirectPath(route, this.config.pathfinderKey);
         return {
-          srcToken,
-          dstToken,
-          srcNextChunkAmountIn,
-          dstNextChunkAmountOut,
           raw: path,
           data: web3().eth.abi.encodeParameters(["bool", "address[]"], [true, path]),
         };
       case "ParaswapExchange":
         return {
-          srcToken,
-          dstToken,
-          srcNextChunkAmountIn,
-          dstNextChunkAmountOut,
           raw: route,
           data: await Paraswap.buildSwapData(route, this.config.twapAddress),
         };
