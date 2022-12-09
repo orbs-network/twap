@@ -44,10 +44,10 @@ export namespace Paraswap {
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
     const result = await response.json();
     return {
-      low: BN(result.safeLow),
-      medium: BN(result.average),
-      high: BN(result.fast),
-      instant: BN(result.fastest),
+      low: BN(result.safeLow || 0),
+      medium: BN(result.average || 0),
+      high: BN(result.fast || 0),
+      instant: BN(result.fastest || 0),
     };
   }
 
