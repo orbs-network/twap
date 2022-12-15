@@ -383,21 +383,26 @@ describe("TWAPLib with production config", () => {
         expect(lib.totalChunks(srcAmount, await srcToken.amount(33))).bignumber.eq(4);
       });
 
-      it("fillDelayMillis for evenly distributed trades over maxDuration, with buffer of bid and extra buffer", async () => {
+      it("fillDelayMillis for evenly distributed trades over maxDuration, with buffer for bidding war and block settlement", async () => {
         expect(lib.config.bidDelaySeconds).eq(60);
         const minute = 60 * 1000;
         const hour = 60 * minute;
-        expect(lib.fillDelayMillis(0, 0)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(10, 0)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(10, 1000)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(10, minute)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(10, hour)).bignumber.eq(4 * minute);
-        expect(lib.fillDelayMillis(4, hour)).bignumber.eq(13 * minute);
-        expect(lib.fillDelayMillis(3, hour)).bignumber.eq(18 * minute);
-        expect(lib.fillDelayMillis(2, hour)).bignumber.eq(28 * minute);
-        expect(lib.fillDelayMillis(1, hour)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(100, hour)).bignumber.eq(0);
-        expect(lib.fillDelayMillis(5, 5 * hour)).bignumber.eq(58 * minute);
+        [
+          { chunks: 0, duration: 0, ui: 2 * minute, actual: 0 },
+          { chunks: 10, duration: 0, ui: 2 * minute, actual: 0 },
+          { chunks: 10, duration: 1000, ui: 2 * minute, actual: 0 },
+          { chunks: 10, duration: minute, ui: 2 * minute, actual: 0 },
+          { chunks: 10, duration: hour, ui: 6 * minute, actual: 4 * minute },
+          { chunks: 4, duration: hour, ui: 15 * minute, actual: 13 * minute },
+          { chunks: 3, duration: hour, ui: 20 * minute, actual: 18 * minute },
+          { chunks: 2, duration: hour, ui: 30 * minute, actual: 28 * minute },
+          { chunks: 1, duration: hour, ui: 2 * minute, actual: 0 },
+          { chunks: 100, duration: hour, ui: 2 * minute, actual: 0 },
+          { chunks: 5, duration: 5 * hour, ui: hour, actual: 58 * minute },
+        ].map((i) => {
+          expect(lib.fillDelayUiMillis(i.chunks, i.duration)).bignumber.eq(i.ui);
+          expect(lib.fillDelayMillis(i.chunks, i.duration)).bignumber.eq(i.actual);
+        });
       });
 
       it("dstMinAmountOut", async () => {

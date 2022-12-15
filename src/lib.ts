@@ -69,15 +69,19 @@ export class TWAPLib {
   totalChunks = (srcAmount: BN.Value, srcChunkAmount: BN.Value) =>
     BN(srcAmount).div(srcChunkAmount).integerValue(BN.ROUND_CEIL).toNumber();
 
+  estimatedDelayBetweenChunksMillis = () => this.config.bidDelaySeconds * 1000 * 2;
+
+  /**
+   * includes the bidding war and block settelment
+   */
+  fillDelayUiMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
+    BN.max(
+      BN(totalChunks).gt(1) ? BN(maxDurationMillis).div(totalChunks) : 0,
+      BN(this.estimatedDelayBetweenChunksMillis())
+    ).toNumber();
+
   fillDelayMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
-    BN(totalChunks).lte(1) || BN(maxDurationMillis).lte(this.config.bidDelaySeconds * 1000 * 2)
-      ? 0
-      : BN.max(
-          BN(maxDurationMillis)
-            .div(totalChunks)
-            .minus(BN(this.config.bidDelaySeconds * 1000 * 2)),
-          0
-        ).toNumber();
+    this.fillDelayUiMillis(totalChunks, maxDurationMillis) - this.estimatedDelayBetweenChunksMillis();
 
   dstMinAmountOut = (
     srcToken: TokenData,
