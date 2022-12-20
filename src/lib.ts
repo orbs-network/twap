@@ -21,7 +21,6 @@ import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
-import ParaswapRoute = Paraswap.ParaswapRoute;
 
 export const twapAbi = twapArtifact.abi as any;
 export const lensAbi = lensArtifact.abi as any;
@@ -350,7 +349,7 @@ export class TWAPLib {
     return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
   }
 
-  async convertRouteToSwapData(route: ParaswapRoute) {
+  async convertRouteToSwapData(route: Paraswap.ParaswapRoute) {
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
         const path = Paraswap.getDirectPath(route, this.config.pathfinderKey);
