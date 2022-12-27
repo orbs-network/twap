@@ -320,8 +320,10 @@ export class TWAPLib {
 
   async getToken(address: string) {
     if (isNativeAddress(address) || eqIgnoreCase(address, this.config.wToken.address)) return this.config.wToken;
-    const t = erc20("", address);
-    return { address, decimals: await t.decimals(), symbol: await t.methods.symbol().call() };
+    address = Web3.utils.toChecksumAddress(address);
+    const t = erc20(address, address);
+    const [decimals, symbol] = await Promise.all([t.decimals(), t.methods.symbol().call()]);
+    return { address, decimals, symbol };
   }
 
   async findSwapDataForBid(order: Order) {
