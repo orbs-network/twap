@@ -54,7 +54,7 @@ describe("Paraswap", () => {
       });
 
       it("direct path might be invalid", async () => {
-        const route = await Paraswap.findRoute(c.chainId, usdc, c.wToken, 100_000 * 1e6);
+        const route = await Paraswap.findRoute(c.chainId, usdc, usdc, 100_000 * 1e6);
         await expectRevert(() => Paraswap.getDirectPath(route, c.pathfinderKey), "invalid direct path");
       });
     });
