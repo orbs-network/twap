@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../IExchange.sol";
-import "./IParaswap.sol";
 
 /**
  * Adapter between IParaswap and TWAP's IExchange interface
@@ -23,8 +22,14 @@ contract ParaswapExchange is IExchange {
     /**
      * data = amountOut, swap data from paraswap api
      */
-    function getAmountOut(address, address, uint256, bytes calldata data) public pure returns (uint256 dstAmountOut) {
-        (dstAmountOut, ) = decode(data);
+    function getAmountOut(
+        address,
+        address,
+        uint256,
+        bytes calldata,
+        bytes calldata bidData
+    ) public pure returns (uint256 dstAmountOut) {
+        (dstAmountOut, ) = decode(bidData);
     }
 
     /**
@@ -35,9 +40,10 @@ contract ParaswapExchange is IExchange {
         address _dstToken,
         uint256 amountIn,
         uint256 amountOutMin,
-        bytes calldata data
+        bytes calldata,
+        bytes calldata bidData
     ) public {
-        (, bytes memory swapdata) = decode(data);
+        (, bytes memory swapdata) = decode(bidData);
         ERC20 srcToken = ERC20(_srcToken);
         ERC20 dstToken = ERC20(_dstToken);
 
@@ -55,4 +61,12 @@ contract ParaswapExchange is IExchange {
     function decode(bytes calldata data) private pure returns (uint256 amountOut, bytes memory swapdata) {
         return abi.decode(data, (uint256, bytes));
     }
+}
+
+/**
+ * Augustus Swapper
+ * Paraswap main exchange interface
+ */
+interface IParaswap {
+    function getTokenTransferProxy() external view returns (address);
 }

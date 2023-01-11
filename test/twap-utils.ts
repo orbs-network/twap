@@ -1,6 +1,15 @@
 import { block, zeroAddress } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import { dstToken, exchange, srcToken, swapDataForUniV2, taker, twap, user, userSrcTokenStartBalance } from "./fixture";
+import {
+  dstToken,
+  exchange,
+  srcToken,
+  swapBidDataForUniV2,
+  taker,
+  twap,
+  user,
+  userSrcTokenStartBalance,
+} from "./fixture";
 
 export async function ask(
   srcAmount: number,
@@ -8,7 +17,7 @@ export async function ask(
   dstMinAmount: number,
   deadline: number = 0,
   exchange: string = zeroAddress,
-  bidDelay: number = 10,
+  bidDelay: number = 30,
   fillDelay: number = 0,
   _user: string = user
 ) {
@@ -18,21 +27,22 @@ export async function ask(
   const _dstRate = await dstToken.amount(dstMinAmount);
   await srcToken.methods.approve(twap.options.address, _srcAmount).send({ from: _user });
   return twap.methods
-    .ask(
+    .ask([
       exchange,
       srcToken.address,
       dstToken.address,
-      _srcAmount,
-      _srcRate,
-      _dstRate.isZero() ? 1 : _dstRate,
+      _srcAmount.toString(),
+      _srcRate.toString(),
+      _dstRate.isZero() ? 1 : _dstRate.toString(),
       deadline,
       bidDelay,
-      fillDelay
-    )
+      fillDelay,
+      [],
+    ])
     .send({ from: _user });
 }
 
-export async function bid(id: number, fee: number = 0.01, slippagePercent = 0, swapData: string = swapDataForUniV2) {
+export async function bid(id: number, fee: number = 0.01, slippagePercent = 0, swapData: string = swapBidDataForUniV2) {
   return twap.methods
     .bid(id, exchange.options.address, await dstToken.amount(fee), slippagePercent * 1000, swapData)
     .send({ from: taker });

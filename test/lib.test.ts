@@ -7,7 +7,7 @@ import BN from "bignumber.js";
 import _ from "lodash";
 
 describe("TWAPLib with production config", () => {
-  beforeEach(() => initFixture(true));
+  beforeEach(() => initFixture("latest"));
 
   _.map(Configs, (c) => {
     describe(`${c.partner} on ${c.chainId}`, () => {
@@ -129,6 +129,10 @@ describe("TWAPLib with production config", () => {
       });
 
       describe("with order", () => {
+        beforeEach("only latest TWAP version", async function () {
+          if ((await lib.twap.methods.VERSION().call().then(parseInt)) !== TWAPLib.VERSION) return this.skip();
+        });
+
         let orderId: number = -1;
 
         beforeEach(async () => {

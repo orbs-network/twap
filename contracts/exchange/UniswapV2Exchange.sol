@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "../IExchange.sol";
-import "./IUniswapV2.sol";
 
 /**
  * Adapter between IUniswapV2 and TWAP's IExchange interface
@@ -26,9 +25,10 @@ contract UniswapV2Exchange is IExchange {
         address srcToken,
         address dstToken,
         uint256 amountIn,
-        bytes calldata data
+        bytes calldata,
+        bytes calldata bidData
     ) public view returns (uint256 amountOut) {
-        (, address[] memory path) = decode(data);
+        (, address[] memory path) = decode(bidData);
         require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
         return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
     }
@@ -36,8 +36,15 @@ contract UniswapV2Exchange is IExchange {
     /**
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
-    function swap(address _srcToken, address, uint256 amountIn, uint256 amountOutMin, bytes calldata data) public {
-        (bool fotTokens, address[] memory path) = decode(data);
+    function swap(
+        address _srcToken,
+        address,
+        uint256 amountIn,
+        uint256 amountOutMin,
+        bytes calldata,
+        bytes calldata bidData
+    ) public {
+        (bool fotTokens, address[] memory path) = decode(bidData);
         ERC20 srcToken = ERC20(_srcToken);
 
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
@@ -61,4 +68,24 @@ contract UniswapV2Exchange is IExchange {
     function decode(bytes calldata data) private pure returns (bool fotTokens, address[] memory path) {
         (fotTokens, path) = abi.decode(data, (bool, address[]));
     }
+}
+
+interface IUniswapV2 {
+    function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);
+
+    function swapExactTokensForTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
 }

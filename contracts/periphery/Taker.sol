@@ -52,7 +52,7 @@ contract Taker {
         if (o.ask.dstToken != twap.iweth() && o.ask.dstToken != address(0) && feeExchange != address(0)) {
             uint256 dstAmount = ERC20(o.ask.dstToken).balanceOf(address(this));
             ERC20(o.ask.dstToken).safeIncreaseAllowance(feeExchange, dstAmount);
-            IExchange(feeExchange).swap(o.ask.dstToken, twap.iweth(), dstAmount, feeMinAmountOut, feeData);
+            IExchange(feeExchange).swap(o.ask.dstToken, twap.iweth(), dstAmount, feeMinAmountOut, o.ask.data, feeData);
         }
 
         rescue(o.ask.dstToken);

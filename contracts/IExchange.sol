@@ -14,7 +14,8 @@ interface IExchange {
         address srcToken,
         address dstToken,
         uint256 amountIn,
-        bytes calldata data
+        bytes calldata askData,
+        bytes calldata bidData
     ) external view returns (uint256 amountOut);
 
     /**
@@ -25,6 +26,7 @@ interface IExchange {
         address dstToken,
         uint256 amountIn,
         uint256 amountOutMin,
-        bytes calldata data
+        bytes calldata askData,
+        bytes calldata bidData
     ) external;
 }

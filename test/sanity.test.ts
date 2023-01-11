@@ -5,7 +5,7 @@ import {
   fundSrcTokenFromWhale,
   initFixture,
   srcToken,
-  swapDataForUniV2,
+  swapBidDataForUniV2,
   taker,
   twap,
   user,
@@ -20,10 +20,6 @@ describe("Sanity", () => {
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
 
-  it("version", async () => {
-    expect(await twap.methods.VERSION().call()).bignumber.eq(3);
-  });
-
   it("maker creates ask order, emits event", async () => {
     expect(await twap.methods.length().call()).bignumber.zero;
 
@@ -35,19 +31,17 @@ describe("Sanity", () => {
     expect(events[0].event).eq("OrderCreated");
     expect(events[0].returnValues.id).eq("0");
     expect(events[0].returnValues.maker).eq(user);
-    expect(events[0].returnValues.ask[6]).eq(srcToken.address);
+    expect(events[0].returnValues.ask.srcToken).eq(srcToken.address);
     expect(await twap.methods.length().call()).bignumber.eq("1");
 
     const o = await order(0);
     expect(o.id).bignumber.zero;
-
     expect(o.status).eq(deadline.toString());
-
-    expect(o.ask.time).bignumber.eq(blockTimeAtCreation.toString());
+    expect(o.maker).eq(user);
+    expect(o.time).bignumber.eq(blockTimeAtCreation.toString());
     expect(o.ask.deadline).bignumber.eq(deadline.toString());
-    expect(o.ask.bidDelay).bignumber.eq(10);
+    expect(o.ask.bidDelay).bignumber.eq(30);
     expect(o.ask.fillDelay).bignumber.eq(0);
-    expect(o.ask.maker).eq(user);
     expect(o.ask.exchange).eq(zeroAddress);
     expect(o.ask.srcToken).eq(srcToken.address);
     expect(o.ask.dstToken).eq(dstToken.address);
@@ -72,7 +66,7 @@ describe("Sanity", () => {
     const o = await order(0);
     expect(o.bid.taker).eq(taker);
     expect(o.bid.exchange).eq(exchange.options.address);
-    expect(o.bid.data).deep.eq(swapDataForUniV2);
+    expect(o.bid.data).deep.eq(swapBidDataForUniV2);
     expect(o.bid.dstFee).bignumber.eq(await dstToken.amount(0.01));
     expect(o.bid.dstAmount)
       .bignumber.gte(await dstToken.amount(1))
@@ -135,11 +129,11 @@ describe("Sanity", () => {
   it("order fully filled, emits event", async () => {
     await ask(2000, 1000, 0.5);
     await bid(0);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await mineBlock(60);
     await bid(0);
-    await mineBlock(10);
+    await mineBlock(60);
     const tx = await fill(0);
     const o = await order(0);
     expect(o.ask.deadline).bignumber.not.eq(zero);
@@ -165,7 +159,7 @@ describe("Sanity", () => {
       await ask(8000, 4000, 2, undefined, undefined, undefined, undefined, await account(6));
 
       await ask(1000, 1000, 0.5, (await time()) + 10);
-      await mineBlock(10);
+      await mineBlock(60);
     });
 
     it("find orders for maker", async () => {

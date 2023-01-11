@@ -59,7 +59,7 @@ describe("Lens", async () => {
       await ask(2000, 2000, 1);
       expect(await takerBiddableOrders()).length(1);
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await fill(0);
       await mineBlock(60);
       expect(await takerBiddableOrders()).empty;
@@ -75,7 +75,7 @@ describe("Lens", async () => {
       await ask(2000, 1000, 0.5);
       await ask(2000, 1000, 0.5);
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await fill(0);
 
       const result = await takerBiddableOrders();
@@ -87,7 +87,7 @@ describe("Lens", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
       expect(await takerBiddableOrders()).empty;
-      await mineBlock(61);
+      await mineBlock(60 * 11);
       expect(await takerBiddableOrders()).length(1);
     });
 
@@ -126,14 +126,14 @@ describe("Lens", async () => {
       await ask(2000, 2000, 1);
       await bid(0);
       expect(await takerFillableOrders()).empty;
-      await mineBlock(11);
+      await mineBlock(60);
       expect(await takerFillableOrders()).length(1);
     });
 
     it("filled", async () => {
       await ask(2000, 2000, 1);
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await fill(0);
       expect(await takerFillableOrders()).empty;
     });
@@ -148,7 +148,7 @@ describe("Lens", async () => {
     it("canceled", async () => {
       await ask(2000, 2000, 1);
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await twap.methods.cancel(0).send({ from: user });
       expect(await takerFillableOrders()).empty;
     });
@@ -156,7 +156,7 @@ describe("Lens", async () => {
     it("maker allowance and balance", async () => {
       await ask(2000, 1000, 0.5);
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
       expect(await takerFillableOrders()).empty;
 
@@ -175,7 +175,7 @@ describe("Lens", async () => {
       await fundSrcTokenFromWhale(otherUser, 1);
       await srcToken.methods.approve(twap.options.address, maxUint256).send({ from: otherUser });
       await twap.methods
-        .ask(zeroAddress, srcToken.address, dstToken.address, 1, 1, 1, endTime(), 10, 60)
+        .ask([zeroAddress, srcToken.address, dstToken.address, 1, 1, 1, endTime(), 60, 60, []])
         .send({ from: otherUser });
       await ask(15_000, 3000, 1);
       await twap.methods.cancel(0).send({ from: user });

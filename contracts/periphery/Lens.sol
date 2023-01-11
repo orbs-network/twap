@@ -46,7 +46,6 @@ contract Lens {
     ) external view returns (OrderLib.Order[] memory result) {
         OrderLib.Order[] memory orders = paginated(lastIndex, pageSize);
         uint64 count = 0;
-        uint32 staleMul = twap.STALE_BID_DELAY_MUL();
 
         for (uint64 i = 0; i < orders.length; i++) {
             uint64 id = lastIndex - i;
@@ -54,9 +53,9 @@ contract Lens {
                 OrderLib.Order memory o = twap.order(id);
                 if (
                     block.timestamp > o.filledTime + o.ask.fillDelay && // after fill delay
-                    (o.bid.taker != taker || block.timestamp > o.bid.time + (o.ask.bidDelay * staleMul)) && // other taker or stale bid
-                    ERC20(o.ask.srcToken).allowance(o.ask.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
-                    ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext() // maker balance
+                    (o.bid.taker != taker || block.timestamp > o.bid.time + twap.STALE_BID_SECONDS()) && // other taker or stale bid
+                    ERC20(o.ask.srcToken).allowance(o.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
+                    ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext() // maker balance
                 ) {
                     orders[count] = o;
                     count++;
@@ -91,8 +90,8 @@ contract Lens {
                 if (
                     o.bid.taker == taker && // winning taker
                     block.timestamp > o.bid.time + o.ask.bidDelay && // after bid delay
-                    ERC20(o.ask.srcToken).allowance(o.ask.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
-                    ERC20(o.ask.srcToken).balanceOf(o.ask.maker) >= o.srcBidAmountNext() // maker balance
+                    ERC20(o.ask.srcToken).allowance(o.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
+                    ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext() // maker balance
                 ) {
                     orders[count] = o;
                     count++;

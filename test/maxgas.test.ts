@@ -59,17 +59,18 @@ describe("maxgas: special test: large order history, paginated reads", async () 
       await Promise.all(
         _.map(times, async (i) =>
           twap.methods
-            .ask(
+            .ask([
               exchange.options.address,
               srcToken.address,
               dstToken.address,
-              _srcAmount,
-              _srcBidAmount,
-              _dstMinAmount,
+              _srcAmount.toString(),
+              _srcBidAmount.toString(),
+              _dstMinAmount.toString(),
               now + 1000 + i + (EXPIRED_ASKS / 10) * chunk,
-              10,
-              60
-            )
+              60,
+              60,
+              [],
+            ])
             .send({ from: user })
         )
       );

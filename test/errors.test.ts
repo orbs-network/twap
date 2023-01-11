@@ -6,7 +6,7 @@ import {
   wNativeToken,
   setMockExchangeAmountOut,
   srcToken,
-  swapDataForUniV2,
+  swapBidDataForUniV2,
   taker,
   twap,
   user,
@@ -30,71 +30,75 @@ describe("Errors", () => {
     });
 
     describe("invalid params", () => {
+      let now = 0;
+      beforeEach(async () => (now = await time()));
+
       [
         {
           name: "srcToken zero",
           act: async () =>
-            twap.methods.ask(zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, zeroAddress, dstToken.address, 10, 5, 10, now + 10, 60, 60, []]),
         },
         {
           name: "same tokens",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, srcToken.address, 10, 5, 10, now + 10, 60, 60, []]),
         },
         {
           name: "srcAmount zero",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 0, 5, 10, now + 10, 60, 60, []]),
         },
         {
           name: "srcBidAmount zero",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 10, 0, 10, now + 10, 60, 60, []]),
         },
         {
           name: "srcBidAmount>srcAmount",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 10, 11, 10, now + 10, 60, 60, []]),
         },
         {
           name: "dstMinAmount zero",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 10, 5, 0, now + 10, 60, 60, []]),
         },
         {
           name: "expired",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, await time(), 10, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now, 60, 60, []]),
         },
         {
           name: "bid delay lower than minimum",
           act: async () =>
-            twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 5, 60),
+            twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 5, 60, []]),
         },
         {
           name: "weth to native",
           act: async () =>
-            twap.methods.ask(zeroAddress, wNativeToken.address, zeroAddress, 10, 5, 10, (await time()) + 10, 10, 60),
+            twap.methods.ask([zeroAddress, wNativeToken.address, zeroAddress, 10, 5, 10, now + 10, 60, 60, []]),
         },
         {
           name: "same tokens native",
           act: async () =>
-            twap.methods.ask(
+            twap.methods.ask([
               zeroAddress,
               wNativeToken.address,
               wNativeToken.address,
               10,
               5,
               10,
-              (await time()) + 10,
-              10,
-              60
-            ),
+              now + 10,
+              40,
+              60,
+              [],
+            ]),
         },
       ].map((i) =>
         it(i.name, async () => {
-          expect(await twap.methods.MIN_BID_DELAY_SECONDS().call().then(parseInt)).eq(10);
-          twap.methods.ask(zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, (await time()) + 10, 10, 60); //valid
+          expect(await twap.methods.MIN_BID_DELAY_SECONDS().call().then(parseInt)).eq(30);
+          twap.methods.ask([zeroAddress, srcToken.address, dstToken.address, 10, 5, 10, now + 10, 60, 60, []]); //valid
           await expectRevert(async () => (await i.act()).call(), "params");
         })
       );
@@ -105,7 +109,7 @@ describe("Errors", () => {
       await expectRevert(
         () =>
           twap.methods
-            .ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 10, 60)
+            .ask([zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 60, 60, []])
             .send({ from: user }),
         "maker allowance"
       );
@@ -117,7 +121,7 @@ describe("Errors", () => {
       await expectRevert(
         () =>
           twap.methods
-            .ask(zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 10, 60)
+            .ask([zeroAddress, srcToken.address, dstToken.address, 100, 10, 1, endTime(), 60, 60, []])
             .send({ from: user }),
         "maker balance"
       );
@@ -127,7 +131,7 @@ describe("Errors", () => {
   describe("verify bid", () => {
     it("expired", async () => {
       await ask(2000, 2000, 1, (await time()) + 10);
-      await mineBlock(10);
+      await mineBlock(60);
       await expectRevert(() => bid(0), "status");
 
       await ask(2000, 2000, 1, (await time()) + 10);
@@ -139,12 +143,12 @@ describe("Errors", () => {
       const otherExchange = await deployArtifact<MockExchange>("MockExchange", { from: deployer });
 
       await ask(2000, 2000, 1, undefined, exchange.options.address);
-      await mineBlock(10);
+      await mineBlock(60);
       await expectRevert(
-        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, swapDataForUniV2).call(),
+        () => twap.methods.bid(0, otherExchange.options.address, 0, 0, swapBidDataForUniV2).call(),
         "exchange"
       );
-      await twap.methods.bid(0, exchange.options.address, 0, 0, swapDataForUniV2).call();
+      await twap.methods.bid(0, exchange.options.address, 0, 0, swapBidDataForUniV2).call();
     });
 
     it("low bid", async () => {
@@ -157,9 +161,9 @@ describe("Errors", () => {
     });
 
     it("recently filled", async () => {
-      await ask(2000, 1000, 0.5, undefined, undefined, undefined, 60);
+      await ask(2000, 1000, 0.5, undefined, undefined, undefined, 100);
       await bid(0);
-      await mineBlock(30);
+      await mineBlock(60);
       await fill(0);
 
       await expectRevert(() => bid(0), "fill delay");
@@ -169,9 +173,9 @@ describe("Errors", () => {
     });
 
     it("recently filled custom fill delay", async () => {
-      await ask(2000, 1000, 0.5, undefined, undefined, 10, 600);
+      await ask(2000, 1000, 0.5, undefined, undefined, 60, 600);
       await bid(0);
-      await mineBlock(30);
+      await mineBlock(60);
       await fill(0);
 
       await expectRevert(() => bid(0), "fill delay");
@@ -201,7 +205,7 @@ describe("Errors", () => {
     it("insufficient amount out when last partial fill", async () => {
       await ask(2000, 1500, 0.75);
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await fill(0);
 
       await withMockExchange(0.1);
@@ -265,7 +269,7 @@ describe("Errors", () => {
       await withMockExchange(1);
 
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
 
       await setMockExchangeAmountOut(0.1);
       await expectRevert(() => fill(0), "min out");
@@ -277,7 +281,7 @@ describe("Errors", () => {
       await withMockExchange(1);
 
       await bid(0, 0.1);
-      await mineBlock(10);
+      await mineBlock(60);
 
       await setMockExchangeAmountOut(0.5);
       await expectRevert(() => fill(0), "min out");
@@ -289,7 +293,7 @@ describe("Errors", () => {
       await withMockExchange(10);
 
       await bid(0, 1);
-      await mineBlock(10);
+      await mineBlock(60);
 
       await setMockExchangeAmountOut(0.5);
       await expectRevert(() => fill(0), /(Arithmetic operation underflowed|reverted)/);
@@ -306,7 +310,7 @@ describe("Errors", () => {
     await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "valid");
 
     await bid(0, 0);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await expectRevert(() => twap.methods.prune(0).send({ from: deployer }), "fill delay");
 

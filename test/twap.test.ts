@@ -1,27 +1,23 @@
-import { account, chainId, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import {
-  asTokenData,
   deployer,
   dstToken,
   exchange,
   initFixture,
-  wNativeToken,
   setMockExchangeAmountOut,
   srcToken,
-  swapDataForUniV2,
+  swapBidDataForUniV2,
   taker,
   twap,
   user,
   userSrcTokenStartBalance,
   withMockExchange,
-  withParaswapExchange,
   withUniswapV2Exchange,
+  wNativeToken,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, bid, endTime, expectFilled, fill, order } from "./twap-utils";
-import { Paraswap } from "../src/paraswap";
-import BigNumber from "bignumber.js";
 
 describe("TWAP", async () => {
   beforeEach(() => initFixture());
@@ -30,7 +26,7 @@ describe("TWAP", async () => {
   it("single chunk", async () => {
     await ask(2000, 2000, 1);
     await bid(0);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
 
     await expectFilled(0, 2000, 1);
@@ -41,7 +37,7 @@ describe("TWAP", async () => {
 
     for (let i = 1; i <= 4; i++) {
       await bid(0);
-      await mineBlock(10);
+      await mineBlock(60);
       await fill(0);
       await expectFilled(0, 2500 * i, 1.25 * i);
     }
@@ -53,19 +49,19 @@ describe("TWAP", async () => {
     await ask(10_000, 4000, 2, undefined, undefined, undefined, 60);
 
     await bid(0);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await mineBlock(60);
 
     await bid(0);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await mineBlock(60);
 
     await expectFilled(0, 8000, 4);
 
     await bid(0);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await expectFilled(0, 10_000, 5);
   });
@@ -79,7 +75,7 @@ describe("TWAP", async () => {
     await withMockExchange(0.6);
     await bid(0);
 
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await expectFilled(0, 1000, 0.59); // 0.01 taker fee
   });
@@ -92,7 +88,7 @@ describe("TWAP", async () => {
     await mineBlock(1);
 
     await twap.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, swapDataForUniV2)
+      .bid(0, exchange.options.address, await dstToken.amount(0.001), 0, swapBidDataForUniV2)
       .send({ from: await account(5) });
 
     expect((await order(0)).bid.taker).eq(await account(5));
@@ -111,21 +107,18 @@ describe("TWAP", async () => {
     await bid(0);
   });
 
-  it("clears stale unfilled bid after max bidding window = bidDelay * STALE_BID_DELAY_MUL", async () => {
-    expect(await twap.methods.STALE_BID_DELAY_MUL().call()).bignumber.eq(5);
-    const bidDelay = 60;
-    await ask(2000, 1000, 0.5, undefined, undefined, bidDelay);
+  it("clears stale unfilled bid after max bidding window", async () => {
+    expect(await twap.methods.STALE_BID_SECONDS().call()).bignumber.eq(600);
+    await ask(2000, 1000, 0.5, undefined, undefined, 60);
 
     await withMockExchange(1);
     await bid(0);
     await setMockExchangeAmountOut(0.6);
 
-    const notStaleYet = bidDelay * 5 - 5;
-    expect(notStaleYet).eq(295);
-    await mineBlock(295);
+    await mineBlock(500);
     await expectRevert(() => bid(0), "low bid");
 
-    await mineBlock(5); // stale
+    await mineBlock(100); // stale
     await bid(0); // lower bid won
   });
 
@@ -135,7 +128,7 @@ describe("TWAP", async () => {
     await bid(0, 0.3);
     await bid(0, 0.1);
     await bid(0, 0.01);
-    await mineBlock(10);
+    await mineBlock(60);
     await fill(0);
     await expectFilled(0, 1000, 0.5);
   });
@@ -157,7 +150,7 @@ describe("TWAP", async () => {
     await ask(10_000, 2000, 0);
     await withMockExchange(1000);
     await bid(0, 1.234, 10); // %10 slippage
-    await mineBlock(10);
+    await mineBlock(60);
 
     await setMockExchangeAmountOut(850);
     await expectRevert(() => fill(0), "min out");
@@ -184,17 +177,18 @@ describe("TWAP", async () => {
   it("native token output support", async () => {
     await srcToken.methods.approve(twap.options.address, await srcToken.amount(100)).send({ from: user });
     await twap.methods
-      .ask(
+      .ask([
         exchange.options.address,
         srcToken.address,
         zeroAddress,
-        await srcToken.amount(100),
-        await srcToken.amount(100),
+        (await srcToken.amount(100)).toString(),
+        (await srcToken.amount(100)).toString(),
         1,
         endTime(),
         60,
-        0
-      )
+        0,
+        [],
+      ])
       .send({ from: user });
     await bid(
       0,

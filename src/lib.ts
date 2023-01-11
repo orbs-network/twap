@@ -27,6 +27,7 @@ export const lensAbi = lensArtifact.abi as any;
 export const takerAbi = takerArtifact.abi as any;
 
 export class TWAPLib {
+  public static VERSION = 4;
   public twap: TWAP;
   public lens: Lens;
 
@@ -234,6 +235,7 @@ export class TWAPLib {
     deadline: number,
     fillDelaySeconds: number,
     srcUsd: BN.Value,
+    askData?: string,
     maxPriorityFeePerGas?: BN.Value,
     maxFeePerGas?: BN.Value
   ): Promise<number> {
@@ -250,7 +252,7 @@ export class TWAPLib {
     if (validation !== OrderInputValidation.valid) throw new Error(`invalid inputs: ${validation}`);
 
     const tx = await sendAndWaitForConfirmations(
-      this.twap.methods.ask(
+      this.twap.methods.ask([
         this.config.exchangeAddress,
         srcToken.address,
         dstToken.address,
@@ -259,8 +261,9 @@ export class TWAPLib {
         BN(dstMinChunkAmountOut).toFixed(0),
         BN(deadline).div(1000).toFixed(0),
         BN(this.config.bidDelaySeconds).toFixed(0),
-        BN(fillDelaySeconds).toFixed(0)
-      ),
+        BN(fillDelaySeconds).toFixed(0),
+        askData || [],
+      ]),
       {
         from: this.maker,
         maxPriorityFeePerGas,

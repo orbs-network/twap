@@ -6,7 +6,7 @@ import {
   tag,
   useChaiBigNumber,
 } from "@defi.org/web3-candies/dist/hardhat";
-import { account, currentNetwork, erc20s, Token, web3 } from "@defi.org/web3-candies";
+import { account, currentNetwork, erc20s, networks, Token, web3 } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
@@ -31,10 +31,10 @@ export let twap: TWAP;
 export let lens: Lens;
 
 export let exchange: IExchange;
-export let swapDataForUniV2: string;
+export let swapBidDataForUniV2: string;
 
-export async function initFixture(latestBlock = false) {
-  await resetNetworkFork(latestBlock ? "latest" : undefined);
+export async function initFixture(blockNumber?: number | "latest") {
+  await resetNetworkFork(blockNumber);
   await initAccounts();
   await initTokens();
   twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [wNativeToken.address]);
@@ -93,8 +93,8 @@ async function initTokens() {
 }
 
 export async function withUniswapV2Exchange(uniswapAddress?: string) {
+  await withUniswapV2Path();
   const network = await currentNetwork();
-
   const exchangeAddress =
     uniswapAddress ||
     _.find(
@@ -107,7 +107,24 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
       (impl, k) => k === network!.shortname
     );
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [exchangeAddress]);
+}
 
+export async function withParaswapExchange() {
+  exchange = await deployArtifact<IExchange>("ParaswapExchange", { from: deployer }, [
+    "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57", // Paraswap Augustus Swapper on all chains
+  ]);
+}
+
+export async function withPangolinDaasExchange() {
+  if ((await currentNetwork())?.id !== networks.avax.id) throw new Error("only on Avalanche");
+  await withUniswapV2Path();
+  exchange = await deployArtifact<IExchange>("PangolinDaasExchange", { from: deployer }, [
+    "0xEfd958c7C68b7e6a88300E039cAE275ca741007F", // PangolinRouterSupportingFees on Avalanche
+  ]);
+}
+
+async function withUniswapV2Path() {
+  const network = await currentNetwork();
   const paths = {
     eth: [srcToken.address, dstToken.address],
     ftm: [srcToken.address, wNativeToken.address, dstToken.address],
@@ -115,13 +132,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
     avax: [srcToken.address, wNativeToken.address, dstToken.address],
   };
   const path = _.find(paths, (p, k) => k === network!.shortname)!;
-  swapDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
-}
-
-export async function withParaswapExchange() {
-  exchange = await deployArtifact<IExchange>("ParaswapExchange", { from: deployer }, [
-    "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57", // Paraswap Augustus Swapper on all chains
-  ]);
+  swapBidDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }
 
 export async function fundSrcTokenFromWhale(target: string, amount: number) {

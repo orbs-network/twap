@@ -21,7 +21,7 @@ export interface Config {
 
   partner: string;
   exchangeAddress: string;
-  exchangeType: "UniswapV2Exchange" | "ParaswapExchange";
+  exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange";
   pathfinderKey: Paraswap.OnlyDex;
 }
 
@@ -104,22 +104,30 @@ export const Configs = {
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.SpookySwap,
   } as Config,
-
-  Pangolin: {
-    ...ChainConfigs.avax,
-    partner: "Pangolin",
-    exchangeAddress: "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
-    exchangeType: "UniswapV2Exchange",
-    pathfinderKey: Paraswap.OnlyDex.Pangolin,
-  } as Config,
-
-  QuickSwap: {
-    ...ChainConfigs.poly,
-    partner: "QuickSwap",
-    exchangeAddress: "0x9369D5465d6D90AA3c06Af5B683e617EeA9078E4",
-    exchangeType: "UniswapV2Exchange",
-    pathfinderKey: Paraswap.OnlyDex.QuickSwap,
-  } as Config,
+  //
+  // Pangolin: {
+  //   ...ChainConfigs.avax,
+  //   partner: "Pangolin",
+  //   exchangeAddress: "",
+  //   exchangeType: "UniswapV2Exchange",
+  //   pathfinderKey: Paraswap.OnlyDex.Pangolin,
+  // } as Config,
+  //
+  // PangolinDaas: {
+  //   ...ChainConfigs.avax,
+  //   partner: "PangolinDaas",
+  //   exchangeAddress: "",
+  //   exchangeType: "PangolinDaasExchange",
+  //   pathfinderKey: Paraswap.OnlyDex.Pangolin,
+  // } as Config,
+  //
+  // QuickSwap: {
+  //   ...ChainConfigs.poly,
+  //   partner: "QuickSwap",
+  //   exchangeAddress: "",
+  //   exchangeType: "UniswapV2Exchange",
+  //   pathfinderKey: Paraswap.OnlyDex.QuickSwap,
+  // } as Config,
 };
 
 export const nativeTokenAddresses = [

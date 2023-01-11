@@ -1,16 +1,16 @@
 import {
+  deployer,
   dstToken,
   exchange,
   fundSrcTokenFromWhale,
   initFixture,
-  wNativeToken,
   srcToken,
-  swapDataForUniV2,
+  swapBidDataForUniV2,
   taker,
   twap,
   user,
   withUniswapV2Exchange,
-  deployer,
+  wNativeToken,
 } from "./fixture";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
@@ -47,22 +47,22 @@ describe("Taker", async () => {
     await expectRevert(
       async () =>
         takerContract.methods
-          .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapDataForUniV2)
+          .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
           .send({ from: user }),
       "onlyOwners"
     );
     await expectRevert(() => takerContract.methods.fill(0, zeroAddress, 0, []).send({ from: user }), "onlyOwners");
     await expectRevert(() => takerContract.methods.rescue(zeroAddress).send({ from: user }), "onlyOwners");
     await takerContract.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapDataForUniV2)
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
       .send({ from: deployer }); // other owner
   });
 
   it("bid & fill, gas rebate as dstToken without swapping", async () => {
     await takerContract.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapDataForUniV2)
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
       .send({ from: taker });
-    await mineBlock(10);
+    await mineBlock(60);
 
     const dstTokenBefore = await dstToken.methods.balanceOf(taker).call();
     await takerContract.methods.fill(0, zeroAddress, 0, []).send({ from: taker });
@@ -73,9 +73,9 @@ describe("Taker", async () => {
 
   it("gas rebate when dstToken == nativeToken, unwrap with or without swapping to native", async () => {
     await takerContract.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapDataForUniV2)
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
       .send({ from: taker });
-    await mineBlock(10);
+    await mineBlock(60);
 
     const nativeBefore = await web3().eth.getBalance(taker);
     await takerContract.methods
@@ -107,7 +107,6 @@ describe("Taker", async () => {
     });
 
     it("sends ERC20 token balance to owner", async () => {
-      const sombody = await account(6);
       await fundSrcTokenFromWhale(takerContract.options.address, 10);
       expect(await srcToken.methods.balanceOf(takerContract.options.address).call()).bignumber.eq(
         await srcToken.amount(10)

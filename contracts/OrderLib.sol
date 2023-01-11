@@ -7,24 +7,25 @@ library OrderLib {
     struct Order {
         uint64 id; // order id
         uint32 status; // status: deadline, canceled or completed
+        uint32 time; // order creation timestamp
         uint32 filledTime; // last fill timestamp
         uint256 srcFilledAmount; // srcToken total filled amount
+        address maker; // order creator
         Ask ask; // order ask parameters
         Bid bid; // current winning bid
     }
 
     struct Ask {
-        uint32 time; // order creation timestamp
-        uint32 deadline; // order duration timestamp
-        uint32 bidDelay; // minimum delay in seconds before a bid can be filled
-        uint32 fillDelay; // minimum delay in seconds between chunks
-        address maker; // order creator
-        address exchange; // swap only on this exchange, or zero for any exchange
+        address exchange; // restirct swap to this exchange, or zero address for any exchange
         address srcToken; // input token
         address dstToken; // output token
         uint256 srcAmount; // input total order amount
         uint256 srcBidAmount; // input chunk size
         uint256 dstMinAmount; // minimum output chunk size
+        uint32 deadline; // order duration timestamp
+        uint32 bidDelay; // minimum delay in seconds before a bid can be filled
+        uint32 fillDelay; // minimum delay in seconds between chunks
+        bytes data; // optional swap data for exchange
     }
 
     struct Bid {
@@ -33,45 +34,29 @@ library OrderLib {
         address exchange; // execute bid on this exchange, never zero
         uint256 dstAmount; // dstToken actual output amount for this bid after exchange fees, taker fee and slippage
         uint256 dstFee; // dstToken requested by taker for performing the bid and fill
-        bytes data; // swap data to pass to exchange, out dstToken==dstAmount+dstFee
+        bytes data; // optional additional swap data for exchange
     }
 
     /**
      * new Order for msg.sender
      */
-    function newOrder(
-        uint64 id,
-        uint32 deadline,
-        uint32 bidDelay,
-        uint32 fillDelay,
-        address exchange,
-        address srcToken,
-        address dstToken,
-        uint256 srcAmount,
-        uint256 srcBidAmount,
-        uint256 dstMinAmount
-    ) internal view returns (Order memory) {
-        require(block.timestamp < type(uint32).max, "time");
-        require(deadline < type(uint32).max && bidDelay < type(uint32).max && fillDelay < type(uint32).max, "uint32");
+    function newOrder(uint64 id, Ask calldata ask) internal view returns (Order memory) {
+        require(
+            block.timestamp < type(uint32).max &&
+                ask.deadline < type(uint32).max &&
+                ask.bidDelay < type(uint32).max &&
+                ask.fillDelay < type(uint32).max,
+            "uint32"
+        );
         return
             Order(
                 id,
-                deadline, // status
+                ask.deadline, // status
+                uint32(block.timestamp), // time
                 0, // filledTime
                 0, // srcFilledAmount
-                Ask(
-                    uint32(block.timestamp),
-                    deadline,
-                    bidDelay,
-                    fillDelay,
-                    msg.sender,
-                    exchange,
-                    srcToken,
-                    dstToken,
-                    srcAmount,
-                    srcBidAmount,
-                    dstMinAmount
-                ),
+                msg.sender, // maker
+                ask,
                 Bid(
                     0, // time
                     address(0), // taker
@@ -93,7 +78,7 @@ library OrderLib {
         uint256 dstFee,
         bytes memory data
     ) internal view {
-        require(block.timestamp < type(uint32).max, "time");
+        require(block.timestamp < type(uint32).max, "uint32");
         self.bid = OrderLib.Bid(uint32(block.timestamp), msg.sender, exchange, dstAmountOut, dstFee, data);
     }
 
@@ -101,7 +86,7 @@ library OrderLib {
      * chunk filled
      */
     function filled(Order memory self, uint256 srcAmountIn) internal view {
-        require(block.timestamp < type(uint32).max, "time");
+        require(block.timestamp < type(uint32).max, "uint32");
         delete self.bid;
         self.filledTime = uint32(block.timestamp);
         self.srcFilledAmount += srcAmountIn;

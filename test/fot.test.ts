@@ -35,17 +35,18 @@ describe("FeeOnTransfer tokens", async () => {
   it("TWAP supports FOT tokens", async () => {
     await token.methods.approve(twap.options.address, maxUint256).send({ from: user });
     await twap.methods
-      .ask(
+      .ask([
         zeroAddress,
         token.address,
         wNativeToken.address,
-        await token.amount(10),
-        await token.amount(10),
-        await wNativeToken.amount(1),
+        (await token.amount(10)).toString(),
+        (await token.amount(10)).toString(),
+        (await wNativeToken.amount(1)).toString(),
         endTime(),
-        10,
-        60
-      )
+        60,
+        60,
+        [],
+      ])
       .send({ from: user });
 
     await twap.methods
@@ -58,7 +59,7 @@ describe("FeeOnTransfer tokens", async () => {
       )
       .send({ from: taker });
 
-    await mineBlock(10);
+    await mineBlock(60);
     await twap.methods.fill(0).send({ from: taker });
   });
 
@@ -70,7 +71,7 @@ describe("FeeOnTransfer tokens", async () => {
         [false, [token.options.address, wNativeToken.address]]
       );
       await expectRevert(
-        () => exchange.methods.swap(token.options.address, wNativeToken.address, 100, 0, data).send({ from: user }),
+        () => exchange.methods.swap(token.options.address, wNativeToken.address, 100, 0, [], data).send({ from: user }),
         /(UniswapV2|Pancake|Pangolin): K/
       );
     });
@@ -83,13 +84,15 @@ describe("FeeOnTransfer tokens", async () => {
       );
 
       expect(
-        await exchange.methods.getAmountOut(token.options.address, wNativeToken.address, amountIn, data).call()
+        await exchange.methods.getAmountOut(token.options.address, wNativeToken.address, amountIn, [], data).call()
       ).bignumber.closeTo(bn18(18.1), bn18(0.1)); // including exchange fee ~ 0.2-0.3%
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(50));
       expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.eq(zero);
       await token.methods.approve(exchange.options.address, amountIn).send({ from: user });
-      await exchange.methods.swap(token.options.address, wNativeToken.address, amountIn, 0, data).send({ from: user });
+      await exchange.methods
+        .swap(token.options.address, wNativeToken.address, amountIn, 0, [], data)
+        .send({ from: user });
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(40));
       expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.closeTo(
