@@ -40,9 +40,9 @@
   "Pangolin": {
     "chainName": "avax",
     "chainId": 43114,
-    "twapVersion": 3,
-    "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    "lensAddress": "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    "twapVersion": 4,
+    "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
+    "lensAddress": "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "wToken": {
@@ -52,27 +52,27 @@
       "logoUrl": "https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png"
     },
     "partner": "Pangolin",
-    "exchangeAddress": "0x72a18A408e329E7052d08aA0746243Dc30Ad2530",
+    "exchangeAddress": "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
     "exchangeType": "UniswapV2Exchange",
     "pathfinderKey": "PangolinSwap"
   },
-  "QuickSwap": {
-    "chainName": "poly",
-    "chainId": 137,
-    "twapVersion": 3,
-    "twapAddress": "0xBAFdE1cc254BB94Be5866d5a86ddafde4BB44EEF",
-    "lensAddress": "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
+  "PangolinDaas": {
+    "chainName": "avax",
+    "chainId": 43114,
+    "twapVersion": 4,
+    "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
+    "lensAddress": "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "wToken": {
-      "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
       "decimals": 18,
-      "symbol": "WMATIC",
-      "logoUrl": "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
+      "symbol": "WAVAX",
+      "logoUrl": "https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png"
     },
-    "partner": "QuickSwap",
-    "exchangeAddress": "0x9369D5465d6D90AA3c06Af5B683e617EeA9078E4",
-    "exchangeType": "UniswapV2Exchange",
-    "pathfinderKey": "QuickSwap"
+    "partner": "PangolinDaas",
+    "exchangeAddress": "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
+    "exchangeType": "PangolinDaasExchange",
+    "pathfinderKey": "PangolinSwap"
   }
 }

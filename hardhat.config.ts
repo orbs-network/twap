@@ -13,6 +13,15 @@ task("deploy").setAction(async () => {
   if (hre().network.config.chainId === hre().config.networks?.hardhat?.chainId) throw new Error("on hardhat network!");
   if (process.env.NETWORK!.toLowerCase() !== hre().network.name.toLowerCase())
     throw new Error(`different networks!, ${process.env.NETWORK} != ${hre().network.name}`);
+
+  // const twap = await deploy("TWAP", [ChainConfigs.avax.wToken.address], 3e6, 0, true, 5);
+  // await deploy("Lens", [twap], 2e6, 0, true, 5);
+  //
+  // const takers = [await account()];
+  // await deploy("Taker", [twap, takers], 2e6, 0, true, 5);
+  //
+  // await deploy("UniswapV2Exchange", ["0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106"], 2e6, 0, true, 5);
+  // await deploy("PangolinDaasExchange", ["0xEfd958c7C68b7e6a88300E039cAE275ca741007F"], 2e6, 0, true, 5);
 });
 
 task("github-pages").setAction(async () => {

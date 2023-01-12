@@ -3,6 +3,7 @@ import {
   dstToken,
   exchange,
   initFixture,
+  pangolinDaasAskData,
   srcToken,
   swapBidDataForUniV2,
   user,
@@ -111,42 +112,52 @@ describe("IExchange implementations", async () => {
     });
   });
 
-  describe("Pangolin DEX as a service Exchange", () => {
-    beforeEach(async function () {
-      if ((await currentNetwork())?.id !== networks.avax.id) return this.skip();
+  if (process.env.NETWORK!.toLowerCase() === "avax")
+    describe("Pangolin DEX as a service Exchange", () => {
+      beforeEach("must run on block with specific partner DAAS fees", async () => await initFixture(18471000));
+      beforeEach(async () => await withPangolinDaasExchange());
+
+      it("swap with partnerDaas fee", async () => {
+        const pangolin = contract<IPangolinDaas>(
+          artifact("IPangolinDaas").abi,
+          "0xEfd958c7C68b7e6a88300E039cAE275ca741007F"
+        );
+
+        expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
+        await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
+
+        const pangolinDaasPartner = web3().eth.abi.decodeParameter("address", pangolinDaasAskData()) as any;
+        expect((await pangolin.methods.getFeeInfo(pangolinDaasPartner).call()).feeTotal).bignumber.eq(100); // 1%
+
+        const expectedOut = await exchange.methods
+          .getAmountOut(
+            srcToken.address,
+            dstToken.address,
+            await srcToken.amount(100),
+            pangolinDaasAskData(),
+            swapBidDataForUniV2
+          )
+          .call();
+        expect(expectedOut).bignumber.gt(zero);
+
+        await exchange.methods
+          .swap(
+            srcToken.address,
+            dstToken.address,
+            await srcToken.amount(100),
+            expectedOut,
+            pangolinDaasAskData(),
+            swapBidDataForUniV2
+          )
+          .send({ from: user });
+
+        expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
+          (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(100))
+        );
+        expect(await dstToken.methods.balanceOf(user).call()).bignumber.closeTo(
+          expectedOut,
+          BigNumber(expectedOut).times(0.01)
+        );
+      });
     });
-    beforeEach("must run on block with specific partner DAAS fees", async () => await initFixture(18471000));
-    beforeEach(async () => await withPangolinDaasExchange());
-
-    it("swap with partnerDaas fee", async () => {
-      const pangolin = contract<IPangolinDaas>(
-        artifact("IPangolinDaas").abi,
-        "0xEfd958c7C68b7e6a88300E039cAE275ca741007F"
-      );
-
-      expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
-      await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
-      const partner = "0xFA1c2Ae5c52a02cbaD6A05CdcA89f032Fa3a4D0d";
-      const askData = web3().eth.abi.encodeParameter("address", partner); // some partner
-
-      expect((await pangolin.methods.getFeeInfo(partner).call()).feeTotal).bignumber.eq(100); // 1%
-
-      const expectedOut = await exchange.methods
-        .getAmountOut(srcToken.address, dstToken.address, await srcToken.amount(100), askData, swapBidDataForUniV2)
-        .call();
-      expect(expectedOut).bignumber.gt(zero);
-
-      await exchange.methods
-        .swap(srcToken.address, dstToken.address, await srcToken.amount(100), expectedOut, askData, swapBidDataForUniV2)
-        .send({ from: user });
-
-      expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
-        (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(100))
-      );
-      expect(await dstToken.methods.balanceOf(user).call()).bignumber.closeTo(
-        expectedOut,
-        BigNumber(expectedOut).times(0.01)
-      );
-    });
-  });
 });

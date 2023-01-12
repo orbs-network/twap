@@ -295,14 +295,14 @@ export class TWAPLib {
     return {
       id: Number(r.id),
       status: Number(r.status),
+      time: Number(r.time),
       filledTime: Number(r.filledTime),
       srcFilledAmount: BN(r.srcFilledAmount),
+      maker: Web3.utils.toChecksumAddress(r.maker),
       ask: {
-        time: Number(r.ask.time),
         deadline: Number(r.ask.deadline),
         bidDelay: Number(r.ask.bidDelay),
         fillDelay: Number(r.ask.fillDelay),
-        maker: Web3.utils.toChecksumAddress(r.ask.maker),
         exchange: Web3.utils.toChecksumAddress(r.ask.exchange),
         srcToken: Web3.utils.toChecksumAddress(r.ask.srcToken),
         dstToken: Web3.utils.toChecksumAddress(r.ask.dstToken),
@@ -357,6 +357,7 @@ export class TWAPLib {
   async convertRouteToSwapData(route: Paraswap.ParaswapRoute) {
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
+      case "PangolinDaasExchange":
         const path = Paraswap.getDirectPath(route, this.config.pathfinderKey);
         return {
           raw: path,
@@ -376,14 +377,14 @@ export class TWAPLib {
 export interface Order {
   id: number;
   status: number;
+  time: number;
   filledTime: number;
   srcFilledAmount: BN;
+  maker: string;
   ask: {
-    time: number;
     deadline: number;
     bidDelay: number;
     fillDelay: number;
-    maker: string;
     exchange: string;
     srcToken: string;
     dstToken: string;

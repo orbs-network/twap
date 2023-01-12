@@ -48,16 +48,14 @@
       "symbol": "WMATIC",
       "logoUrl": "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
     },
-    "integrations": [
-      "QuickSwap"
-    ]
+    "integrations": []
   },
   "avax": {
     "chainName": "avax",
     "chainId": 43114,
-    "twapVersion": 3,
-    "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    "lensAddress": "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    "twapVersion": 4,
+    "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
+    "lensAddress": "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "wToken": {
@@ -67,7 +65,8 @@
       "logoUrl": "https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png"
     },
     "integrations": [
-      "Pangolin"
+      "Pangolin",
+      "PangolinDaas"
     ]
   }
 }

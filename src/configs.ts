@@ -74,9 +74,9 @@ export const ChainConfigs = {
   avax: {
     chainName: "avax",
     chainId: 43114,
-    twapVersion: 3,
-    twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    twapVersion: 4,
+    twapAddress: "0xF2687e119B0A4aB00bED9c9F425403566D605020",
+    lensAddress: "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
@@ -104,23 +104,23 @@ export const Configs = {
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: Paraswap.OnlyDex.SpookySwap,
   } as Config,
-  //
-  // Pangolin: {
-  //   ...ChainConfigs.avax,
-  //   partner: "Pangolin",
-  //   exchangeAddress: "",
-  //   exchangeType: "UniswapV2Exchange",
-  //   pathfinderKey: Paraswap.OnlyDex.Pangolin,
-  // } as Config,
-  //
-  // PangolinDaas: {
-  //   ...ChainConfigs.avax,
-  //   partner: "PangolinDaas",
-  //   exchangeAddress: "",
-  //   exchangeType: "PangolinDaasExchange",
-  //   pathfinderKey: Paraswap.OnlyDex.Pangolin,
-  // } as Config,
-  //
+
+  Pangolin: {
+    ...ChainConfigs.avax,
+    partner: "Pangolin",
+    exchangeAddress: "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
+    exchangeType: "UniswapV2Exchange",
+    pathfinderKey: Paraswap.OnlyDex.Pangolin,
+  } as Config,
+
+  PangolinDaas: {
+    ...ChainConfigs.avax,
+    partner: "PangolinDaas",
+    exchangeAddress: "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
+    exchangeType: "PangolinDaasExchange",
+    pathfinderKey: Paraswap.OnlyDex.Pangolin,
+  } as Config,
+
   // QuickSwap: {
   //   ...ChainConfigs.poly,
   //   partner: "QuickSwap",
