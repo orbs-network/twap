@@ -109,8 +109,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [exchangeAddress]);
 }
 
-const pangolinDaasSamplePartner = "0xFA1c2Ae5c52a02cbaD6A05CdcA89f032Fa3a4D0d";
-export const pangolinDaasAskData = () => web3().eth.abi.encodeParameter("address", pangolinDaasSamplePartner);
+export const pangolinDaasSamplePartner = "0xFA1c2Ae5c52a02cbaD6A05CdcA89f032Fa3a4D0d";
 export async function withParaswapExchange() {
   exchange = await deployArtifact<IExchange>("ParaswapExchange", { from: deployer }, [
     "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57", // Paraswap Augustus Swapper on all chains

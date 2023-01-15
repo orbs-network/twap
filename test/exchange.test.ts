@@ -3,7 +3,7 @@ import {
   dstToken,
   exchange,
   initFixture,
-  pangolinDaasAskData,
+  pangolinDaasSamplePartner,
   srcToken,
   swapBidDataForUniV2,
   user,
@@ -12,16 +12,7 @@ import {
   withParaswapExchange,
   withUniswapV2Exchange,
 } from "./fixture";
-import {
-  chainId,
-  contract,
-  currentNetwork,
-  maxUint256,
-  networks,
-  web3,
-  zero,
-  zeroAddress,
-} from "@defi.org/web3-candies";
+import { chainId, contract, maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
 import { Paraswap } from "../src";
 import BigNumber from "bignumber.js";
 import { artifact, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
@@ -126,15 +117,14 @@ describe("IExchange implementations", async () => {
         expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
         await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
 
-        const pangolinDaasPartner = web3().eth.abi.decodeParameter("address", pangolinDaasAskData()) as any;
-        expect((await pangolin.methods.getFeeInfo(pangolinDaasPartner).call()).feeTotal).bignumber.eq(100); // 1%
+        expect((await pangolin.methods.getFeeInfo(pangolinDaasSamplePartner).call()).feeTotal).bignumber.eq(100); // 1%
 
         const expectedOut = await exchange.methods
           .getAmountOut(
             srcToken.address,
             dstToken.address,
             await srcToken.amount(100),
-            pangolinDaasAskData(),
+            web3().eth.abi.encodeParameter("address", pangolinDaasSamplePartner),
             swapBidDataForUniV2
           )
           .call();
@@ -146,7 +136,7 @@ describe("IExchange implementations", async () => {
             dstToken.address,
             await srcToken.amount(100),
             expectedOut,
-            pangolinDaasAskData(),
+            web3().eth.abi.encodeParameter("address", pangolinDaasSamplePartner),
             swapBidDataForUniV2
           )
           .send({ from: user });

@@ -198,7 +198,8 @@ export class TWAPLib {
     dstMinChunkAmountOut: BN.Value,
     deadline: BN.Value,
     fillDelaySeconds: BN.Value,
-    srcUsd: BN.Value
+    srcUsd: BN.Value,
+    askDataParams: any[]
   ): OrderInputValidation {
     const tokensValidation = this.validateTokens(srcToken, dstToken);
     if (tokensValidation === TokensValidation.invalid) return OrderInputValidation.invalidTokens;
@@ -223,6 +224,9 @@ export class TWAPLib {
     )
       return OrderInputValidation.invalidSmallestSrcChunkUsd;
 
+    if (this.config.exchangeType === "PangolinDaasExchange" && !_.get(askDataParams, [0]))
+      return OrderInputValidation.invalidAskDataParams;
+
     return OrderInputValidation.valid;
   }
 
@@ -235,7 +239,7 @@ export class TWAPLib {
     deadline: number,
     fillDelaySeconds: number,
     srcUsd: BN.Value,
-    askData?: string,
+    askDataParams: any[] = [],
     maxPriorityFeePerGas?: BN.Value,
     maxFeePerGas?: BN.Value
   ): Promise<number> {
@@ -247,9 +251,15 @@ export class TWAPLib {
       dstMinChunkAmountOut,
       deadline,
       fillDelaySeconds,
-      srcUsd
+      srcUsd,
+      askDataParams
     );
     if (validation !== OrderInputValidation.valid) throw new Error(`invalid inputs: ${validation}`);
+
+    const askData =
+      this.config.exchangeType === "PangolinDaasExchange"
+        ? web3().eth.abi.encodeParameters(["address"], askDataParams)
+        : [];
 
     const tx = await sendAndWaitForConfirmations(
       this.twap.methods.ask([
@@ -262,7 +272,7 @@ export class TWAPLib {
         BN(deadline).div(1000).toFixed(0),
         BN(this.config.bidDelaySeconds).toFixed(0),
         BN(fillDelaySeconds).toFixed(0),
-        askData || [],
+        askData,
       ]),
       {
         from: this.maker,
@@ -419,6 +429,7 @@ export enum OrderInputValidation {
   invalidFillDelaySeconds = "invalidFillDelaySeconds",
   invalidSrcUsd = "invalidSrcUsd",
   invalidSmallestSrcChunkUsd = "invalidSmallestSrcChunkUsd",
+  invalidAskDataParams = "invalidAskDataParams",
 }
 
 export enum TokensValidation {

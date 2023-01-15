@@ -3,7 +3,7 @@ import { expect } from "chai";
 import {
   dstToken,
   initFixture,
-  pangolinDaasAskData,
+  pangolinDaasSamplePartner,
   srcToken,
   taker,
   user,
@@ -11,7 +11,7 @@ import {
   wNativeToken,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { chainId, web3, zeroAddress } from "@defi.org/web3-candies";
+import { web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
@@ -159,7 +159,7 @@ describe("TWAPLib with production config", () => {
               Date.now() + 1e6,
               0,
               1,
-              c.exchangeType === "PangolinDaasExchange" ? pangolinDaasAskData() : undefined
+              c.exchangeType === "PangolinDaasExchange" ? [pangolinDaasSamplePartner] : undefined
             );
           });
 
