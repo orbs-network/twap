@@ -198,8 +198,7 @@ export class TWAPLib {
     dstMinChunkAmountOut: BN.Value,
     deadline: BN.Value,
     fillDelaySeconds: BN.Value,
-    srcUsd: BN.Value,
-    askDataParams: any[]
+    srcUsd: BN.Value
   ): OrderInputValidation {
     const tokensValidation = this.validateTokens(srcToken, dstToken);
     if (tokensValidation === TokensValidation.invalid) return OrderInputValidation.invalidTokens;
@@ -223,9 +222,6 @@ export class TWAPLib {
         .lt(BN(this.config.minChunkSizeUsd).times(BN(10).pow(srcToken.decimals)))
     )
       return OrderInputValidation.invalidSmallestSrcChunkUsd;
-
-    if (this.config.exchangeType === "PangolinDaasExchange" && !_.get(askDataParams, [0]))
-      return OrderInputValidation.invalidAskDataParams;
 
     return OrderInputValidation.valid;
   }
@@ -251,8 +247,7 @@ export class TWAPLib {
       dstMinChunkAmountOut,
       deadline,
       fillDelaySeconds,
-      srcUsd,
-      askDataParams
+      srcUsd
     );
     if (validation !== OrderInputValidation.valid) throw new Error(`invalid inputs: ${validation}`);
 
@@ -429,7 +424,6 @@ export enum OrderInputValidation {
   invalidFillDelaySeconds = "invalidFillDelaySeconds",
   invalidSrcUsd = "invalidSrcUsd",
   invalidSmallestSrcChunkUsd = "invalidSmallestSrcChunkUsd",
-  invalidAskDataParams = "invalidAskDataParams",
 }
 
 export enum TokensValidation {
