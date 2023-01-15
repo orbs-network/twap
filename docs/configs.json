@@ -74,5 +74,24 @@
     "exchangeAddress": "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
     "exchangeType": "PangolinDaasExchange",
     "pathfinderKey": "PangolinSwap"
+  },
+  "QuickSwap": {
+    "chainName": "poly",
+    "chainId": 137,
+    "twapVersion": 3,
+    "twapAddress": "0xBAFdE1cc254BB94Be5866d5a86ddafde4BB44EEF",
+    "lensAddress": "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
+    "bidDelaySeconds": 60,
+    "minChunkSizeUsd": 10,
+    "wToken": {
+      "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+      "decimals": 18,
+      "symbol": "WMATIC",
+      "logoUrl": "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
+    },
+    "partner": "QuickSwap",
+    "exchangeAddress": "0xcbD5BE6a939EAEb226824298F1FAe6B1049b71C6",
+    "exchangeType": "UniswapV2Exchange",
+    "pathfinderKey": "QuickSwap"
   }
 }

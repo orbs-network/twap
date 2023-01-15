@@ -8,21 +8,19 @@ import "@nomiclabs/hardhat-etherscan";
 import { hardhatDefaultConfig, hre } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 import fs from "fs-extra";
-import { deploy } from "@defi.org/web3-candies/dist/hardhat/deploy";
-import { ChainConfigs } from "./src";
 
 task("deploy").setAction(async () => {
   if (hre().network.config.chainId === hre().config.networks?.hardhat?.chainId) throw new Error("on hardhat network!");
   if (process.env.NETWORK!.toLowerCase() !== hre().network.name.toLowerCase())
     throw new Error(`different networks!, ${process.env.NETWORK} != ${hre().network.name}`);
 
-  const twap = await deploy("TWAP", [ChainConfigs.poly.wToken.address], 3e6, 0, true, 10);
-  await deploy("Lens", [twap], 2e6, 0, true, 10);
-
-  const takers = [""];
-  await deploy("Taker", [twap, takers], 2e6, 0, true, 10);
-
-  await deploy("UniswapV2Exchange", [""], 2e6, 0, true, 10);
+  // const twap = await deploy("TWAP", [ChainConfigs.poly.wToken.address], 3e6, 0, true, 10);
+  // await deploy("Lens", [twap], 2e6, 0, true, 10);
+  //
+  // const takers = [""];
+  // await deploy("Taker", [twap, takers], 2e6, 0, true, 10);
+  //
+  // await deploy("UniswapV2Exchange", [""], 2e6, 0, true, 10);
 });
 
 task("github-pages").setAction(async () => {

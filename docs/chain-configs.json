@@ -48,7 +48,9 @@
       "symbol": "WMATIC",
       "logoUrl": "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
     },
-    "integrations": []
+    "integrations": [
+      "QuickSwap"
+    ]
   },
   "avax": {
     "chainName": "avax",
