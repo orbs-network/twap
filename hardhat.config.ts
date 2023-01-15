@@ -16,13 +16,13 @@ task("deploy").setAction(async () => {
   if (process.env.NETWORK!.toLowerCase() !== hre().network.name.toLowerCase())
     throw new Error(`different networks!, ${process.env.NETWORK} != ${hre().network.name}`);
 
-  // const twap = await deploy("TWAP", [ChainConfigs.poly.wToken.address], 3e6, 0, true, 5);
-  // await deploy("Lens", [twap], 2e6, 0, true, 5);
-  //
-  // const takers = [""];
-  // await deploy("Taker", [twap, takers], 2e6, 0, true, 5);
-  //
-  // await deploy("UniswapV2Exchange", ["0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff"], 2e6, 0, true, 5);
+  const twap = await deploy("TWAP", [ChainConfigs.poly.wToken.address], 3e6, 0, true, 10);
+  await deploy("Lens", [twap], 2e6, 0, true, 10);
+
+  const takers = [""];
+  await deploy("Taker", [twap, takers], 2e6, 0, true, 10);
+
+  await deploy("UniswapV2Exchange", [""], 2e6, 0, true, 10);
 });
 
 task("github-pages").setAction(async () => {

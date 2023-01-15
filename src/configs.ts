@@ -121,13 +121,13 @@ export const Configs = {
     pathfinderKey: Paraswap.OnlyDex.Pangolin,
   } as Config,
 
-  // QuickSwap: {
-  //   ...ChainConfigs.poly,
-  //   partner: "QuickSwap",
-  //   exchangeAddress: "",
-  //   exchangeType: "UniswapV2Exchange",
-  //   pathfinderKey: Paraswap.OnlyDex.QuickSwap,
-  // } as Config,
+  QuickSwap: {
+    ...ChainConfigs.poly,
+    partner: "QuickSwap",
+    exchangeAddress: "0xcbD5BE6a939EAEb226824298F1FAe6B1049b71C6",
+    exchangeType: "UniswapV2Exchange",
+    pathfinderKey: Paraswap.OnlyDex.QuickSwap,
+  } as Config,
 };
 
 export const nativeTokenAddresses = [
