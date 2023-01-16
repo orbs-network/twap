@@ -300,10 +300,10 @@ export class TWAPLib {
     return {
       id: Number(r.id),
       status: Number(r.status),
-      time: Number(r.time),
+      time: Number(r.time || r.ask.time),
       filledTime: Number(r.filledTime),
       srcFilledAmount: BN(r.srcFilledAmount),
-      maker: Web3.utils.toChecksumAddress(r.maker),
+      maker: Web3.utils.toChecksumAddress(r.maker || r.ask.maker),
       ask: {
         deadline: Number(r.ask.deadline),
         bidDelay: Number(r.ask.bidDelay),

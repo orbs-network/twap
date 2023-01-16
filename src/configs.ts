@@ -59,9 +59,9 @@ export const ChainConfigs = {
   poly: {
     chainName: "poly",
     chainId: 137,
-    twapVersion: 3,
-    twapAddress: "0xBAFdE1cc254BB94Be5866d5a86ddafde4BB44EEF",
-    lensAddress: "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
+    twapVersion: 4,
+    twapAddress: "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
+    lensAddress: "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     wToken: {
