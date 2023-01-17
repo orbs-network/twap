@@ -14,17 +14,10 @@ import {
   zero,
   zeroAddress,
 } from "@defi.org/web3-candies";
-import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
-import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
-import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
-
-export const twapAbi = twapArtifact.abi as any;
-export const lensAbi = lensArtifact.abi as any;
-export const takerAbi = takerArtifact.abi as any;
 
 export class TWAPLib {
   public static VERSION = 4;
@@ -33,8 +26,8 @@ export class TWAPLib {
 
   constructor(public config: Config, public maker: string, public provider?: any) {
     if (provider) setWeb3Instance(new Web3(provider));
-    this.twap = contract<TWAP>(twapAbi, config.twapAddress);
-    this.lens = contract<Lens>(lensAbi, config.lensAddress);
+    this.twap = contract<TWAP>(config.twapAbi, config.twapAddress);
+    this.lens = contract<Lens>(config.lensAbi, config.lensAddress);
   }
 
   dstAmount = (
@@ -239,7 +232,7 @@ export class TWAPLib {
     maxPriorityFeePerGas?: BN.Value,
     maxFeePerGas?: BN.Value
   ): Promise<number> {
-    let validation = this.validateOrderInputs(
+    const validation = this.validateOrderInputs(
       srcToken,
       dstToken,
       srcAmount,
@@ -256,25 +249,24 @@ export class TWAPLib {
         ? web3().eth.abi.encodeParameters(["address"], askDataParams)
         : [];
 
-    const tx = await sendAndWaitForConfirmations(
-      this.twap.methods.ask([
-        this.config.exchangeAddress,
-        srcToken.address,
-        dstToken.address,
-        BN(srcAmount).toFixed(0),
-        BN(srcChunkAmount).toFixed(0),
-        BN(dstMinChunkAmountOut).toFixed(0),
-        BN(deadline).div(1000).toFixed(0),
-        BN(this.config.bidDelaySeconds).toFixed(0),
-        BN(fillDelaySeconds).toFixed(0),
-        askData,
-      ]),
-      {
-        from: this.maker,
-        maxPriorityFeePerGas,
-        maxFeePerGas,
-      }
-    );
+    const askParams = [
+      this.config.exchangeAddress,
+      srcToken.address,
+      dstToken.address,
+      BN(srcAmount).toFixed(0),
+      BN(srcChunkAmount).toFixed(0),
+      BN(dstMinChunkAmountOut).toFixed(0),
+      BN(deadline).div(1000).toFixed(0),
+      BN(this.config.bidDelaySeconds).toFixed(0),
+      BN(fillDelaySeconds).toFixed(0),
+    ];
+    if (this.config.twapVersion > 3) askParams.push(askData as any);
+
+    const tx = await sendAndWaitForConfirmations(this.twap.methods.ask(askParams as any), {
+      from: this.maker,
+      maxPriorityFeePerGas,
+      maxFeePerGas,
+    });
 
     const events = parseEvents(tx, this.twap.options.jsonInterface);
     return Number(events[0].returnValues.id);

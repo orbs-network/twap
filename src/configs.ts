@@ -1,6 +1,10 @@
 import { eqIgnoreCase, zeroAddress } from "@defi.org/web3-candies";
 import _ from "lodash";
 import { Paraswap } from "./paraswap";
+import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
+import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
+import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
+import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
 
 export interface TokenData {
   address: string;
@@ -18,12 +22,21 @@ export interface Config {
   bidDelaySeconds: number;
   minChunkSizeUsd: number;
   wToken: TokenData;
+  twapAbi: any;
+  lensAbi: any;
+  takerAbi: any;
 
   partner: string;
   exchangeAddress: string;
   exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange";
   pathfinderKey: Paraswap.OnlyDex;
 }
+
+const defaultAbis = {
+  twapAbi: twapArtifact.abi,
+  lensAbi: lensArtifact.abi,
+  takerAbi: takerArtifact.abi,
+};
 
 export const ChainConfigs = {
   eth: {
@@ -40,6 +53,7 @@ export const ChainConfigs = {
       symbol: "WETH",
       logoUrl: "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
     },
+    ...defaultAbis,
   },
   ftm: {
     chainName: "ftm",
@@ -55,6 +69,9 @@ export const ChainConfigs = {
       symbol: "WFTM",
       logoUrl: "https://tokens.1inch.io/0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83.png",
     },
+    twapAbi: twapAbiV3,
+    lensAbi: lensAbiV3,
+    takerAbi: takerAbiV3,
   },
   poly: {
     chainName: "poly",
@@ -70,6 +87,7 @@ export const ChainConfigs = {
       symbol: "WMATIC",
       logoUrl: "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png",
     },
+    ...defaultAbis,
   },
   avax: {
     chainName: "avax",
@@ -85,6 +103,7 @@ export const ChainConfigs = {
       symbol: "WAVAX",
       logoUrl: "https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png",
     },
+    ...defaultAbis,
   },
 };
 
