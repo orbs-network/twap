@@ -260,9 +260,16 @@ export class TWAPLib {
       BN(this.config.bidDelaySeconds).toFixed(0),
       BN(fillDelaySeconds).toFixed(0),
     ];
-    if (this.config.twapVersion > 3) askParams.push(askData as any);
 
-    const tx = await sendAndWaitForConfirmations(this.twap.methods.ask(askParams as any), {
+    let ask: any;
+    if (this.config.twapVersion > 3) {
+      askParams.push(askData as any);
+      ask = this.twap.methods.ask(askParams as any);
+    } else {
+      ask = (this.twap.methods as any).ask(...askParams);
+    }
+
+    const tx = await sendAndWaitForConfirmations(ask, {
       from: this.maker,
       maxPriorityFeePerGas,
       maxFeePerGas,
