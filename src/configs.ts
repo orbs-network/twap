@@ -21,6 +21,7 @@ export interface Config {
   lensAddress: string;
   bidDelaySeconds: number;
   minChunkSizeUsd: number;
+  nativeToken: TokenData;
   wToken: TokenData;
   twapAbi: any;
   lensAbi: any;
@@ -47,11 +48,17 @@ export const ChainConfigs = {
     lensAddress: "",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 100,
+    nativeToken: {
+      address: zeroAddress,
+      decimals: 18,
+      symbol: "ETH",
+      logoUrl: "https://app.1inch.io/assets/images/network-logos/ethereum.svg",
+    },
     wToken: {
       address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
       decimals: 18,
       symbol: "WETH",
-      logoUrl: "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
+      logoUrl: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
     },
     ...defaultAbis,
   },
@@ -63,11 +70,17 @@ export const ChainConfigs = {
     lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
+    nativeToken: {
+      address: zeroAddress,
+      decimals: 18,
+      symbol: "FTM",
+      logoUrl: "https://app.1inch.io/assets/images/network-logos/fantom.svg",
+    },
     wToken: {
       address: "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
       decimals: 18,
       symbol: "WFTM",
-      logoUrl: "https://tokens.1inch.io/0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83.png",
+      logoUrl: "https://tokens.1inch.io/0x4e15361fd6b4bb609fa63c81a2be19d873717870.png",
     },
     twapAbi: twapAbiV3,
     lensAbi: lensAbiV3,
@@ -81,6 +94,12 @@ export const ChainConfigs = {
     lensAddress: "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
+    nativeToken: {
+      address: zeroAddress,
+      decimals: 18,
+      symbol: "MATIC",
+      logoUrl: "https://app.1inch.io/assets/images/network-logos/polygon.svg",
+    },
     wToken: {
       address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
       decimals: 18,
@@ -97,6 +116,12 @@ export const ChainConfigs = {
     lensAddress: "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
+    nativeToken: {
+      address: zeroAddress,
+      decimals: 18,
+      symbol: "AVAX",
+      logoUrl: "https://app.1inch.io/assets/images/network-logos/avalanche.svg",
+    },
     wToken: {
       address: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
       decimals: 18,

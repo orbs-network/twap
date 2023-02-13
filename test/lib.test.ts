@@ -235,7 +235,8 @@ describe("TWAPLib with production config", () => {
               decimals: 6,
               symbol: "USDC",
             });
-            expect(await lib.getToken(zeroAddress)).deep.eq(lib.config.wToken);
+            expect(await lib.getToken(zeroAddress)).deep.eq(lib.config.nativeToken);
+            expect(await lib.getToken(lib.config.wToken.address.toLowerCase())).deep.eq(lib.config.wToken);
           });
 
           it("isNativeToken", async () => {

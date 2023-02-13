@@ -326,7 +326,9 @@ export class TWAPLib {
   }
 
   async getToken(address: string) {
-    if (isNativeAddress(address) || eqIgnoreCase(address, this.config.wToken.address)) return this.config.wToken;
+    if (isNativeAddress(address)) return this.config.nativeToken;
+    if (eqIgnoreCase(address, this.config.wToken.address)) return this.config.wToken;
+
     address = Web3.utils.toChecksumAddress(address);
     const t = erc20(address, address);
     const [decimals, symbol] = await Promise.all([t.decimals(), t.methods.symbol().call()]);
