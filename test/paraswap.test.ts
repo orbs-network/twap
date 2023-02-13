@@ -46,7 +46,9 @@ describe("Paraswap", () => {
           expect(intersection.length, allExchanges.toString()).eq(c.pathfinderKey.split(",").length);
         });
 
-        it("direct path for univ2 exchanges", async () => {
+        it("direct path for univ2 exchanges", async function () {
+          if (c.exchangeType !== "UniswapV2Exchange" && c.exchangeType !== "PangolinDaasExchange") return this.skip();
+
           const route = await Paraswap.findRoute(c.chainId, usdc, c.wToken, 100_000 * 1e6, c.pathfinderKey);
           const path = Paraswap.getDirectPath(route, c.pathfinderKey);
           expect(route.destAmount).bignumber.gt(0);

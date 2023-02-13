@@ -9,7 +9,7 @@ export namespace Paraswap {
   export enum OnlyDex {
     UniSwapV2 = "Uniswap",
     SushiSwap = "SushiSwap",
-    QuickSwap = "QuickSwap",
+    QuickSwap = "QuickSwap,QuickSwapV3",
     SpiritSwap = "SpiritSwap,SpiritSwapV2",
     SpookySwap = "SpookySwap",
     Pangolin = "PangolinSwap",

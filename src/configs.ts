@@ -143,8 +143,8 @@ export const Configs = {
   QuickSwap: {
     ...ChainConfigs.poly,
     partner: "QuickSwap",
-    exchangeAddress: "0xcbD5BE6a939EAEb226824298F1FAe6B1049b71C6",
-    exchangeType: "UniswapV2Exchange",
+    exchangeAddress: "0x26D0ec4Be402BCE03AAa8aAf0CF67e9428ba54eF",
+    exchangeType: "ParaswapExchange",
     pathfinderKey: Paraswap.OnlyDex.QuickSwap,
   } as Config,
 };
