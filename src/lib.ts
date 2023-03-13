@@ -292,7 +292,31 @@ export class TWAPLib {
   }
 
   async getAllOrders() {
-    return _.map(await this.lens.methods.makerOrders(this.maker).call(), (o) => this.parseOrder(o));
+    return _.filter(
+      _.map(await this.lens.methods.makerOrders(this.maker).call(), (o) => this.parseOrder(o)),
+      (o) => eqIgnoreCase(o.ask.exchange, this.config.exchangeAddress)
+    );
+  }
+
+  async getAllOrdersWithTokens() {
+    const orders = await this.getAllOrders();
+    const tokens = await Promise.all(
+      _.map(
+        _.uniq(
+          _.concat(
+            _.map(orders, (o) => o.ask.srcToken),
+            _.map(orders, (o) => o.ask.dstToken)
+          )
+        ),
+        (a) => this.getToken(a)
+      )
+    );
+    return _.map(orders, (o) =>
+      _.merge(o, {
+        srcToken: _.find(tokens, (t) => eqIgnoreCase(t.address, o.ask.srcToken))!,
+        dstToken: _.find(tokens, (t) => eqIgnoreCase(t.address, o.ask.dstToken))!,
+      })
+    );
   }
 
   parseOrder(r: any): Order {

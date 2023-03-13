@@ -142,13 +142,11 @@ describe("TWAPLib with production config", () => {
         });
 
         describe("with order", () => {
-          beforeEach("only latest TWAP version", async function () {
-            if ((await lib.twap.methods.VERSION().call().then(parseInt)) !== TWAPLib.VERSION) return this.skip();
-          });
-
           let orderId: number = -1;
 
-          beforeEach(async () => {
+          beforeEach(async function () {
+            if ((await lib.twap.methods.VERSION().call().then(parseInt)) !== TWAPLib.VERSION) return this.skip();
+
             await lib.approve(await lib.getToken(srcToken.address), await srcToken.amount(1000));
             orderId = await lib.submitOrder(
               await lib.getToken(srcToken.address),
@@ -225,6 +223,14 @@ describe("TWAPLib with production config", () => {
             const orders = await lib.getAllOrders();
             expect(orders).length(1);
             expect(orders[0].id).eq(orderId);
+          });
+
+          it("getAllOrdersWithTokens", async () => {
+            const orders = await lib.getAllOrdersWithTokens();
+            expect(orders).length(1);
+            expect(orders[0].id).eq(orderId);
+            expect(orders[0].srcToken.address).eq(orders[0].ask.srcToken);
+            expect(orders[0].dstToken.address).eq(orders[0].ask.dstToken);
           });
         });
 
