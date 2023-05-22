@@ -8,14 +8,15 @@ import {
   swapBidDataForUniV2,
   user,
   userSrcTokenStartBalance,
+  withOdosExchange,
   withPangolinDaasExchange,
   withParaswapExchange,
   withUniswapV2Exchange,
 } from "./fixture";
-import { chainId, contract, maxUint256, web3, zero, zeroAddress } from "@defi.org/web3-candies";
-import { Paraswap } from "../src";
+import { account, chainId, contract, maxUint256, sleep, web3, zero, zeroAddress } from "@defi.org/web3-candies";
+import { Odos, Paraswap } from "../src";
 import BigNumber from "bignumber.js";
-import { artifact, expectRevert } from "@defi.org/web3-candies/dist/hardhat";
+import { artifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { IPangolinDaas } from "../typechain-hardhat/contracts/exchange/PangolinDaasExchange.sol";
 
 describe("IExchange implementations", async () => {
@@ -148,6 +149,49 @@ describe("IExchange implementations", async () => {
           expectedOut,
           BigNumber(expectedOut).times(0.01)
         );
+      });
+    });
+
+  if (process.env.NETWORK!.toLowerCase() === "arb")
+    describe("OdosExchange", () => {
+      beforeEach("must run on latest block due to odos backend", async function () {
+        await initFixture("latest");
+      });
+
+      beforeEach(() => withOdosExchange());
+
+      it("getAmountOut using pure encoded data from offchain", async () => {
+        const encodedSwapData = web3().eth.abi.encodeParameters(
+          ["uint256", "bytes"],
+          [await dstToken.amount(123456789), []]
+        );
+        const expectedOut = await exchange.methods
+          .getAmountOut(zeroAddress, zeroAddress, zero, [], encodedSwapData)
+          .call();
+        expect(expectedOut).bignumber.eq(await dstToken.amount(123456789));
+      });
+
+      it("swap with data from odos api", async () => {
+        const odosRoute = await Odos.findRoute(
+          await chainId(),
+          { address: srcToken.address, decimals: await srcToken.decimals(), symbol: "" },
+          { address: dstToken.address, decimals: await dstToken.decimals(), symbol: "" },
+          await srcToken.amount(10_000),
+          exchange.options.address,
+          Odos.OnlyDex.Chronos
+        );
+        expect(odosRoute.dstAmountOut).bignumber.gte(await dstToken.amount(1));
+        const dstMinOut = BigNumber(odosRoute.dstAmountOut).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
+
+        await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
+        await exchange.methods
+          .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], odosRoute.data)
+          .send({ from: user });
+
+        expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
+          (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(10_000))
+        );
+        expect(await dstToken.methods.balanceOf(user).call()).bignumber.gte(dstMinOut);
       });
     });
 });

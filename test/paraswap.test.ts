@@ -33,7 +33,9 @@ describe("Paraswap", () => {
           expect(result.low).bignumber.gt(0).lte(result.medium).lte(result.high).lte(result.instant);
         });
 
-        it("find route with other exchanges", async () => {
+        it("find route with other exchanges", async function () {
+          if (!Object.values(Paraswap.OnlyDex).includes(c.pathfinderKey as Paraswap.OnlyDex)) return this.skip();
+
           const result = await Paraswap.findRoute(c.chainId, usdc, c.wToken, 100_000 * 1e6, undefined, true);
           expect(result.destAmount).bignumber.gt(0);
 
@@ -49,15 +51,24 @@ describe("Paraswap", () => {
         it("direct path for univ2 exchanges", async function () {
           if (c.exchangeType !== "UniswapV2Exchange" && c.exchangeType !== "PangolinDaasExchange") return this.skip();
 
-          const route = await Paraswap.findRoute(c.chainId, usdc, c.wToken, 100_000 * 1e6, c.pathfinderKey);
-          const path = Paraswap.getDirectPath(route, c.pathfinderKey);
+          const route = await Paraswap.findRoute(
+            c.chainId,
+            usdc,
+            c.wToken,
+            100_000 * 1e6,
+            c.pathfinderKey as Paraswap.OnlyDex
+          );
+          const path = Paraswap.getDirectPath(route, c.pathfinderKey as Paraswap.OnlyDex);
           expect(route.destAmount).bignumber.gt(0);
           expect(path.length).gt(1);
         });
 
         it("direct path might be invalid", async () => {
           const route = await Paraswap.findRoute(c.chainId, usdc, usdc, 100_000 * 1e6);
-          await expectRevert(() => Paraswap.getDirectPath(route, c.pathfinderKey), "invalid direct path");
+          await expectRevert(
+            () => Paraswap.getDirectPath(route, c.pathfinderKey as Paraswap.OnlyDex),
+            "invalid direct path"
+          );
         });
       });
     }

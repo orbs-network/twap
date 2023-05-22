@@ -14,7 +14,6 @@ import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { ask, bid, endTime, fill } from "./twap-utils";
 import { expect } from "chai";
 import { account, maxUint256, zeroAddress } from "@defi.org/web3-candies";
-import type { Lens } from "../typechain-hardhat/contracts/periphery";
 
 describe("Lens", async () => {
   const PAGE_SIZE = 2000; // under 15m gas

@@ -6,6 +6,7 @@ import {
   convertDecimals,
   eqIgnoreCase,
   erc20,
+  estimateGasPrice,
   iwethabi,
   parseEvents,
   sendAndWaitForConfirmations,

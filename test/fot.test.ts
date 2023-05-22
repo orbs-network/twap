@@ -5,6 +5,7 @@ import {
   chainId,
   contract,
   erc20,
+  ether,
   maxUint256,
   networks,
   Token,
@@ -24,8 +25,8 @@ describe("FeeOnTransfer tokens", async () => {
 
   beforeEach("deploy mock deflationary token", async () => {
     token = erc20("FoT", (await deployArtifact("MockDeflationaryToken", { from: user })).options.address);
-    await expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(100));
-    await expect(await web3().eth.getBalance(user)).bignumber.gte(bn18(100));
+    await expect(await token.methods.balanceOf(user).call()).bignumber.eq("100e18");
+    await expect(await web3().eth.getBalance(user)).bignumber.gte("100e18");
   });
 
   beforeEach("add liquidity, 50 token + 100 eth", async () => {
@@ -41,7 +42,7 @@ describe("FeeOnTransfer tokens", async () => {
         wNativeToken.address,
         (await token.amount(10)).toString(),
         (await token.amount(10)).toString(),
-        (await wNativeToken.amount(1)).toString(),
+        bn18().toString(),
         endTime(),
         60,
         60,
@@ -95,10 +96,7 @@ describe("FeeOnTransfer tokens", async () => {
         .send({ from: user });
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(40));
-      expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.closeTo(
-        await wNativeToken.amount(15.2),
-        bn18(0.1)
-      );
+      expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.closeTo(bn18(15.2), bn18(0.1));
     });
   });
 });
@@ -106,7 +104,7 @@ describe("FeeOnTransfer tokens", async () => {
 async function addLiquidityETH(depositor: string, token: Token, tokens: number, eths: number) {
   const chain = await chainId();
   const amountToken = await token.amount(tokens);
-  const amountEth = await wNativeToken.amount(eths);
+  const amountEth = bn18(eths);
   const addLiquidityMethodName = `addLiquidity${chain === networks.avax.id ? "AVAX" : "ETH"}`;
   const abi = [
     {
@@ -132,9 +130,9 @@ async function addLiquidityETH(depositor: string, token: Token, tokens: number, 
   await token.methods.approve(router.options.address, amountToken).send({ from: depositor });
   await router.methods[addLiquidityMethodName](
     token.options.address,
-    amountToken,
-    amountToken,
-    amountEth,
+    amountToken.toString(),
+    amountToken.toString(),
+    amountEth.toString(),
     depositor,
     maxUint256
   ).send({ from: depositor, value: amountEth });

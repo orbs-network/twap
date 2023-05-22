@@ -5,6 +5,7 @@ import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
+import { Odos } from "./odos";
 
 export interface TokenData {
   address: string;
@@ -29,8 +30,8 @@ export interface Config {
 
   partner: string;
   exchangeAddress: string;
-  exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange";
-  pathfinderKey: Paraswap.OnlyDex;
+  exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange" | "OdosExchange";
+  pathfinderKey: Paraswap.OnlyDex | Odos.OnlyDex;
 }
 
 const defaultAbis = {
@@ -56,6 +57,28 @@ export const ChainConfigs = {
     },
     wToken: {
       address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      decimals: 18,
+      symbol: "WETH",
+      logoUrl: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+    },
+    ...defaultAbis,
+  },
+  arb: {
+    chainName: "arb",
+    chainId: 42161,
+    twapVersion: 0,
+    twapAddress: "",
+    lensAddress: "",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 100,
+    nativeToken: {
+      address: zeroAddress,
+      decimals: 18,
+      symbol: "ETH",
+      logoUrl: "https://app.1inch.io/assets/images/network-logos/arbitrum.svg",
+    },
+    wToken: {
+      address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
       decimals: 18,
       symbol: "WETH",
       logoUrl: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
@@ -171,6 +194,14 @@ export const Configs = {
     exchangeAddress: "0x26D0ec4Be402BCE03AAa8aAf0CF67e9428ba54eF",
     exchangeType: "ParaswapExchange",
     pathfinderKey: Paraswap.OnlyDex.QuickSwap,
+  } as Config,
+
+  Chronos: {
+    ...ChainConfigs.arb,
+    partner: "Chronos",
+    exchangeAddress: "",
+    exchangeType: "OdosExchange",
+    pathfinderKey: Odos.OnlyDex.Chronos,
   } as Config,
 };
 

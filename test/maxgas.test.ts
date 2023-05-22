@@ -1,20 +1,22 @@
 import { expect } from "chai";
 import hardhatConfig from "../hardhat.config";
 import { ask, endTime, time } from "./twap-utils";
-import { dstToken, exchange, initFixture, lens, srcToken, taker, twap, user } from "./fixture";
+import { dstToken, exchange, initFixture, lens, srcToken, taker, twap, user, withOdosExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
 /**
  * very long test: only enable this without logs, otherwise will timeout
  */
-describe("maxgas: special test: large order history, paginated reads", async () => {
+xdescribe("maxgas: special test: large order history, paginated reads", async () => {
   const ASSUME_MAX_GAS = 15_000_000;
   const EXPIRED_ASKS = 5_000;
 
   const PAGE_SIZE = 2500; // under 15m gas
 
   beforeEach(() => initFixture());
+
+  // beforeEach(() => withOdosExchange());
 
   beforeEach(async () => {
     expect(hardhatConfig.networks?.hardhat?.blockGasLimit).eq(ASSUME_MAX_GAS);

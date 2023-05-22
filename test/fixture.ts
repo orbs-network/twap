@@ -6,7 +6,7 @@ import {
   tag,
   useChaiBigNumber,
 } from "@defi.org/web3-candies/dist/hardhat";
-import { account, currentNetwork, erc20s, networks, Token, web3 } from "@defi.org/web3-candies";
+import { account, chainId, currentNetwork, erc20, erc20s, networks, Token, web3 } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
@@ -39,7 +39,6 @@ export async function initFixture(blockNumber?: number | "latest") {
   await initTokens();
   twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [wNativeToken.address]);
   lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
-
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
   expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
 }
@@ -87,6 +86,14 @@ async function initTokens() {
       dstTokenWhale = "0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8";
       return;
 
+    case "ARB":
+      srcToken = erc20s.arb.USDC();
+      dstToken = erc20s.arb.WETH();
+      wNativeToken = dstToken;
+      srcTokenWhale = "0x62383739D68Dd0F844103Db8dFb05a7EdED5BBE6";
+      dstTokenWhale = "0x489ee077994B6658eAfA855C308275EAd8097C4A";
+      return;
+
     default:
       throw new Error(`unhandled NETWORK ${process.env.NETWORK}`);
   }
@@ -103,21 +110,30 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
         ftm: "0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52", // Spiritswap V1
         poly: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
         avax: "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106", // Pangolin
+        arb: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", // Sushiswap
       },
       (impl, k) => k === network!.shortname
     );
+  if (!exchangeAddress) throw new Error(`no UniswapV2 exchange for ${network?.name}`);
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [exchangeAddress]);
 }
 
-export const pangolinDaasSamplePartner = "0xFA1c2Ae5c52a02cbaD6A05CdcA89f032Fa3a4D0d";
 export async function withParaswapExchange() {
   exchange = await deployArtifact<IExchange>("ParaswapExchange", { from: deployer }, [
     "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57", // Paraswap Augustus Swapper on all chains
   ]);
 }
 
+export async function withOdosExchange() {
+  if ((await chainId()) !== networks.arb.id) throw new Error("only on Arbitrum");
+  exchange = await deployArtifact<IExchange>("OdosExchange", { from: deployer }, [
+    "0xdd94018F54e565dbfc939F7C44a16e163FaAb331",
+  ]);
+}
+
+export const pangolinDaasSamplePartner = "0xFA1c2Ae5c52a02cbaD6A05CdcA89f032Fa3a4D0d";
 export async function withPangolinDaasExchange() {
-  if ((await currentNetwork())?.id !== networks.avax.id) throw new Error("only on Avalanche");
+  if ((await chainId()) !== networks.avax.id) throw new Error("only on Avalanche");
   await withUniswapV2Path();
   exchange = await deployArtifact<IExchange>("PangolinDaasExchange", { from: deployer }, [
     "0xEfd958c7C68b7e6a88300E039cAE275ca741007F", // PangolinRouterSupportingFees on Avalanche
@@ -131,8 +147,10 @@ async function withUniswapV2Path() {
     ftm: [srcToken.address, wNativeToken.address, dstToken.address],
     poly: [srcToken.address, dstToken.address],
     avax: [srcToken.address, wNativeToken.address, dstToken.address],
+    arb: [srcToken.address, dstToken.address],
   };
-  const path = _.find(paths, (p, k) => k === network!.shortname)!;
+  const path = paths[network!.shortname];
+  if (!path) throw new Error(`no UniswapV2 path for ${network?.name}`);
   swapBidDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }
 
@@ -145,7 +163,7 @@ export async function fundSrcTokenFromWhale(target: string, amount: number) {
   expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
 }
 
-async function fundDstTokenFromWhale(target: string, amount: number) {
+async function fundDstToken(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
   await setBalance(dstTokenWhale, await wNativeToken.amount(10e6));
@@ -155,7 +173,7 @@ async function fundDstTokenFromWhale(target: string, amount: number) {
 
 export async function withMockExchange(dstAmountOut: number) {
   exchange = await deployArtifact("MockExchange", { from: deployer });
-  await fundDstTokenFromWhale(exchange.options.address, 10_000);
+  await fundDstToken(exchange.options.address, 10_000);
   await setMockExchangeAmountOut(dstAmountOut);
 }
 
