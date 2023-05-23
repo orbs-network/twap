@@ -62,4 +62,3 @@ contract OdosExchange is IExchange {
         return abi.decode(data, (uint256, bytes));
     }
 }
-

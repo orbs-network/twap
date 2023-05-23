@@ -19,6 +19,7 @@ import type { TWAP } from "../typechain-hardhat/contracts";
 import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
+import { Odos } from "./odos";
 
 export class TWAPLib {
   public static VERSION = 4;
@@ -371,25 +372,40 @@ export class TWAPLib {
       this.getToken(order.ask.dstToken),
     ]);
 
-    const route = await Paraswap.findRoute(
-      this.config.chainId,
-      srcToken,
-      dstToken,
-      srcNextChunkAmountIn,
-      this.config.pathfinderKey
-    );
-    const dstNextChunkAmountOut = BN(route.destAmount);
-
-    const { raw, data } = await this.convertRouteToSwapData(route);
-
-    return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
+    if (this.config.exchangeType === "OdosExchange") {
+      const route = await Odos.findRoute(
+        this.config.chainId,
+        srcToken,
+        dstToken,
+        srcNextChunkAmountIn,
+        this.config.exchangeAddress,
+        this.config.pathfinderKey as Odos.OnlyDex
+      );
+      const dstNextChunkAmountOut = route.dstAmountOut;
+      const { raw, data } = await this.convertRouteToSwapData(route);
+      return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
+    } else {
+      const route = await Paraswap.findRoute(
+        this.config.chainId,
+        srcToken,
+        dstToken,
+        srcNextChunkAmountIn,
+        this.config.pathfinderKey as Paraswap.OnlyDex
+      );
+      const dstNextChunkAmountOut = BN(route.destAmount);
+      const { raw, data } = await this.convertRouteToSwapData(route);
+      return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
+    }
   }
 
-  async convertRouteToSwapData(route: Paraswap.ParaswapRoute) {
+  async convertRouteToSwapData(route: Paraswap.ParaswapRoute | Odos.OdosRoute) {
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
       case "PangolinDaasExchange":
-        const path = Paraswap.getDirectPath(route, this.config.pathfinderKey);
+        const path = Paraswap.getDirectPath(
+          route as Paraswap.ParaswapRoute,
+          this.config.pathfinderKey as Paraswap.OnlyDex
+        );
         return {
           raw: path,
           data: web3().eth.abi.encodeParameters(["bool", "address[]"], [true, path]),
@@ -397,7 +413,12 @@ export class TWAPLib {
       case "ParaswapExchange":
         return {
           raw: route,
-          data: await Paraswap.buildSwapData(route, this.config.twapAddress),
+          data: await Paraswap.buildSwapData(route as Paraswap.ParaswapRoute, this.config.twapAddress),
+        };
+      case "OdosExchange":
+        return {
+          raw: route,
+          data: (route as Odos.OdosRoute).data,
         };
       default:
         throw new Error(`unhandled exchange ${this.config.exchangeType}`);

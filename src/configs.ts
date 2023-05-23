@@ -66,9 +66,9 @@ export const ChainConfigs = {
   arb: {
     chainName: "arb",
     chainId: 42161,
-    twapVersion: 0,
-    twapAddress: "",
-    lensAddress: "",
+    twapVersion: 4,
+    twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+    lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 100,
     nativeToken: {
@@ -199,7 +199,7 @@ export const Configs = {
   Chronos: {
     ...ChainConfigs.arb,
     partner: "Chronos",
-    exchangeAddress: "",
+    exchangeAddress: "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
     exchangeType: "OdosExchange",
     pathfinderKey: Odos.OnlyDex.Chronos,
   } as Config,
