@@ -8,16 +8,16 @@ import "hardhat-gas-reporter";
 import "hardhat-tracer";
 import { HardhatUserConfig, task } from "hardhat/config";
 import _ from "lodash";
-import { chainConfig } from "./src/configs";
-import { chainId } from "@defi.org/web3-candies";
+// import { chainConfig } from "./src/configs";
+// import { chainId } from "@defi.org/web3-candies";
 
 task("deploy").setAction(async () => {
   if (isHardhatNetwork()) throw new Error("on hardhat network!");
-  const config = chainConfig(await chainId());
+  // const config = chainConfig(await chainId());
   // const twap = await deploy("TWAP", [ChainConfigs.arb.wToken.address], 3e6, 0, true, 10);
 
-  const takers = [];
-  await deploy("Taker", [config.twapAddress, takers], 2e6, 0, true, 10);
+  // const takers = [];
+  // await deploy("Taker", [config.twapAddress, takers], 2e6, 0, true, 10);
 });
 
 task("github-pages").setAction(async () => {

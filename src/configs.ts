@@ -70,7 +70,7 @@ export const ChainConfigs = {
     twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
     lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 100,
+    minChunkSizeUsd: 10,
     nativeToken: {
       address: zeroAddress,
       decimals: 18,

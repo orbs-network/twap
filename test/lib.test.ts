@@ -11,7 +11,7 @@ import {
   wNativeToken,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
@@ -71,7 +71,7 @@ describe("TWAPLib with production config", () => {
           expect(
             lib.validateTokens(
               { address: nativeTokenAddresses[1], symbol: "", decimals: 18 },
-              await lib.getToken(dstToken.address)
+              { address: web3().eth.accounts.create().address, symbol: "some token", decimals: 18 }
             )
           ).eq("wrapAndOrder");
 
@@ -80,11 +80,14 @@ describe("TWAPLib with production config", () => {
           ).eq("unwrapOnly");
 
           expect(
-            lib.validateTokens(await lib.getToken(dstToken.address), {
-              address: nativeTokenAddresses[1],
-              symbol: "",
-              decimals: 18,
-            })
+            lib.validateTokens(
+              { address: web3().eth.accounts.create().address, symbol: "some token", decimals: 18 },
+              {
+                address: nativeTokenAddresses[1],
+                symbol: "",
+                decimals: 18,
+              }
+            )
           ).eq("dstTokenZero");
         });
 
