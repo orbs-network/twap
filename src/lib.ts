@@ -361,6 +361,33 @@ export class TWAPLib {
     return { address, decimals, symbol };
   }
 
+  async findRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
+    if (this.config.exchangeType === "OdosExchange") {
+      const route = await Odos.findRoute(
+        this.config.chainId,
+        srcToken,
+        dstToken,
+        srcAmount,
+        this.config.exchangeAddress,
+        this.config.pathfinderKey as Odos.OnlyDex
+      );
+      const dstAmount = route.dstAmountOut;
+      const { raw, data } = await this.convertRouteToSwapData(route);
+      return { srcToken, dstToken, srcAmount, dstAmount, raw, data };
+    } else {
+      const route = await Paraswap.findRoute(
+        this.config.chainId,
+        srcToken,
+        dstToken,
+        srcAmount,
+        this.config.pathfinderKey as Paraswap.OnlyDex
+      );
+      const dstAmount = BN(route.destAmount);
+      const { raw, data } = await this.convertRouteToSwapData(route);
+      return { srcToken, dstToken, srcAmount, dstAmount, raw, data };
+    }
+  }
+
   async findSwapDataForBid(order: Order) {
     if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
       throw new Error(`mismatched exchange and config`);
@@ -372,30 +399,7 @@ export class TWAPLib {
       this.getToken(order.ask.dstToken),
     ]);
 
-    if (this.config.exchangeType === "OdosExchange") {
-      const route = await Odos.findRoute(
-        this.config.chainId,
-        srcToken,
-        dstToken,
-        srcNextChunkAmountIn,
-        this.config.exchangeAddress,
-        this.config.pathfinderKey as Odos.OnlyDex
-      );
-      const dstNextChunkAmountOut = route.dstAmountOut;
-      const { raw, data } = await this.convertRouteToSwapData(route);
-      return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
-    } else {
-      const route = await Paraswap.findRoute(
-        this.config.chainId,
-        srcToken,
-        dstToken,
-        srcNextChunkAmountIn,
-        this.config.pathfinderKey as Paraswap.OnlyDex
-      );
-      const dstNextChunkAmountOut = BN(route.destAmount);
-      const { raw, data } = await this.convertRouteToSwapData(route);
-      return { srcToken, dstToken, srcNextChunkAmountIn, dstNextChunkAmountOut, raw, data };
-    }
+    return this.findRoute(srcToken, dstToken, srcNextChunkAmountIn);
   }
 
   async convertRouteToSwapData(route: Paraswap.ParaswapRoute | Odos.OdosRoute) {
