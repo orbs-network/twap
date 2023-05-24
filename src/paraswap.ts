@@ -19,6 +19,7 @@ export namespace Paraswap {
   export interface Route {
     dstAmount: BN;
     srcUsd: BN;
+    dstUsd: BN;
     data: string;
     path: string[];
   }
@@ -82,7 +83,7 @@ export namespace Paraswap {
     const route = (await response.json()).priceRoute as ParaswapRoute;
     const path = getDirectPath(route, onlyDex);
     const data = await buildSwapData(route, exchangeAdapter);
-    return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), data, path };
+    return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), dstUsd: BN(route.destUSD), data, path };
   }
 
   function getDirectPath(route: ParaswapRoute, onlyDex?: OnlyDex) {

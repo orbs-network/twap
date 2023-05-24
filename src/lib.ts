@@ -382,7 +382,7 @@ export class TWAPLib {
         this.config.pathfinderKey as Paraswap.OnlyDex
       );
     }
-    return { ...route, data: this.encodeBidData(route) };
+    return { ...route, data: this.encodeBidData(route), srcToken, dstToken, srcAmount };
   }
 
   async findRouteForNextBid(order: Order) {

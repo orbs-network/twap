@@ -11,6 +11,7 @@ export namespace Odos {
   export interface Route {
     dstAmount: BN;
     srcUsd: BN;
+    dstUsd: BN;
     data: string;
     path: string[];
   }
@@ -46,6 +47,7 @@ export namespace Odos {
 
     const j = await response.json();
     const srcUsd = bn(j.inValues[0]);
+    const dstUsd = bn(j.outValues[0]);
     const dstAmount = bn(j.outAmounts[0]);
 
     const data = await buildSwapData(j.pathId, dstAmount, exchangeAdapter);
@@ -53,6 +55,7 @@ export namespace Odos {
     return {
       dstAmount,
       srcUsd,
+      dstUsd,
       data,
       path: [],
     };
