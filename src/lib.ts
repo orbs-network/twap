@@ -362,8 +362,9 @@ export class TWAPLib {
   }
 
   async findRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
+    let route;
     if (this.config.exchangeType === "OdosExchange") {
-      const route = await Odos.findRoute(
+      route = await Odos.findRoute(
         this.config.chainId,
         srcToken,
         dstToken,
@@ -371,24 +372,20 @@ export class TWAPLib {
         this.config.exchangeAddress,
         this.config.pathfinderKey as Odos.OnlyDex
       );
-      const dstAmount = route.dstAmountOut;
-      const { raw, data } = await this.convertRouteToSwapData(route);
-      return { srcToken, dstToken, srcAmount, dstAmount, raw, data };
     } else {
-      const route = await Paraswap.findRoute(
+      route = await Paraswap.findRoute(
         this.config.chainId,
         srcToken,
         dstToken,
         srcAmount,
+        this.config.exchangeAddress,
         this.config.pathfinderKey as Paraswap.OnlyDex
       );
-      const dstAmount = BN(route.destAmount);
-      const { raw, data } = await this.convertRouteToSwapData(route);
-      return { srcToken, dstToken, srcAmount, dstAmount, raw, data };
     }
+    return { ...route, data: this.encodeBidData(route) };
   }
 
-  async findSwapDataForBid(order: Order) {
+  async findRouteForNextBid(order: Order) {
     if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
       throw new Error(`mismatched exchange and config`);
 
@@ -399,33 +396,19 @@ export class TWAPLib {
       this.getToken(order.ask.dstToken),
     ]);
 
-    return this.findRoute(srcToken, dstToken, srcNextChunkAmountIn);
+    return await this.findRoute(srcToken, dstToken, srcNextChunkAmountIn);
   }
 
-  async convertRouteToSwapData(route: Paraswap.ParaswapRoute | Odos.OdosRoute) {
+  encodeBidData(route: Paraswap.Route | Odos.Route) {
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
       case "PangolinDaasExchange":
-        const path = Paraswap.getDirectPath(
-          route as Paraswap.ParaswapRoute,
-          this.config.pathfinderKey as Paraswap.OnlyDex
-        );
-        return {
-          raw: path,
-          data: web3().eth.abi.encodeParameters(["bool", "address[]"], [true, path]),
-        };
+        return web3().eth.abi.encodeParameters(["bool", "address[]"], [true, route.path]);
       case "ParaswapExchange":
-        return {
-          raw: route,
-          data: await Paraswap.buildSwapData(route as Paraswap.ParaswapRoute, this.config.twapAddress),
-        };
       case "OdosExchange":
-        return {
-          raw: route,
-          data: (route as Odos.OdosRoute).data,
-        };
+        return web3().eth.abi.encodeParameters(["uint256", "bytes"], [route.dstAmount.toFixed(0), route.data]);
       default:
-        throw new Error(`unhandled exchange ${this.config.exchangeType}`);
+        throw new Error(`unknown exchange type ${this.config.exchangeType}`);
     }
   }
 }

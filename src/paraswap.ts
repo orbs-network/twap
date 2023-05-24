@@ -1,5 +1,5 @@
 import BN from "bignumber.js";
-import { eqIgnoreCase, web3 } from "@defi.org/web3-candies";
+import { eqIgnoreCase, web3, zeroAddress } from "@defi.org/web3-candies";
 import { chainConfig, isNativeAddress, nativeTokenAddresses, TokenData } from "./configs";
 import _ from "lodash";
 
@@ -16,7 +16,14 @@ export namespace Paraswap {
     TraderJoe = "TraderJoe",
   }
 
-  export interface ParaswapRoute {
+  export interface Route {
+    dstAmount: BN;
+    srcUsd: BN;
+    data: string;
+    path: string[];
+  }
+
+  interface ParaswapRoute {
     blockNumber: number;
     network: number;
     srcToken: string;
@@ -39,27 +46,15 @@ export namespace Paraswap {
     maxImpactReached: boolean;
   }
 
-  export async function gasPrices(chainId: number) {
-    const response = await fetch(`${URL}/prices/gas/${chainId}`);
-    if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    const result = await response.json();
-    return {
-      low: BN(result.safeLow || 0),
-      medium: BN(result.average || 0),
-      high: BN(result.fast || 0),
-      instant: BN(result.fastest || 0),
-    };
-  }
-
   export async function priceUsd(chainId: number, token: TokenData) {
-    const _token = isNativeAddress(token.address) ? chainConfig(chainId).wToken : token;
+    token = isNativeAddress(token.address) ? chainConfig(chainId).wToken : token;
     const r = await findRoute(
       chainId,
-      _token,
+      token,
       { address: nativeTokenAddresses[2], symbol: "NATIVE", decimals: 18 },
-      BN(10).pow(_token.decimals)
+      BN(10).pow(token.decimals)
     );
-    return BN(r.srcUSD);
+    return r.srcUsd;
   }
 
   export async function findRoute(
@@ -67,9 +62,9 @@ export namespace Paraswap {
     src: TokenData,
     dst: TokenData,
     amountIn: BN.Value,
-    onlyDex?: OnlyDex,
-    otherExchanges = false
-  ): Promise<ParaswapRoute> {
+    exchangeAdapter: string = zeroAddress,
+    onlyDex?: OnlyDex
+  ): Promise<Route> {
     const params = new URLSearchParams({
       srcToken: src.address,
       destToken: dst.address,
@@ -81,33 +76,37 @@ export namespace Paraswap {
       maxImpact: "50",
       includeDEXS: onlyDex || "",
       partner: onlyDex?.toLowerCase()?.split(",")?.[0] || "",
-      otherExchangePrices: otherExchanges.toString(),
     });
     const response = await fetch(`${URL}/prices/?${params}`);
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    return (await response.json()).priceRoute;
+    const route = (await response.json()).priceRoute as ParaswapRoute;
+    const path = getDirectPath(route, onlyDex);
+    const data = await buildSwapData(route, exchangeAdapter);
+    return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), data, path };
   }
 
-  export function getDirectPath(route: ParaswapRoute, onlyDex: OnlyDex) {
+  function getDirectPath(route: ParaswapRoute, onlyDex?: OnlyDex) {
+    if (!onlyDex || !route.bestRoute.length) return [];
+
     const bestRoute = _.sortBy(route.bestRoute, (r) => r.percent).reverse()[0];
 
-    if (bestRoute.swaps.length > 1) throw new Error(`invalid direct path more than 1 path`);
+    if (bestRoute.swaps.length > 1) return []; // invalid direct path more than 1 path
     if (
       !eqIgnoreCase(bestRoute.swaps[0].srcToken, route.srcToken) ||
       !eqIgnoreCase(bestRoute.swaps[0].destToken, route.destToken)
     )
-      throw new Error(`invalid direct path tokens`);
+      return []; //invalid direct path tokens
 
     const bestSwap = _.sortBy(bestRoute.swaps[0].swapExchanges, (s) => s.percent).reverse()[0];
-    if (!onlyDex.split(",").includes(bestSwap.exchange)) throw new Error(`invalid direct path exchange`);
+    if (!onlyDex.split(",").includes(bestSwap.exchange)) return []; // invalid direct path exchange
 
     const path: string[] = bestSwap.data.path;
-    if (!path || path.length < 2) throw new Error(`invalid direct path`);
+    if (!path || path.length < 2) return []; // invalid direct path
 
     return path;
   }
 
-  export async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
+  async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
     const response = await fetch(`${URL}/transactions/${paraswapRoute.network}?ignoreChecks=true`, {
       method: "POST",
       headers: {
@@ -125,7 +124,6 @@ export namespace Paraswap {
       }),
     });
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    const swapData = (await response.json()).data;
-    return web3().eth.abi.encodeParameters(["uint256", "bytes"], [paraswapRoute.destAmount, swapData]);
+    return (await response.json()).data;
   }
 }

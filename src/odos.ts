@@ -8,22 +8,16 @@ export namespace Odos {
     Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
   }
 
-  export interface OdosRoute {
-    pathId: string;
-    dstAmountOut: BN;
+  export interface Route {
+    dstAmount: BN;
     srcUsd: BN;
     data: string;
+    path: string[];
   }
 
   export async function priceUsd(chainId: number, token: TokenData) {
     token = isNativeAddress(token.address) ? chainConfig(chainId).wToken : token;
-    const r = await findRoute(
-      chainId,
-      token,
-      chainConfig(chainId).nativeToken,
-      BN(10).pow(token.decimals),
-      zeroAddress
-    );
+    const r = await findRoute(chainId, token, chainConfig(chainId).nativeToken, BN(10).pow(token.decimals));
     return r.srcUsd;
   }
 
@@ -32,9 +26,9 @@ export namespace Odos {
     src: TokenData,
     dst: TokenData,
     amountIn: BN.Value,
-    exchangeAdapter: string,
+    exchangeAdapter: string = zeroAddress,
     onlyDex?: OnlyDex
-  ): Promise<OdosRoute> {
+  ): Promise<Route> {
     const response = await fetch(`${URL}/sor/quote`, {
       method: "POST",
       headers: { "Content-Type": "application/json", accept: "application/json" },
@@ -51,17 +45,16 @@ export namespace Odos {
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
 
     const j = await response.json();
-    const pathId = j.pathId;
     const srcUsd = bn(j.inValues[0]);
-    const dstAmountOut = bn(j.outAmounts[0]);
+    const dstAmount = bn(j.outAmounts[0]);
 
-    const data = await buildSwapData(pathId, dstAmountOut, exchangeAdapter);
+    const data = await buildSwapData(j.pathId, dstAmount, exchangeAdapter);
 
     return {
-      pathId,
-      dstAmountOut,
+      dstAmount,
       srcUsd,
       data,
+      path: [],
     };
   }
 
@@ -78,6 +71,6 @@ export namespace Odos {
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
     const swapData = (await response.json())?.transaction?.data;
     if (!swapData) throw new Error(`invalid swap data from Odos`);
-    return web3().eth.abi.encodeParameters(["uint256", "bytes"], [dstAmountOut.toFixed(0), swapData]);
+    return swapData;
   }
 }

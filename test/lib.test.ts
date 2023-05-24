@@ -15,7 +15,7 @@ import { account, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
-describe.only("TWAPLib with production config", () => {
+describe("TWAPLib with production config", () => {
   beforeEach(async () => initFixture("latest"));
 
   _.map(
@@ -199,7 +199,7 @@ describe.only("TWAPLib with production config", () => {
           });
 
           it("status completed", async () => {
-            const { dstAmount, data } = await lib.findSwapDataForBid(await lib.getOrder(orderId));
+            const { dstAmount, data } = await lib.findRouteForNextBid(await lib.getOrder(orderId));
 
             await lib.twap.methods.bid(orderId, lib.config.exchangeAddress, 0, 2000, data).send({ from: taker });
             await mineBlock(60);
