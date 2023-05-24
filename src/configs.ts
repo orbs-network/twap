@@ -75,7 +75,7 @@ export const ChainConfigs = {
       address: zeroAddress,
       decimals: 18,
       symbol: "ETH",
-      logoUrl: "https://app.1inch.io/assets/images/network-logos/arbitrum.svg",
+      logoUrl: "https://app.1inch.io/assets/images/network-logos/ethereum.svg",
     },
     wToken: {
       address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
