@@ -82,7 +82,12 @@ export namespace Paraswap {
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
     const route = (await response.json()).priceRoute as ParaswapRoute;
     const path = getDirectPath(route, onlyDex);
-    const data = await buildSwapData(route, exchangeAdapter);
+
+    let data = "";
+    try {
+      data = await buildSwapData(route, exchangeAdapter);
+    } catch (e) {}
+
     return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), dstUsd: BN(route.destUSD), data, path };
   }
 
