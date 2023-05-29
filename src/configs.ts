@@ -7,6 +7,8 @@ import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json
 import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
 import { Odos } from "./odos";
 
+export { isNativeAddress, nativeTokenAddresses } from "@defi.org/web3-candies";
+
 export interface TokenData {
   address: string;
   decimals: number;
@@ -205,12 +207,4 @@ export const Configs = {
   } as Config,
 };
 
-export const nativeTokenAddresses = [
-  zeroAddress,
-  "0x0000000000000000000000000000000000001010",
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-  "0x000000000000000000000000000000000000dEaD",
-];
-
-export const isNativeAddress = (address: string) => !!_.find(nativeTokenAddresses, (a) => eqIgnoreCase(a, address));
 export const chainConfig = (chainId: number) => _.find(ChainConfigs, (c) => c.chainId === chainId)!;

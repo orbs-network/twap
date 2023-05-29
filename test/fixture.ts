@@ -6,7 +6,7 @@ import {
   tag,
   useChaiBigNumber,
 } from "@defi.org/web3-candies/dist/hardhat";
-import { account, chainId, currentNetwork, erc20, erc20s, networks, Token, web3 } from "@defi.org/web3-candies";
+import { account, chainId, erc20s, network, networks, Token, web3 } from "@defi.org/web3-candies";
 import { expect } from "chai";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
@@ -101,7 +101,7 @@ async function initTokens() {
 
 export async function withUniswapV2Exchange(uniswapAddress?: string) {
   await withUniswapV2Path();
-  const network = await currentNetwork();
+  const n = network(await chainId());
   const exchangeAddress =
     uniswapAddress ||
     _.find(
@@ -112,9 +112,9 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
         avax: "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106", // Pangolin
         arb: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", // Sushiswap
       },
-      (impl, k) => k === network!.shortname
+      (impl, k) => k === n!.shortname
     );
-  if (!exchangeAddress) throw new Error(`no UniswapV2 exchange for ${network?.name}`);
+  if (!exchangeAddress) throw new Error(`no UniswapV2 exchange for ${n!.name}`);
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [exchangeAddress]);
 }
 
@@ -141,7 +141,7 @@ export async function withPangolinDaasExchange() {
 }
 
 async function withUniswapV2Path() {
-  const network = await currentNetwork();
+  const n = network(await chainId());
   const paths = {
     eth: [srcToken.address, dstToken.address],
     ftm: [srcToken.address, wNativeToken.address, dstToken.address],
@@ -149,7 +149,7 @@ async function withUniswapV2Path() {
     avax: [srcToken.address, wNativeToken.address, dstToken.address],
     arb: [srcToken.address, dstToken.address],
   };
-  const path = paths[network!.shortname];
+  const path = paths[n!.shortname];
   if (!path) throw new Error(`no UniswapV2 path for ${network?.name}`);
   swapBidDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }

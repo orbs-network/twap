@@ -14,7 +14,7 @@ import {
   withUniswapV2Exchange,
 } from "./fixture";
 import { account, chainId, contract, maxUint256, sleep, web3, zero, zeroAddress } from "@defi.org/web3-candies";
-import { Odos, Paraswap } from "../src";
+import { Odos, Paraswap, TWAPLib, chainConfig } from "../src";
 import BigNumber from "bignumber.js";
 import { artifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { IPangolinDaas } from "../typechain-hardhat/contracts/exchange/PangolinDaasExchange.sol";
@@ -85,16 +85,20 @@ describe("IExchange implementations", async () => {
         await chainId(),
         { address: srcToken.address, decimals: await srcToken.decimals(), symbol: "" },
         { address: dstToken.address, decimals: await dstToken.decimals(), symbol: "" },
-        await srcToken.amount(10_000)
+        await srcToken.amount(10_000),
+        exchange.options.address
       );
-      expect(paraswapRoute.destAmount).bignumber.gte(await dstToken.amount(1));
-      const dstMinOut = BigNumber(paraswapRoute.destAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
+      expect(paraswapRoute.dstAmount).bignumber.gte(await dstToken.amount(1));
+      const dstMinOut = BigNumber(paraswapRoute.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
 
-      const swapData = await Paraswap.buildSwapData(paraswapRoute, exchange.options.address);
+      const encodedData = web3().eth.abi.encodeParameters(
+        ["uint256", "bytes"],
+        [paraswapRoute.dstAmount.toFixed(0), paraswapRoute.data]
+      );
 
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       await exchange.methods
-        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], swapData)
+        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], encodedData)
         .send({ from: user });
 
       expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
@@ -180,8 +184,8 @@ describe("IExchange implementations", async () => {
           exchange.options.address,
           Odos.OnlyDex.Chronos
         );
-        expect(odosRoute.dstAmountOut).bignumber.gte(await dstToken.amount(1));
-        const dstMinOut = BigNumber(odosRoute.dstAmountOut).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
+        expect(odosRoute.dstAmount).bignumber.gte(await dstToken.amount(1));
+        const dstMinOut = BigNumber(odosRoute.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
 
         await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
         await exchange.methods

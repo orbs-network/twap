@@ -85,8 +85,12 @@ export namespace Paraswap {
 
     let data = "";
     try {
-      data = await buildSwapData(route, exchangeAdapter);
-    } catch (e) {}
+      if (exchangeAdapter !== zeroAddress) {
+        data = await buildSwapData(route, exchangeAdapter);
+      }
+    } catch (e) {
+      console.error(e);
+    }
 
     return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), dstUsd: BN(route.destUSD), data, path };
   }
@@ -115,9 +119,7 @@ export namespace Paraswap {
   async function buildSwapData(paraswapRoute: ParaswapRoute, exchangeAdapter: string) {
     const response = await fetch(`${URL}/transactions/${paraswapRoute.network}?ignoreChecks=true`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         priceRoute: paraswapRoute,
         srcToken: paraswapRoute.srcToken,
