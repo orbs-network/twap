@@ -1,12 +1,8 @@
-import { BN, account, bn, sleep, web3, zeroAddress } from "@defi.org/web3-candies";
-import { TokenData, chainConfig, isNativeAddress, nativeTokenAddresses } from "./configs";
+import { BN, TokenData, bn, isNativeAddress, zeroAddress } from "@defi.org/web3-candies";
+import { OdosOnlyDex, chainConfig } from "./configs";
 
 export namespace Odos {
   const URL = "https://api.odos.xyz";
-
-  export enum OnlyDex {
-    Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
-  }
 
   export interface Route {
     dstAmount: BN;
@@ -28,7 +24,7 @@ export namespace Odos {
     dst: TokenData,
     amountIn: BN.Value,
     exchangeAdapter: string = zeroAddress,
-    onlyDex?: OnlyDex
+    onlyDex?: OdosOnlyDex
   ): Promise<Route> {
     const response = await fetch(`${URL}/sor/quote`, {
       method: "POST",

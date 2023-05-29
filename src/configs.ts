@@ -1,19 +1,29 @@
-import { eqIgnoreCase, zeroAddress } from "@defi.org/web3-candies";
+import { zeroAddress } from "@defi.org/web3-candies";
 import _ from "lodash";
-import { Paraswap } from "./paraswap";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
-import { Odos } from "./odos";
-
-export { isNativeAddress, nativeTokenAddresses } from "@defi.org/web3-candies";
 
 export interface TokenData {
   address: string;
   decimals: number;
   symbol: string;
   logoUrl?: string;
+}
+
+export enum ParaswapOnlyDex {
+  UniSwapV2 = "Uniswap",
+  SushiSwap = "SushiSwap",
+  QuickSwap = "QuickSwap,QuickSwapV3",
+  SpiritSwap = "SpiritSwap,SpiritSwapV2",
+  SpookySwap = "SpookySwap",
+  Pangolin = "PangolinSwap",
+  TraderJoe = "TraderJoe",
+}
+
+export enum OdosOnlyDex {
+  Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
 }
 
 export interface Config {
@@ -33,7 +43,7 @@ export interface Config {
   partner: string;
   exchangeAddress: string;
   exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange" | "OdosExchange";
-  pathfinderKey: Paraswap.OnlyDex | Odos.OnlyDex;
+  pathfinderKey: ParaswapOnlyDex | OdosOnlyDex;
 }
 
 const defaultAbis = {
@@ -163,7 +173,7 @@ export const Configs = {
     partner: "SpiritSwap",
     exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
     exchangeType: "ParaswapExchange",
-    pathfinderKey: Paraswap.OnlyDex.SpiritSwap,
+    pathfinderKey: ParaswapOnlyDex.SpiritSwap,
   } as Config,
 
   SpookySwap: {
@@ -171,7 +181,7 @@ export const Configs = {
     partner: "SpookySwap",
     exchangeAddress: "0x4b5815D263549Ff9b54a3838693C3DC0dbE7e597",
     exchangeType: "UniswapV2Exchange",
-    pathfinderKey: Paraswap.OnlyDex.SpookySwap,
+    pathfinderKey: ParaswapOnlyDex.SpookySwap,
   } as Config,
 
   Pangolin: {
@@ -179,7 +189,7 @@ export const Configs = {
     partner: "Pangolin",
     exchangeAddress: "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
     exchangeType: "UniswapV2Exchange",
-    pathfinderKey: Paraswap.OnlyDex.Pangolin,
+    pathfinderKey: ParaswapOnlyDex.Pangolin,
   } as Config,
 
   PangolinDaas: {
@@ -187,7 +197,7 @@ export const Configs = {
     partner: "PangolinDaas",
     exchangeAddress: "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
     exchangeType: "PangolinDaasExchange",
-    pathfinderKey: Paraswap.OnlyDex.Pangolin,
+    pathfinderKey: ParaswapOnlyDex.Pangolin,
   } as Config,
 
   QuickSwap: {
@@ -195,7 +205,7 @@ export const Configs = {
     partner: "QuickSwap",
     exchangeAddress: "0x26D0ec4Be402BCE03AAa8aAf0CF67e9428ba54eF",
     exchangeType: "ParaswapExchange",
-    pathfinderKey: Paraswap.OnlyDex.QuickSwap,
+    pathfinderKey: ParaswapOnlyDex.QuickSwap,
   } as Config,
 
   Chronos: {
@@ -203,7 +213,7 @@ export const Configs = {
     partner: "Chronos",
     exchangeAddress: "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
     exchangeType: "OdosExchange",
-    pathfinderKey: Odos.OnlyDex.Chronos,
+    pathfinderKey: OdosOnlyDex.Chronos,
   } as Config,
 };
 

@@ -11,7 +11,7 @@ import {
   wNativeToken,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { account, web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, erc20Data, web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
@@ -474,6 +474,15 @@ describe("TWAPLib with production config", () => {
               false
             )
           ).bignumber.eq((await dstToken.amount(100)).idiv(3));
+        });
+
+        it("priceUsd", async () => {
+          const price = await lib.priceUsd({
+            symbol: "USDC",
+            address: srcToken.address,
+            decimals: await srcToken.decimals(),
+          });
+          expect(price).bignumber.closeTo(1, 0.01);
         });
       });
     }

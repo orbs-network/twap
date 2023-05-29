@@ -1,12 +1,13 @@
-import { Config, isNativeAddress, TokenData } from "./configs";
+import { Config, OdosOnlyDex, ParaswapOnlyDex } from "./configs";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import {
+  TokenData,
   contract,
   convertDecimals,
   eqIgnoreCase,
   erc20,
-  estimateGasPrice,
+  isNativeAddress,
   iwethabi,
   parseEvents,
   sendAndWaitForConfirmations,
@@ -361,6 +362,17 @@ export class TWAPLib {
     return { address, decimals, symbol };
   }
 
+  async priceUsd(token: TokenData) {
+    token = isNativeAddress(token.address) ? this.config.wToken : token;
+    const r = await Paraswap.findRoute(
+      this.config.chainId,
+      token,
+      { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "NATIVE", decimals: 18 },
+      BN(10).pow(token.decimals)
+    );
+    return r.srcUsd.toNumber();
+  }
+
   async findRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
     let route;
     if (this.config.exchangeType === "OdosExchange") {
@@ -370,7 +382,7 @@ export class TWAPLib {
         dstToken,
         srcAmount,
         this.config.exchangeAddress,
-        this.config.pathfinderKey as Odos.OnlyDex
+        this.config.pathfinderKey as OdosOnlyDex
       );
     } else {
       route = await Paraswap.findRoute(
@@ -379,7 +391,7 @@ export class TWAPLib {
         dstToken,
         srcAmount,
         this.config.exchangeAddress,
-        this.config.pathfinderKey as Paraswap.OnlyDex
+        this.config.pathfinderKey as ParaswapOnlyDex
       );
     }
     return { ...route, data: this.encodeBidData(route), srcToken, dstToken, srcAmount };

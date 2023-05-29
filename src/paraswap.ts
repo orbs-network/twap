@@ -1,20 +1,10 @@
+import { TokenData, eqIgnoreCase, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
-import { eqIgnoreCase, web3, zeroAddress } from "@defi.org/web3-candies";
-import { chainConfig, isNativeAddress, nativeTokenAddresses, TokenData } from "./configs";
 import _ from "lodash";
+import { ParaswapOnlyDex } from "./configs";
 
 export namespace Paraswap {
   const URL = "https://apiv5.paraswap.io";
-
-  export enum OnlyDex {
-    UniSwapV2 = "Uniswap",
-    SushiSwap = "SushiSwap",
-    QuickSwap = "QuickSwap,QuickSwapV3",
-    SpiritSwap = "SpiritSwap,SpiritSwapV2",
-    SpookySwap = "SpookySwap",
-    Pangolin = "PangolinSwap",
-    TraderJoe = "TraderJoe",
-  }
 
   export interface Route {
     dstAmount: BN;
@@ -47,24 +37,13 @@ export namespace Paraswap {
     maxImpactReached: boolean;
   }
 
-  export async function priceUsd(chainId: number, token: TokenData) {
-    token = isNativeAddress(token.address) ? chainConfig(chainId).wToken : token;
-    const r = await findRoute(
-      chainId,
-      token,
-      { address: nativeTokenAddresses[2], symbol: "NATIVE", decimals: 18 },
-      BN(10).pow(token.decimals)
-    );
-    return r.srcUsd;
-  }
-
   export async function findRoute(
     chainId: number,
     src: TokenData,
     dst: TokenData,
     amountIn: BN.Value,
     exchangeAdapter: string = zeroAddress,
-    onlyDex?: OnlyDex
+    onlyDex?: ParaswapOnlyDex
   ): Promise<Route> {
     const params = new URLSearchParams({
       srcToken: src.address,
@@ -95,7 +74,7 @@ export namespace Paraswap {
     return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), dstUsd: BN(route.destUSD), data, path };
   }
 
-  function getDirectPath(route: ParaswapRoute, onlyDex?: OnlyDex) {
+  function getDirectPath(route: ParaswapRoute, onlyDex?: ParaswapOnlyDex) {
     if (!onlyDex || !route.bestRoute.length) return [];
 
     const bestRoute = _.sortBy(route.bestRoute, (r) => r.percent).reverse()[0];
