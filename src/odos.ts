@@ -1,5 +1,5 @@
-import { BN, TokenData, bn, isNativeAddress, zeroAddress } from "@defi.org/web3-candies";
-import { OdosOnlyDex, chainConfig } from "./configs";
+import { BN, TokenData, bn, zeroAddress } from "@defi.org/web3-candies";
+import { OdosOnlyDex } from "./configs";
 
 export namespace Odos {
   const URL = "https://api.odos.xyz";
@@ -10,12 +10,6 @@ export namespace Odos {
     dstUsd: BN;
     data: string;
     path: string[];
-  }
-
-  export async function priceUsd(chainId: number, token: TokenData) {
-    token = isNativeAddress(token.address) ? chainConfig(chainId).wToken : token;
-    const r = await findRoute(chainId, token, chainConfig(chainId).nativeToken, BN(10).pow(token.decimals));
-    return r.srcUsd;
   }
 
   export async function findRoute(
