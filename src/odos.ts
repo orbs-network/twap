@@ -1,5 +1,6 @@
-import { BN, TokenData, bn, zeroAddress } from "@defi.org/web3-candies";
+import { TokenData, bn, zeroAddress } from "@defi.org/web3-candies";
 import { OdosOnlyDex } from "./configs";
+import BN from "bignumber.js";
 
 export namespace Odos {
   const URL = "https://api.odos.xyz";
