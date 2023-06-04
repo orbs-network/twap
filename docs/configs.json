@@ -8,6 +8,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "FTM",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/fantom.svg"
@@ -1508,6 +1509,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "FTM",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/fantom.svg"
@@ -3008,6 +3010,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "AVAX",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/avalanche.svg"
@@ -4540,6 +4543,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "AVAX",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/avalanche.svg"
@@ -6072,6 +6076,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "MATIC",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/polygon.svg"
@@ -7604,6 +7609,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "ETH",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/ethereum.svg"
@@ -9136,6 +9142,7 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "BNB",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/bsc_2.svg"
