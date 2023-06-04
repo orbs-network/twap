@@ -14,7 +14,7 @@ task("deploy").setAction(async () => {
   if (isHardhatNetwork()) throw new Error("on hardhat network!");
   const config = require("./src/configs").chainConfig(await chainId());
 
-  // const twap = await deploy("TWAP", [ChainConfigs.arb.wToken.address], 3e6, 0, true, 10);
+  // const twap = await deploy("TWAP", [config.wToken.address], 3e6, 0, true, 10);
 
   // const takers = [];
   // await deploy("Taker", [config.twapAddress, takers], 2e6, 0, true, 10);
