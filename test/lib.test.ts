@@ -56,34 +56,41 @@ describe.only("TWAPLib with production config", () => {
           expect(lib.validateTokens(lib.config.wToken, await lib.getToken(srcToken.address))).eq("valid");
           expect(lib.validateTokens(lib.config.wToken, lib.config.wToken)).eq("invalid");
           expect(
-            lib.validateTokens({ address: nativeTokenAddresses[1], symbol: "", decimals: 18 }, lib.config.wToken)
+            lib.validateTokens(
+              { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "", decimals: 18 },
+              lib.config.wToken
+            )
           ).eq("wrapOnly");
-          expect(
-            lib.validateTokens({ address: nativeTokenAddresses[0], symbol: "", decimals: 18 }, lib.config.wToken)
-          ).eq("wrapOnly");
+          expect(lib.validateTokens({ address: zeroAddress, symbol: "", decimals: 18 }, lib.config.wToken)).eq(
+            "wrapOnly"
+          );
           expect(
             lib.validateTokens(
-              { address: nativeTokenAddresses[2], symbol: "", decimals: 18 },
-              { address: nativeTokenAddresses[0], symbol: "", decimals: 18 }
+              { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "", decimals: 18 },
+              { address: zeroAddress, symbol: "", decimals: 18 }
             )
           ).eq("invalid");
 
           expect(
             lib.validateTokens(
-              { address: nativeTokenAddresses[1], symbol: "", decimals: 18 },
+              { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "", decimals: 18 },
               { address: web3().eth.accounts.create().address, symbol: "some token", decimals: 18 }
             )
           ).eq("wrapAndOrder");
 
           expect(
-            lib.validateTokens(lib.config.wToken, { address: nativeTokenAddresses[1], symbol: "", decimals: 18 })
+            lib.validateTokens(lib.config.wToken, {
+              address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+              symbol: "",
+              decimals: 18,
+            })
           ).eq("unwrapOnly");
 
           expect(
             lib.validateTokens(
               { address: web3().eth.accounts.create().address, symbol: "some token", decimals: 18 },
               {
-                address: nativeTokenAddresses[1],
+                address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
                 symbol: "",
                 decimals: 18,
               }
@@ -241,7 +248,7 @@ describe.only("TWAPLib with production config", () => {
           it("getToken", async () => {
             expect(await lib.getToken(srcToken.address)).deep.eq({
               address: srcToken.address,
-              decimals: 6,
+              decimals: await srcToken.decimals(),
               symbol: "USDC",
             });
             expect(await lib.getToken(zeroAddress)).deep.eq(lib.config.nativeToken);
@@ -324,13 +331,12 @@ describe.only("TWAPLib with production config", () => {
         });
 
         it("market price dstAmount = srcAmount * (srcUsd/dstUsd)", async () => {
-          expect(await srcToken.decimals()).eq(6);
           expect(await dstToken.decimals()).eq(18);
           expect(
             lib.dstAmount(
               await lib.getToken(srcToken.address),
               await lib.getToken(dstToken.address),
-              123 * 1e6,
+              123 * 10 ** (await srcToken.decimals()),
               1.234,
               5.678,
               0,
@@ -340,13 +346,12 @@ describe.only("TWAPLib with production config", () => {
         });
 
         it("limit price dstAmount = srcAmount * limitPrice", async () => {
-          expect(await srcToken.decimals()).eq(6);
           expect(await dstToken.decimals()).eq(18);
           expect(
             lib.dstAmount(
               await lib.getToken(srcToken.address),
               await lib.getToken(dstToken.address),
-              123 * 1e6,
+              123 * 10 ** (await srcToken.decimals()),
               1.234,
               5.678,
               1.2345,
