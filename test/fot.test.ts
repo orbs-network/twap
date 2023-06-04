@@ -1,4 +1,4 @@
-import { exchange, initFixture, taker, twap, user, withUniswapV2Exchange, wNativeToken } from "./fixture";
+import { exchange, initFixture, network, taker, twap, user, withUniswapV2Exchange } from "./fixture";
 import {
   Abi,
   bn18,
@@ -6,6 +6,7 @@ import {
   contract,
   erc20,
   ether,
+  iweth,
   maxUint256,
   networks,
   Token,
@@ -39,7 +40,7 @@ describe("FeeOnTransfer tokens", async () => {
       .ask([
         zeroAddress,
         token.address,
-        wNativeToken.address,
+        network.wToken.address,
         (await token.amount(10)).toString(),
         (await token.amount(10)).toString(),
         bn18().toString(),
@@ -56,7 +57,7 @@ describe("FeeOnTransfer tokens", async () => {
         exchange.options.address,
         0,
         30_000,
-        web3().eth.abi.encodeParameters(["bool", "address[]"], [true, [token.options.address, wNativeToken.address]])
+        web3().eth.abi.encodeParameters(["bool", "address[]"], [true, [token.options.address, network.wToken.address]])
       )
       .send({ from: taker });
 
@@ -69,10 +70,11 @@ describe("FeeOnTransfer tokens", async () => {
       await token.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       const data = web3().eth.abi.encodeParameters(
         ["bool", "address[]"],
-        [false, [token.options.address, wNativeToken.address]]
+        [false, [token.options.address, network.wToken.address]]
       );
       await expectRevert(
-        () => exchange.methods.swap(token.options.address, wNativeToken.address, 100, 0, [], data).send({ from: user }),
+        () =>
+          exchange.methods.swap(token.options.address, network.wToken.address, 100, 0, [], data).send({ from: user }),
         /(UniswapV2|Pancake|Pangolin): K/
       );
     });
@@ -81,22 +83,22 @@ describe("FeeOnTransfer tokens", async () => {
       const amountIn = bn18(10);
       const data = web3().eth.abi.encodeParameters(
         ["bool", "address[]"],
-        [true, [token.options.address, wNativeToken.address]]
+        [true, [token.options.address, network.wToken.address]]
       );
 
       expect(
-        await exchange.methods.getAmountOut(token.options.address, wNativeToken.address, amountIn, [], data).call()
+        await exchange.methods.getAmountOut(token.options.address, network.wToken.address, amountIn, [], data).call()
       ).bignumber.closeTo(bn18(18.1), bn18(0.1)); // including exchange fee ~ 0.2-0.3%
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(50));
-      expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.eq(zero);
+      expect(await iweth(network.id).methods.balanceOf(user).call()).bignumber.eq(zero);
       await token.methods.approve(exchange.options.address, amountIn).send({ from: user });
       await exchange.methods
-        .swap(token.options.address, wNativeToken.address, amountIn, 0, [], data)
+        .swap(token.options.address, network.wToken.address, amountIn, 0, [], data)
         .send({ from: user });
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(40));
-      expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.closeTo(bn18(15.2), bn18(0.1));
+      expect(await iweth(network.id).methods.balanceOf(user).call()).bignumber.closeTo(bn18(15.2), bn18(0.1));
     });
   });
 });

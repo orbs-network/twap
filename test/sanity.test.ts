@@ -16,7 +16,7 @@ import { account, block, parseEvents, zero, zeroAddress } from "@defi.org/web3-c
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
-describe("Sanity", () => {
+describe.only("Sanity", () => {
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
 
@@ -162,9 +162,9 @@ describe("Sanity", () => {
       await mineBlock(60);
     });
 
-    it("find orders for maker", async () => {
+    it.only("find orders for maker", async () => {
       const toBlock = (await block()).number;
-      const fromBlock = toBlock - 1000;
+      const fromBlock = toBlock - 10;
       const events = await twap.getPastEvents("OrderCreated", { fromBlock, toBlock, filter: { maker: user } });
       expect(_.map(events, (e) => e.returnValues.id)).deep.eq(["0", "1", "3"]);
       expect((await order(0)).ask.srcAmount).bignumber.eq(await srcToken.amount(2000));

@@ -1,17 +1,17 @@
-import { Configs, nativeTokenAddresses, Status, TWAPLib } from "../src";
+import { Configs, Status, TWAPLib } from "../src";
 import { expect } from "chai";
 import {
   dstToken,
   initFixture,
+  network,
   pangolinDaasSamplePartner,
   srcToken,
   taker,
   user,
   userSrcTokenStartBalance,
-  wNativeToken,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { account, erc20Data, web3, zeroAddress } from "@defi.org/web3-candies";
+import { web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
@@ -270,7 +270,7 @@ describe("TWAPLib with production config", () => {
               await srcToken.amount(userSrcTokenStartBalance)
             );
             expect(await lib.makerBalance(await lib.getToken(dstToken.address))).bignumber.zero;
-            expect(await lib.makerBalance(await lib.getToken(wNativeToken.address))).bignumber.zero;
+            expect(await lib.makerBalance(await lib.getToken(network.wToken.address))).bignumber.zero;
             expect(await lib.makerBalance({ address: zeroAddress, symbol: "", decimals: 1 })).bignumber.eq(
               BN(1e6).times(1e18)
             );
@@ -483,6 +483,11 @@ describe("TWAPLib with production config", () => {
             decimals: await srcToken.decimals(),
           });
           expect(price).bignumber.closeTo(1, 0.01);
+        });
+
+        it("priceUsd for native token uses wToken", async () => {
+          const price = await lib.priceUsd({ address: zeroAddress, symbol: "", decimals: 1 });
+          expect(price).bignumber.gt(0);
         });
       });
     }

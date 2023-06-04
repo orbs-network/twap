@@ -4,18 +4,18 @@ import {
   exchange,
   fundSrcTokenFromWhale,
   initFixture,
+  network,
   srcToken,
   swapBidDataForUniV2,
   taker,
   twap,
   user,
   withUniswapV2Exchange,
-  wNativeToken,
 } from "./fixture";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import { ask, expectFilled } from "./twap-utils";
-import { account, bn, bn18, web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, bn, bn18, erc20, iweth, web3, zeroAddress } from "@defi.org/web3-candies";
 import type { Taker } from "../typechain-hardhat/contracts/periphery";
 import BigNumber from "bignumber.js";
 
@@ -32,7 +32,7 @@ describe("Taker", async () => {
 
   afterEach(async () => {
     expect(await dstToken.methods.balanceOf(takerContract.options.address).call()).bignumber.zero;
-    expect(await wNativeToken.methods.balanceOf(takerContract.options.address).call()).bignumber.zero;
+    expect(await erc20("").methods.balanceOf(takerContract.options.address).call()).bignumber.zero;
     expect(await web3().eth.getBalance(takerContract.options.address)).bignumber.zero;
   });
 
@@ -83,7 +83,7 @@ describe("Taker", async () => {
         0,
         exchange.options.address,
         1,
-        web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, wNativeToken.address]])
+        web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, network.wToken.address]])
       )
       .send({ from: taker });
 

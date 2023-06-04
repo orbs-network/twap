@@ -1,4 +1,4 @@
-import { account, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
+import { account, iweth, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
 import {
   deployer,
   dstToken,
@@ -13,7 +13,7 @@ import {
   userSrcTokenStartBalance,
   withMockExchange,
   withUniswapV2Exchange,
-  wNativeToken,
+  network,
 } from "./fixture";
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
@@ -194,7 +194,7 @@ describe("TWAP", async () => {
       0,
       undefined,
       undefined,
-      web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [srcToken.address, wNativeToken.address]])
+      web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [srcToken.address, network.wToken.address]])
     );
     await mineBlock(60);
     const balanceBefore = await web3().eth.getBalance(user);
@@ -202,7 +202,7 @@ describe("TWAP", async () => {
     expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
       (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(100))
     );
-    expect(await wNativeToken.methods.balanceOf(user).call()).bignumber.zero;
+    expect(await iweth(network.id).methods.balanceOf(user).call()).bignumber.zero;
     expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
     expect(await web3().eth.getBalance(user)).bignumber.gt(balanceBefore);
   });

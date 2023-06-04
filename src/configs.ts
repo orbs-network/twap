@@ -1,4 +1,4 @@
-import { zeroAddress } from "@defi.org/web3-candies";
+import { networks, zeroAddress } from "@defi.org/web3-candies";
 import _ from "lodash";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
@@ -20,6 +20,7 @@ export enum ParaswapOnlyDex {
   SpookySwap = "SpookySwap",
   Pangolin = "PangolinSwap",
   TraderJoe = "TraderJoe",
+  Thena = "",
 }
 
 export enum OdosOnlyDex {
@@ -61,18 +62,20 @@ export const ChainConfigs = {
     lensAddress: "",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 100,
-    nativeToken: {
-      address: zeroAddress,
-      decimals: 18,
-      symbol: "ETH",
-      logoUrl: "https://app.1inch.io/assets/images/network-logos/ethereum.svg",
-    },
-    wToken: {
-      address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      decimals: 18,
-      symbol: "WETH",
-      logoUrl: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-    },
+    nativeToken: networks.eth.native,
+    wToken: networks.eth.wToken,
+    ...defaultAbis,
+  },
+  bsc: {
+    chainName: "bsc",
+    chainId: 56,
+    twapVersion: 4,
+    twapAddress: "",
+    lensAddress: "",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 10,
+    nativeToken: networks.bsc.native,
+    wToken: networks.bsc.wToken,
     ...defaultAbis,
   },
   arb: {
@@ -83,18 +86,8 @@ export const ChainConfigs = {
     lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
-    nativeToken: {
-      address: zeroAddress,
-      decimals: 18,
-      symbol: "ETH",
-      logoUrl: "https://app.1inch.io/assets/images/network-logos/ethereum.svg",
-    },
-    wToken: {
-      address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-      decimals: 18,
-      symbol: "WETH",
-      logoUrl: "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-    },
+    nativeToken: networks.arb.native,
+    wToken: networks.arb.wToken,
     ...defaultAbis,
   },
   ftm: {
@@ -105,18 +98,8 @@ export const ChainConfigs = {
     lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
-    nativeToken: {
-      address: zeroAddress,
-      decimals: 18,
-      symbol: "FTM",
-      logoUrl: "https://app.1inch.io/assets/images/network-logos/fantom.svg",
-    },
-    wToken: {
-      address: "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
-      decimals: 18,
-      symbol: "WFTM",
-      logoUrl: "https://tokens.1inch.io/0x4e15361fd6b4bb609fa63c81a2be19d873717870.png",
-    },
+    nativeToken: networks.ftm.native,
+    wToken: networks.ftm.wToken,
     twapAbi: twapAbiV3,
     lensAbi: lensAbiV3,
     takerAbi: takerAbiV3,
@@ -129,18 +112,8 @@ export const ChainConfigs = {
     lensAddress: "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
-    nativeToken: {
-      address: zeroAddress,
-      decimals: 18,
-      symbol: "MATIC",
-      logoUrl: "https://app.1inch.io/assets/images/network-logos/polygon.svg",
-    },
-    wToken: {
-      address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-      decimals: 18,
-      symbol: "WMATIC",
-      logoUrl: "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png",
-    },
+    nativeToken: networks.poly.native,
+    wToken: networks.poly.wToken,
     ...defaultAbis,
   },
   avax: {
@@ -151,18 +124,8 @@ export const ChainConfigs = {
     lensAddress: "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
-    nativeToken: {
-      address: zeroAddress,
-      decimals: 18,
-      symbol: "AVAX",
-      logoUrl: "https://app.1inch.io/assets/images/network-logos/avalanche.svg",
-    },
-    wToken: {
-      address: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
-      decimals: 18,
-      symbol: "WAVAX",
-      logoUrl: "https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png",
-    },
+    nativeToken: networks.avax.native,
+    wToken: networks.avax.wToken,
     ...defaultAbis,
   },
 };
@@ -214,6 +177,14 @@ export const Configs = {
     exchangeAddress: "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.Chronos,
+  } as Config,
+
+  Thena: {
+    ...ChainConfigs.bsc,
+    partner: "Thena",
+    exchangeAddress: "",
+    exchangeType: "ParaswapExchange",
+    pathfinderKey: ParaswapOnlyDex.Thena,
   } as Config,
 };
 

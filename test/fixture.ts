@@ -1,4 +1,15 @@
 import {
+  Token,
+  account,
+  chainId,
+  erc20s,
+  erc20sData,
+  ether,
+  network as cnet,
+  networks,
+  web3,
+} from "@defi.org/web3-candies";
+import {
   deployArtifact,
   impersonate,
   resetNetworkFork,
@@ -6,22 +17,21 @@ import {
   tag,
   useChaiBigNumber,
 } from "@defi.org/web3-candies/dist/hardhat";
-import { account, chainId, erc20s, network, networks, Token, web3 } from "@defi.org/web3-candies";
 import { expect } from "chai";
-import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
-import type { MockExchange } from "../typechain-hardhat/contracts/test";
 import _ from "lodash";
+import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
 import { Lens } from "../typechain-hardhat/contracts/periphery";
+import type { MockExchange } from "../typechain-hardhat/contracts/test";
 
 useChaiBigNumber();
 
+export let network: ReturnType<typeof cnet>;
 export let user: string;
 export let taker: string;
 export let deployer: string;
 
 export let srcToken: Token;
 export let dstToken: Token;
-export let wNativeToken: Token;
 export const userSrcTokenStartBalance = 1_000_000;
 
 let srcTokenWhale: string;
@@ -34,10 +44,11 @@ export let exchange: IExchange;
 export let swapBidDataForUniV2: string;
 
 export async function initFixture(blockNumber?: number | "latest") {
+  network = cnet(await chainId());
   await resetNetworkFork(blockNumber);
   await initAccounts();
   await initTokens();
-  twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [wNativeToken.address]);
+  twap = await deployArtifact<TWAP>("TWAP", { from: deployer }, [network.wToken.address]);
   lens = await deployArtifact<Lens>("Lens", { from: deployer }, [twap.options.address]);
   await fundSrcTokenFromWhale(user, userSrcTokenStartBalance);
   expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
@@ -53,45 +64,47 @@ async function initAccounts() {
 }
 
 async function initTokens() {
-  switch (process.env.NETWORK) {
-    case "ETH":
+  switch (await chainId()) {
+    case networks.eth.id:
       srcToken = erc20s.eth.USDC();
       dstToken = erc20s.eth.WETH();
-      wNativeToken = dstToken;
       srcTokenWhale = "0x55fe002aeff02f77364de339a1292923a15844b8";
       dstTokenWhale = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
       return;
 
-    case "POLY":
+    case networks.poly.id:
       srcToken = erc20s.poly.USDC();
       dstToken = erc20s.poly.WETH();
-      wNativeToken = erc20s.poly.WMATIC();
       srcTokenWhale = "0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245";
       dstTokenWhale = "0x72A53cDBBcc1b9efa39c834A540550e23463AAcB";
       return;
 
-    case "FTM":
+    case networks.ftm.id:
       srcToken = erc20s.ftm.USDC();
       dstToken = erc20s.ftm.WETH();
-      wNativeToken = erc20s.ftm.WFTM();
       srcTokenWhale = "0x95bf7E307BC1ab0BA38ae10fc27084bC36FcD605";
       dstTokenWhale = "0x25c130B2624CF12A4Ea30143eF50c5D68cEFA22f";
       return;
 
-    case "AVAX":
+    case networks.avax.id:
       srcToken = erc20s.avax.USDC();
       dstToken = erc20s.avax.WETHe();
-      wNativeToken = erc20s.avax.WAVAX();
       srcTokenWhale = "0x4aeFa39caEAdD662aE31ab0CE7c8C2c9c0a013E8";
       dstTokenWhale = "0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8";
       return;
 
-    case "ARB":
+    case networks.arb.id:
       srcToken = erc20s.arb.USDC();
       dstToken = erc20s.arb.WETH();
-      wNativeToken = dstToken;
       srcTokenWhale = "0x62383739D68Dd0F844103Db8dFb05a7EdED5BBE6";
       dstTokenWhale = "0x489ee077994B6658eAfA855C308275EAd8097C4A";
+      return;
+
+    case networks.bsc.id:
+      srcToken = erc20s.bsc.USDC();
+      dstToken = erc20s.bsc.WETH();
+      srcTokenWhale = "0x8894E0a0c962CB723c1976a4421c95949bE2D4E3";
+      dstTokenWhale = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
       return;
 
     default:
@@ -101,7 +114,6 @@ async function initTokens() {
 
 export async function withUniswapV2Exchange(uniswapAddress?: string) {
   await withUniswapV2Path();
-  const n = network(await chainId());
   const exchangeAddress =
     uniswapAddress ||
     _.find(
@@ -111,10 +123,11 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
         poly: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff", // Quickswap
         avax: "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106", // Pangolin
         arb: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", // Sushiswap
+        bsc: "0x10ED43C718714eb63d5aA57B78B54704E256024E", // Pancakeswap
       },
-      (impl, k) => k === n!.shortname
+      (impl, k) => k === network.shortname
     );
-  if (!exchangeAddress) throw new Error(`no UniswapV2 exchange for ${n!.name}`);
+  if (!exchangeAddress) throw new Error(`no UniswapV2 exchange for ${network.name}`);
   exchange = await deployArtifact<IExchange>("UniswapV2Exchange", { from: deployer }, [exchangeAddress]);
 }
 
@@ -141,15 +154,15 @@ export async function withPangolinDaasExchange() {
 }
 
 async function withUniswapV2Path() {
-  const n = network(await chainId());
   const paths = {
     eth: [srcToken.address, dstToken.address],
-    ftm: [srcToken.address, wNativeToken.address, dstToken.address],
+    ftm: [srcToken.address, erc20sData.ftm.WFTM.address, dstToken.address],
     poly: [srcToken.address, dstToken.address],
-    avax: [srcToken.address, wNativeToken.address, dstToken.address],
+    avax: [srcToken.address, erc20sData.avax.WAVAX.address, dstToken.address],
     arb: [srcToken.address, dstToken.address],
+    bsc: [srcToken.address, erc20sData.bsc.WBNB.address, dstToken.address],
   };
-  const path = paths[n!.shortname];
+  const path = paths[network.shortname];
   if (!path) throw new Error(`no UniswapV2 path for ${network?.name}`);
   swapBidDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }
@@ -157,7 +170,7 @@ async function withUniswapV2Path() {
 export async function fundSrcTokenFromWhale(target: string, amount: number) {
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
-  await setBalance(srcTokenWhale, await wNativeToken.amount(10e6));
+  await setBalance(srcTokenWhale, ether.times(100));
   expect(await srcToken.methods.balanceOf(srcTokenWhale).call()).bignumber.gte(await srcToken.amount(amount));
   await srcToken.methods.transfer(target, await srcToken.amount(amount)).send({ from: srcTokenWhale });
   expect(await srcToken.methods.balanceOf(target).call()).bignumber.eq(await srcToken.amount(amount));
@@ -166,7 +179,7 @@ export async function fundSrcTokenFromWhale(target: string, amount: number) {
 async function fundDstToken(target: string, amount: number) {
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
-  await setBalance(dstTokenWhale, await wNativeToken.amount(10e6));
+  await setBalance(dstTokenWhale, ether.times(100));
   await dstToken.methods.transfer(target, await dstToken.amount(amount)).send({ from: dstTokenWhale });
   expect(await dstToken.methods.balanceOf(target).call()).bignumber.eq(await dstToken.amount(amount));
 }

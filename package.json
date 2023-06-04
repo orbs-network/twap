@@ -31,7 +31,8 @@
     "test:ftm": "NETWORK=FTM BLOCK=39800909 hardhat test",
     "test:poly": "NETWORK=POLY BLOCK=29174252 hardhat test",
     "test:avax": "NETWORK=AVAX BLOCK=15609313 hardhat test",
-    "test:arb": "NETWORK=ARB hardhat test"
+    "test:arb": "NETWORK=ARB hardhat test",
+    "test:bsc": "NETWORK=BSC hardhat test"
   },
   "prettier": {
     "printWidth": 120

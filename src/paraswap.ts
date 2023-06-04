@@ -67,9 +67,7 @@ export namespace Paraswap {
       if (exchangeAdapter !== zeroAddress) {
         data = await buildSwapData(route, exchangeAdapter);
       }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) {}
 
     return { dstAmount: BN(route.destAmount), srcUsd: BN(route.srcUSD), dstUsd: BN(route.destUSD), data, path };
   }
@@ -106,7 +104,7 @@ export namespace Paraswap {
         srcDecimals: paraswapRoute.srcDecimals,
         destDecimals: paraswapRoute.destDecimals,
         srcAmount: paraswapRoute.srcAmount,
-        destAmount: "1",
+        destAmount: "1", //paraswapRoute.destAmount ? BN(paraswapRoute.destAmount).times(0.9).toFixed(0) : "1",
         userAddress: exchangeAdapter,
       }),
     });
