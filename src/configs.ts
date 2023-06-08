@@ -1,9 +1,11 @@
-import { networks, zeroAddress } from "@defi.org/web3-candies";
+import { networks } from "@defi.org/web3-candies";
 import _ from "lodash";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
+
+export { nativeTokenAddresses, zeroAddress } from "@defi.org/web3-candies";
 
 export interface TokenData {
   address: string;
