@@ -21,6 +21,7 @@ import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
 import { Odos } from "./odos";
+import { OpenOcean } from "./openocean";
 
 export class TWAPLib {
   public static VERSION = 4;
@@ -411,13 +412,14 @@ export class TWAPLib {
     return await this.findRoute(srcToken, dstToken, srcNextChunkAmountIn);
   }
 
-  encodeBidData(route: Paraswap.Route | Odos.Route) {
+  encodeBidData(route: Paraswap.Route | Odos.Route | OpenOcean.Route) {
     switch (this.config.exchangeType) {
       case "UniswapV2Exchange":
       case "PangolinDaasExchange":
         return web3().eth.abi.encodeParameters(["bool", "address[]"], [true, route.path]);
       case "ParaswapExchange":
       case "OdosExchange":
+      case "OpenOceanExchange":
         return web3().eth.abi.encodeParameters(["uint256", "bytes"], [route.dstAmount.toFixed(0), route.data]);
       default:
         throw new Error(`unknown exchange type ${this.config.exchangeType}`);

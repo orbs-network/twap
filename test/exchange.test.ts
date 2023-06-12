@@ -229,10 +229,12 @@ describe("IExchange implementations", async () => {
       );
       expect(odosRoute.dstAmount).bignumber.gte(await dstToken.amount(1));
       const dstMinOut = BigNumber(odosRoute.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
+      const encodedSwapData = web3().eth.abi.encodeParameters(["uint256", "bytes"], [dstMinOut, odosRoute.data]);
 
+      expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       await exchange.methods
-        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], odosRoute.data)
+        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], encodedSwapData)
         .send({ from: user });
 
       expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(

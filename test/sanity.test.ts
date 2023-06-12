@@ -16,7 +16,7 @@ import { account, block, parseEvents, zero, zeroAddress } from "@defi.org/web3-c
 import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
-describe.only("Sanity", () => {
+describe("Sanity", () => {
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
 
