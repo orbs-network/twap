@@ -22,11 +22,14 @@ export enum ParaswapOnlyDex {
   SpookySwap = "SpookySwap",
   Pangolin = "PangolinSwap",
   TraderJoe = "TraderJoe",
-  Thena = "",
 }
 
 export enum OdosOnlyDex {
   Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
+}
+
+export enum OpenOceanOnlyDex {
+  Thena = "43,47",
 }
 
 export interface Config {
@@ -46,7 +49,7 @@ export interface Config {
   partner: string;
   exchangeAddress: string;
   exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange" | "OdosExchange";
-  pathfinderKey: ParaswapOnlyDex | OdosOnlyDex;
+  pathfinderKey: ParaswapOnlyDex | OdosOnlyDex | OpenOceanOnlyDex;
 }
 
 const defaultAbis = {
@@ -186,7 +189,7 @@ export const Configs = {
     partner: "Thena",
     exchangeAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
     exchangeType: "ParaswapExchange",
-    pathfinderKey: ParaswapOnlyDex.Thena,
+    pathfinderKey: OpenOceanOnlyDex.Thena,
   } as Config,
 };
 
