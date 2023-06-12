@@ -1,4 +1,4 @@
-import { Config, OdosOnlyDex, ParaswapOnlyDex } from "./configs";
+import { Config, OdosOnlyDex, OpenOceanOnlyDex, ParaswapOnlyDex } from "./configs";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import {
@@ -383,7 +383,18 @@ export class TWAPLib {
         dstToken,
         srcAmount,
         this.config.exchangeAddress,
-        this.config.pathfinderKey as OdosOnlyDex
+        this.config.pathfinderKey as OdosOnlyDex,
+        this.config.partner
+      );
+    } else if (this.config.exchangeType === "OpenOceanExchange") {
+      route = await OpenOcean.findRoute(
+        this.config.chainId,
+        srcToken,
+        dstToken,
+        srcAmount,
+        this.config.exchangeAddress,
+        this.config.pathfinderKey as OpenOceanOnlyDex,
+        this.config.partner
       );
     } else {
       route = await Paraswap.findRoute(
@@ -392,7 +403,8 @@ export class TWAPLib {
         dstToken,
         srcAmount,
         this.config.exchangeAddress,
-        this.config.pathfinderKey as ParaswapOnlyDex
+        this.config.pathfinderKey as ParaswapOnlyDex,
+        this.config.partner
       );
     }
     return { ...route, data: this.encodeBidData(route), srcToken, dstToken, srcAmount };
