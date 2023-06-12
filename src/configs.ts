@@ -46,6 +46,7 @@ export interface Config {
   lensAbi: any;
   takerAbi: any;
 
+  name: string;
   partner: string;
   exchangeAddress: string;
   exchangeType:

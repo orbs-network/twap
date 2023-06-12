@@ -10,7 +10,7 @@ describe("Paraswap", () => {
   _.map(
     _.filter(Configs, (c) => c.chainName === process.env.NETWORK!.toLowerCase()),
     (c) => {
-      describe(`${c.partner} on ${c.chainId}`, () => {
+      describe(`${c.name} on ${c.chainId}`, () => {
         let usdc: TokenData;
 
         before(async function () {

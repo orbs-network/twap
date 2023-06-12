@@ -27,7 +27,7 @@ task("github-pages").setAction(async () => {
     "./docs/chain-configs.json",
     _.mapValues(src.ChainConfigs, (cc) => ({
       ...cc,
-      integrations: _.filter(src.Configs, (c) => c.chainId === cc.chainId).map((c) => c.partner),
+      integrations: _.filter(src.Configs, (c) => c.chainId === cc.chainId).map((c) => c.name),
     })),
     { spaces: 2 }
   );
