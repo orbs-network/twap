@@ -6090,7 +6090,7 @@
       }
     ],
     "integrations": [
-      "SpiritSwap",
+      "Orbs:TWAP:SpiritSwap",
       "Orbs:TWAP:SpookySwap"
     ]
   },
