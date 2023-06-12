@@ -3058,7 +3058,7 @@
       }
     ],
     "integrations": [
-      "Thena"
+      "Orbs:TWAP:Thena"
     ]
   },
   "arb": {
@@ -4590,7 +4590,7 @@
       }
     ],
     "integrations": [
-      "Chronos"
+      "Orbs:TWAP:Chronos"
     ]
   },
   "ftm": {
@@ -6091,7 +6091,7 @@
     ],
     "integrations": [
       "SpiritSwap",
-      "SpookySwap"
+      "Orbs:TWAP:SpookySwap"
     ]
   },
   "poly": {
@@ -7623,7 +7623,7 @@
       }
     ],
     "integrations": [
-      "QuickSwap"
+      "Orbs:TWAP:QuickSwap"
     ]
   },
   "avax": {
@@ -9155,8 +9155,8 @@
       }
     ],
     "integrations": [
-      "Pangolin",
-      "PangolinDaas"
+      "Orbs:TWAP:Pangolin",
+      "Orbs:TWAP:PangolinDaas"
     ]
   }
 }

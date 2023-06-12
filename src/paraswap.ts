@@ -43,7 +43,8 @@ export namespace Paraswap {
     dst: TokenData,
     amountIn: BN.Value,
     exchangeAdapter: string = zeroAddress,
-    onlyDex?: ParaswapOnlyDex
+    onlyDex?: ParaswapOnlyDex,
+    partner?: string
   ): Promise<Route> {
     const params = new URLSearchParams({
       srcToken: src.address,
@@ -55,7 +56,7 @@ export namespace Paraswap {
       side: "SELL",
       maxImpact: "50",
       includeDEXS: onlyDex || "",
-      partner: onlyDex?.toLowerCase()?.split(",")?.[0] || "",
+      partner: partner || "",
     });
     const response = await fetch(`${URL}/prices/?${params}`);
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);

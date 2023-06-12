@@ -48,7 +48,12 @@ export interface Config {
 
   partner: string;
   exchangeAddress: string;
-  exchangeType: "UniswapV2Exchange" | "ParaswapExchange" | "PangolinDaasExchange" | "OdosExchange";
+  exchangeType:
+    | "UniswapV2Exchange"
+    | "ParaswapExchange"
+    | "PangolinDaasExchange"
+    | "OdosExchange"
+    | "OpenOceanExchange";
   pathfinderKey: ParaswapOnlyDex | OdosOnlyDex | OpenOceanOnlyDex;
 }
 
@@ -146,7 +151,7 @@ export const Configs = {
 
   SpookySwap: {
     ...ChainConfigs.ftm,
-    partner: "SpookySwap",
+    partner: "Orbs:TWAP:SpookySwap",
     exchangeAddress: "0x4b5815D263549Ff9b54a3838693C3DC0dbE7e597",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: ParaswapOnlyDex.SpookySwap,
@@ -154,7 +159,7 @@ export const Configs = {
 
   Pangolin: {
     ...ChainConfigs.avax,
-    partner: "Pangolin",
+    partner: "Orbs:TWAP:Pangolin",
     exchangeAddress: "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: ParaswapOnlyDex.Pangolin,
@@ -162,7 +167,7 @@ export const Configs = {
 
   PangolinDaas: {
     ...ChainConfigs.avax,
-    partner: "PangolinDaas",
+    partner: "Orbs:TWAP:PangolinDaas",
     exchangeAddress: "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
     exchangeType: "PangolinDaasExchange",
     pathfinderKey: ParaswapOnlyDex.Pangolin,
@@ -170,7 +175,7 @@ export const Configs = {
 
   QuickSwap: {
     ...ChainConfigs.poly,
-    partner: "QuickSwap",
+    partner: "Orbs:TWAP:QuickSwap",
     exchangeAddress: "0x26D0ec4Be402BCE03AAa8aAf0CF67e9428ba54eF",
     exchangeType: "ParaswapExchange",
     pathfinderKey: ParaswapOnlyDex.QuickSwap,
@@ -178,7 +183,7 @@ export const Configs = {
 
   Chronos: {
     ...ChainConfigs.arb,
-    partner: "Chronos",
+    partner: "Orbs:TWAP:Chronos",
     exchangeAddress: "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.Chronos,
@@ -186,9 +191,9 @@ export const Configs = {
 
   Thena: {
     ...ChainConfigs.bsc,
-    partner: "Thena",
-    exchangeAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    exchangeType: "ParaswapExchange",
+    partner: "Orbs:TWAP:Thena",
+    exchangeAddress: "",
+    exchangeType: "OpenOceanExchange",
     pathfinderKey: OpenOceanOnlyDex.Thena,
   } as Config,
 };

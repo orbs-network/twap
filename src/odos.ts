@@ -19,7 +19,8 @@ export namespace Odos {
     dst: TokenData,
     amountIn: BN.Value,
     exchangeAdapter: string = zeroAddress,
-    onlyDex?: OdosOnlyDex
+    onlyDex?: OdosOnlyDex,
+    partner?: string
   ): Promise<Route> {
     const response = await fetch(`${URL}/sor/quote`, {
       method: "POST",
@@ -32,6 +33,7 @@ export namespace Odos {
         userAddr: exchangeAdapter,
         sourceWhitelist: onlyDex?.split(",") || [],
         simulate: false,
+        partner: partner || "",
       }),
     });
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);

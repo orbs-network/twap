@@ -162,7 +162,7 @@ describe.only("Sanity", () => {
       await mineBlock(60);
     });
 
-    it.only("find orders for maker", async () => {
+    it("find orders for maker", async () => {
       const toBlock = (await block()).number;
       const fromBlock = toBlock - 10;
       const events = await twap.getPastEvents("OrderCreated", { fromBlock, toBlock, filter: { maker: user } });

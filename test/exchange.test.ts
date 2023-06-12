@@ -14,7 +14,7 @@ import {
   withUniswapV2Exchange,
 } from "./fixture";
 import { account, chainId, contract, maxUint256, sleep, web3, zero, zeroAddress } from "@defi.org/web3-candies";
-import { Odos, Paraswap, TWAPLib, chainConfig } from "../src";
+import { Odos, OdosOnlyDex, Paraswap, TWAPLib, chainConfig } from "../src";
 import BigNumber from "bignumber.js";
 import { artifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { IPangolinDaas } from "../typechain-hardhat/contracts/exchange/PangolinDaasExchange.sol";
@@ -182,7 +182,7 @@ describe("IExchange implementations", async () => {
           { address: dstToken.address, decimals: await dstToken.decimals(), symbol: "" },
           await srcToken.amount(10_000),
           exchange.options.address,
-          Odos.OnlyDex.Chronos
+          OdosOnlyDex.Chronos
         );
         expect(odosRoute.dstAmount).bignumber.gte(await dstToken.amount(1));
         const dstMinOut = BigNumber(odosRoute.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);

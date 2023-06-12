@@ -1,4 +1,4 @@
-import { chainId, findBlock } from "@defi.org/web3-candies";
+import { chainId, contract, findBlock } from "@defi.org/web3-candies";
 import { deploy, hardhatDefaultConfig, isHardhatNetwork } from "@defi.org/web3-candies/dist/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-web3";

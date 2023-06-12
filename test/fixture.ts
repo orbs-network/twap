@@ -144,6 +144,8 @@ export async function withOdosExchange() {
   ]);
 }
 
+//0x6352a56caadC4F1E25CD6c75970Fa768A3304e64 OpenOcean BSC
+
 export const pangolinDaasSamplePartner = "0xFA1c2Ae5c52a02cbaD6A05CdcA89f032Fa3a4D0d";
 export async function withPangolinDaasExchange() {
   if ((await chainId()) !== networks.avax.id) throw new Error("only on Avalanche");
