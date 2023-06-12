@@ -143,7 +143,7 @@ export const ChainConfigs = {
 export const Configs = {
   SpiritSwap: {
     ...ChainConfigs.ftm,
-    partner: "SpiritSwap",
+    partner: "Orbs:TWAP:SpiritSwap",
     exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
     exchangeType: "ParaswapExchange",
     pathfinderKey: ParaswapOnlyDex.SpiritSwap,
