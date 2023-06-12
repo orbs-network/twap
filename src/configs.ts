@@ -192,7 +192,7 @@ export const Configs = {
   Thena: {
     ...ChainConfigs.bsc,
     partner: "Orbs:TWAP:Thena",
-    exchangeAddress: "",
+    exchangeAddress: "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
     exchangeType: "OpenOceanExchange",
     pathfinderKey: OpenOceanOnlyDex.Thena,
   } as Config,

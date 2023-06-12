@@ -10662,8 +10662,8 @@
       }
     ],
     "partner": "Orbs:TWAP:Thena",
-    "exchangeAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    "exchangeType": "ParaswapExchange",
+    "exchangeAddress": "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
+    "exchangeType": "OpenOceanExchange",
     "pathfinderKey": "43,47"
   }
 }
