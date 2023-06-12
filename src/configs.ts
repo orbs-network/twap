@@ -143,6 +143,7 @@ export const ChainConfigs = {
 export const Configs = {
   SpiritSwap: {
     ...ChainConfigs.ftm,
+    name: "SpiritSwap",
     partner: "Orbs:TWAP:SpiritSwap",
     exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
     exchangeType: "ParaswapExchange",
@@ -151,6 +152,7 @@ export const Configs = {
 
   SpookySwap: {
     ...ChainConfigs.ftm,
+    name: "SpookySwap",
     partner: "Orbs:TWAP:SpookySwap",
     exchangeAddress: "0x4b5815D263549Ff9b54a3838693C3DC0dbE7e597",
     exchangeType: "UniswapV2Exchange",
@@ -159,6 +161,7 @@ export const Configs = {
 
   Pangolin: {
     ...ChainConfigs.avax,
+    name: "Pangolin",
     partner: "Orbs:TWAP:Pangolin",
     exchangeAddress: "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
     exchangeType: "UniswapV2Exchange",
@@ -167,6 +170,7 @@ export const Configs = {
 
   PangolinDaas: {
     ...ChainConfigs.avax,
+    name: "PangolinDaas",
     partner: "Orbs:TWAP:PangolinDaas",
     exchangeAddress: "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
     exchangeType: "PangolinDaasExchange",
@@ -175,6 +179,7 @@ export const Configs = {
 
   QuickSwap: {
     ...ChainConfigs.poly,
+    name: "QuickSwap",
     partner: "Orbs:TWAP:QuickSwap",
     exchangeAddress: "0x26D0ec4Be402BCE03AAa8aAf0CF67e9428ba54eF",
     exchangeType: "ParaswapExchange",
@@ -183,6 +188,7 @@ export const Configs = {
 
   Chronos: {
     ...ChainConfigs.arb,
+    name: "Chronos",
     partner: "Orbs:TWAP:Chronos",
     exchangeAddress: "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
     exchangeType: "OdosExchange",
@@ -191,6 +197,7 @@ export const Configs = {
 
   Thena: {
     ...ChainConfigs.bsc,
+    name: "Thena",
     partner: "Orbs:TWAP:Thena",
     exchangeAddress: "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
     exchangeType: "OpenOceanExchange",
