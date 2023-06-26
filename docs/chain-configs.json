@@ -1474,16 +1474,6 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "bid",
@@ -1512,45 +1502,11 @@
             "internalType": "bytes",
             "name": "feeData",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "fill",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          }
-        ],
-        "name": "hash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "stateMutability": "pure",
         "type": "function"
       },
       {
@@ -1641,24 +1597,6 @@
             "type": "address"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "h",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "name": "verifySig",
-        "outputs": [],
         "stateMutability": "view",
         "type": "function"
       },
@@ -3144,16 +3082,6 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "bid",
@@ -3182,45 +3110,11 @@
             "internalType": "bytes",
             "name": "feeData",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "fill",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          }
-        ],
-        "name": "hash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "stateMutability": "pure",
         "type": "function"
       },
       {
@@ -3311,24 +3205,6 @@
             "type": "address"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "h",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "name": "verifySig",
-        "outputs": [],
         "stateMutability": "view",
         "type": "function"
       },
@@ -4816,16 +4692,6 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "bid",
@@ -4854,45 +4720,11 @@
             "internalType": "bytes",
             "name": "feeData",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "fill",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          }
-        ],
-        "name": "hash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "stateMutability": "pure",
         "type": "function"
       },
       {
@@ -4983,24 +4815,6 @@
             "type": "address"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "h",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "name": "verifySig",
-        "outputs": [],
         "stateMutability": "view",
         "type": "function"
       },
@@ -7989,16 +7803,6 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "bid",
@@ -8027,45 +7831,11 @@
             "internalType": "bytes",
             "name": "feeData",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "fill",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          }
-        ],
-        "name": "hash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "stateMutability": "pure",
         "type": "function"
       },
       {
@@ -8156,24 +7926,6 @@
             "type": "address"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "h",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "name": "verifySig",
-        "outputs": [],
         "stateMutability": "view",
         "type": "function"
       },
@@ -9661,16 +9413,6 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "bid",
@@ -9699,45 +9441,11 @@
             "internalType": "bytes",
             "name": "feeData",
             "type": "bytes"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
           }
         ],
         "name": "fill",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          }
-        ],
-        "name": "hash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "stateMutability": "pure",
         "type": "function"
       },
       {
@@ -9828,24 +9536,6 @@
             "type": "address"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "h",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "name": "verifySig",
-        "outputs": [],
         "stateMutability": "view",
         "type": "function"
       },

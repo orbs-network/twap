@@ -49,28 +49,25 @@ describe.only("Taker", async () => {
     await expectRevert(
       async () =>
         takerContract.methods
-          .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2, deadline, signature)
+          .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
           .send({ from: user }),
       "onlyOwners"
     );
-    await expectRevert(
-      () => takerContract.methods.fill(0, zeroAddress, 0, [], deadline, signature).send({ from: user }),
-      "onlyOwners"
-    );
+    await expectRevert(() => takerContract.methods.fill(0, zeroAddress, 0, []).send({ from: user }), "onlyOwners");
     await expectRevert(() => takerContract.methods.rescue(zeroAddress).send({ from: user }), "onlyOwners");
     await takerContract.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2, deadline, signature)
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
       .send({ from: deployer }); // other owner
   });
 
   it("bid & fill, gas rebate as dstToken without swapping", async () => {
     await takerContract.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2, deadline, signature)
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
       .send({ from: taker });
     await mineBlock(60);
 
     const dstTokenBefore = await dstToken.methods.balanceOf(taker).call();
-    await takerContract.methods.fill(0, zeroAddress, 0, [], deadline, signature).send({ from: taker });
+    await takerContract.methods.fill(0, zeroAddress, 0, []).send({ from: taker });
 
     await expectFilled(0, 1000, 0.5);
     expect(await dstToken.methods.balanceOf(taker).call()).bignumber.gte(dstTokenBefore);
@@ -78,7 +75,7 @@ describe.only("Taker", async () => {
 
   it("gas rebate when dstToken == nativeToken, unwrap with or without swapping to native", async () => {
     await takerContract.methods
-      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2, deadline, signature)
+      .bid(0, exchange.options.address, await dstToken.amount(0.01), 0, swapBidDataForUniV2)
       .send({ from: taker });
     await mineBlock(60);
 
@@ -88,9 +85,7 @@ describe.only("Taker", async () => {
         0,
         exchange.options.address,
         1,
-        web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, network.wToken.address]]),
-        deadline,
-        signature
+        web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, network.wToken.address]])
       )
       .send({ from: taker });
 
@@ -136,55 +131,6 @@ describe.only("Taker", async () => {
       const startBalance = await srcToken.methods.balanceOf(taker).call().then(BigNumber);
       await takerContract.methods.rescue(srcToken.address).send({ from: taker });
       expect(await srcToken.methods.balanceOf(taker).call()).bignumber.eq(startBalance.plus(await srcToken.amount(10)));
-    });
-  });
-
-  describe("sign bid and fill", () => {
-    it("hash", async () => {
-      expect(await takerContract.methods.hash(1234, 123456789).call()).eq(
-        web3().utils.keccak256(web3().utils.encodePacked({ t: "uint64", v: 1234 }, { t: "uint32", v: 123456789 })!)
-      );
-    });
-
-    it("sign", async () => {
-      const hash = await takerContract.methods.hash(1234, 123456789).call();
-      const signature = await web3().eth.sign(hash, taker);
-      await takerContract.methods.verifySig(hash, signature).call();
-      const basSignature = await web3().eth.sign(hash, deployer);
-      await expectRevert(() => takerContract.methods.verifySig(hash, basSignature).call(), "verifySig");
-    });
-
-    it("must sign", async () => {
-      await expectRevert(
-        () =>
-          takerContract.methods
-            .bid(
-              0,
-              exchange.options.address,
-              0,
-              0,
-              swapBidDataForUniV2,
-              deadline,
-              "0xde89786cb358e3324e3db62598f07b7d98a7b6cad180bbc2a1075aedd3e2fd73386a6f4d69fc1800d5a96a99a9fbffd0376f3020c44ed87c243bc4f9aea30ed11b"
-            )
-            .send({ from: taker }),
-        "verifySig"
-      );
-
-      await expectRevert(
-        () =>
-          takerContract.methods
-            .fill(
-              0,
-              zeroAddress,
-              0,
-              [],
-              deadline,
-              "0xde89786cb358e3324e3db62598f07b7d98a7b6cad180bbc2a1075aedd3e2fd73386a6f4d69fc1800d5a96a99a9fbffd0376f3020c44ed87c243bc4f9aea30ed11b"
-            )
-            .send({ from: taker }),
-        "verifySig"
-      );
     });
   });
 });

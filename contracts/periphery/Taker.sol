@@ -23,7 +23,6 @@ contract Taker is Ownable {
     constructor(TWAP _twap, address[] memory _owners) {
         twap = _twap;
         for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = true;
-        transferOwnership(_owners[0]);
     }
 
     function addOwners(address[] memory _owners) external onlyOwner {
@@ -42,12 +41,8 @@ contract Taker is Ownable {
         address exchange,
         uint256 dstFee,
         uint32 slippagePercent,
-        bytes calldata data,
-        uint32 deadline,
-        bytes calldata signature
+        bytes calldata data
     ) external onlyOwners {
-        require(deadline >= block.timestamp, "Taker:deadline");
-        verifySig(hash(id, deadline), signature);
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
 
@@ -59,17 +54,7 @@ contract Taker is Ownable {
      * @param feeMinAmountOut optional native token minimum out, can be 0
      * @param feeData optional data to pass to feeExchange, can be empty
      */
-    function fill(
-        uint64 id,
-        address feeExchange,
-        uint256 feeMinAmountOut,
-        bytes calldata feeData,
-        uint32 deadline,
-        bytes calldata signature
-    ) external onlyOwners {
-        require(deadline >= block.timestamp, "Taker:deadline");
-        verifySig(hash(id, deadline), signature);
-
+    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData) external onlyOwners {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 
@@ -97,14 +82,6 @@ contract Taker is Ownable {
         if (token != address(0) && ERC20(token).balanceOf(address(this)) > 0) {
             ERC20(token).safeTransfer(msg.sender, ERC20(token).balanceOf(address(this)));
         }
-    }
-
-    function hash(uint64 id, uint32 deadline) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(id, deadline));
-    }
-
-    function verifySig(bytes32 h, bytes calldata signature) public view {
-        require(ECDSA.recover(ECDSA.toEthSignedMessageHash(h), signature) == owner(), "Taker:verifySig");
     }
 
     receive() external payable {} // solhint-disable-line no-empty-blocks
