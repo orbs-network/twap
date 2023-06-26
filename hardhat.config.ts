@@ -1,5 +1,12 @@
-import { chainId, contract, findBlock } from "@defi.org/web3-candies";
-import { deploy, hardhatDefaultConfig, isHardhatNetwork } from "@defi.org/web3-candies/dist/hardhat";
+import { chainId, contract, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
+import {
+  artifact,
+  askDeployer,
+  askFees,
+  deploy,
+  hardhatDefaultConfig,
+  isHardhatNetwork,
+} from "@defi.org/web3-candies/dist/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-web3";
 import "@typechain/hardhat";
@@ -14,14 +21,17 @@ task("deploy").setAction(async () => {
   if (isHardhatNetwork()) throw new Error("on hardhat network!");
   const config = require("./src/configs").chainConfig(await chainId());
 
-  // const twap = await deploy("TWAP", [config.wToken.address], 3e6, 0, true, 10);
-
-  // const takers = [];
-  // await deploy("Taker", [config.twapAddress, takers], 2e6, 0, true, 10);
+  const takers = [];
+  await deploy({
+    contractName: "Taker",
+    args: [config.twapAddress, takers],
+    waitForConfirmations: 1,
+  });
 });
 
 task("github-pages").setAction(async () => {
   const src = require("./src");
+  await fs.mkdirp("./docs");
   await fs.writeJson("./docs/configs.json", src.Configs, { spaces: 2 });
   await fs.writeJson(
     "./docs/chain-configs.json",

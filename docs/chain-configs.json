@@ -1438,6 +1438,19 @@
       {
         "inputs": [
           {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "uint64",
             "name": "id",
             "type": "uint64"
@@ -1570,6 +1583,19 @@
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -3082,6 +3108,19 @@
       {
         "inputs": [
           {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "uint64",
             "name": "id",
             "type": "uint64"
@@ -3214,6 +3253,19 @@
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -4728,6 +4780,19 @@
       {
         "inputs": [
           {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "uint64",
             "name": "id",
             "type": "uint64"
@@ -4860,6 +4925,19 @@
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -7875,6 +7953,19 @@
       {
         "inputs": [
           {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "uint64",
             "name": "id",
             "type": "uint64"
@@ -8007,6 +8098,19 @@
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -9521,6 +9625,19 @@
       {
         "inputs": [
           {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "uint64",
             "name": "id",
             "type": "uint64"
@@ -9653,6 +9770,19 @@
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {

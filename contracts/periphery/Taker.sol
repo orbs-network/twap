@@ -26,6 +26,14 @@ contract Taker is Ownable {
         transferOwnership(_owners[0]);
     }
 
+    function addOwners(address[] memory _owners) external onlyOwner {
+        for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = true;
+    }
+
+    function removeOwners(address[] memory _owners) external onlyOwner {
+        for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = false;
+    }
+
     /**
      * Perform bid
      */

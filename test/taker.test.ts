@@ -28,9 +28,7 @@ describe.only("Taker", async () => {
   beforeEach(() => withUniswapV2Exchange());
 
   beforeEach(async () => {
-    takerContract = await deployArtifact<Taker>("Taker", { from: taker }, [twap.options.address, [taker, deployer]]);
-    deadline = Math.floor(Date.now() / 1000) + 100;
-    signature = await web3().eth.sign(await takerContract.methods.hash(0, deadline).call(), taker);
+    takerContract = await deployArtifact<Taker>("Taker", { from: deployer }, [twap.options.address, [taker, deployer]]);
     await ask(2000, 1000, 0.5);
   });
 
@@ -98,6 +96,20 @@ describe.only("Taker", async () => {
 
     await expectFilled(0, 1000, 0.5);
     expect(await web3().eth.getBalance(taker)).bignumber.gte(nativeBefore);
+  });
+
+  describe("add and remove owners by deployer", () => {
+    it("add and remove", async () => {
+      expect(await takerContract.methods.owners(user).call()).eq(false);
+      await takerContract.methods.addOwners([user]).send({ from: deployer });
+      expect(await takerContract.methods.owners(user).call()).eq(true);
+      await takerContract.methods.removeOwners([user]).send({ from: deployer });
+      expect(await takerContract.methods.owners(user).call()).eq(false);
+    });
+
+    it("only deployer", async () => {
+      await expectRevert(() => takerContract.methods.addOwners([user]).send({ from: taker }), "owner");
+    });
   });
 
   describe("rescue", async () => {
