@@ -1,3 +1,8 @@
+import { account, bn, bn18, web3, zeroAddress } from "@defi.org/web3-candies";
+import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import BigNumber from "bignumber.js";
+import { expect } from "chai";
+import type { Taker } from "../typechain-hardhat/contracts/periphery";
 import {
   deployer,
   dstToken,
@@ -12,12 +17,7 @@ import {
   user,
   withUniswapV2Exchange,
 } from "./fixture";
-import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { expect } from "chai";
 import { ask, expectFilled } from "./twap-utils";
-import { account, bn, bn18, erc20, iweth, web3, zeroAddress } from "@defi.org/web3-candies";
-import type { Taker } from "../typechain-hardhat/contracts/periphery";
-import BigNumber from "bignumber.js";
 
 describe.only("Taker", async () => {
   let takerContract: Taker;
