@@ -1,4 +1,4 @@
-import { chainId, contract, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
+import { chainId, contract, estimateGasPrice, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
 import {
   artifact,
   askDeployer,
@@ -22,11 +22,9 @@ task("deploy").setAction(async () => {
   const config = require("./src/configs").chainConfig(await chainId());
 
   const takers = [];
-  await deploy({
-    contractName: "Taker",
-    args: [config.twapAddress, takers],
-    waitForConfirmations: 1,
-  });
+
+  const gas = await estimateGasPrice();
+  // const address = await deploy({ contractName: "Taker", args: [config.twapAddress, takers], waitForConfirmations: 1 });
 });
 
 task("github-pages").setAction(async () => {

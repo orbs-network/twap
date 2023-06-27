@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "../IExchange.sol";
 import "../OrderLib.sol";
@@ -22,10 +21,10 @@ contract Taker is Ownable {
 
     constructor(TWAP _twap, address[] memory _owners) {
         twap = _twap;
-        for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = true;
+        addOwners(_owners);
     }
 
-    function addOwners(address[] memory _owners) external onlyOwner {
+    function addOwners(address[] memory _owners) public onlyOwner {
         for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = true;
     }
 
