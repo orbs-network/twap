@@ -19,10 +19,8 @@ import {
 } from "./fixture";
 import { ask, expectFilled } from "./twap-utils";
 
-describe.only("Taker", async () => {
+describe("Taker", async () => {
   let takerContract: Taker;
-  let deadline: number;
-  let signature: string;
 
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());

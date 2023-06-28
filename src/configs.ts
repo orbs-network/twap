@@ -22,6 +22,7 @@ export enum ParaswapOnlyDex {
   SpookySwap = "SpookySwap",
   Pangolin = "PangolinSwap",
   TraderJoe = "TraderJoe",
+  PancakeSwap = "PancakeSwap,PancakeSwapV2,PancakeSwapV3",
 }
 
 export enum OdosOnlyDex {
@@ -203,6 +204,15 @@ export const Configs = {
     exchangeAddress: "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
     exchangeType: "OpenOceanExchange",
     pathfinderKey: OpenOceanOnlyDex.Thena,
+  } as Config,
+
+  PancakeSwap: {
+    ...ChainConfigs.bsc,
+    name: "PancakeSwap",
+    partner: "Orbs:TWAP:PancakeSwap",
+    exchangeAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+    exchangeType: "ParaswapExchange",
+    pathfinderKey: ParaswapOnlyDex.PancakeSwap,
   } as Config,
 };
 
