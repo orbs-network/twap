@@ -3214,7 +3214,8 @@
       }
     ],
     "integrations": [
-      "Thena"
+      "Thena",
+      "PancakeSwap"
     ]
   },
   "arb": {
