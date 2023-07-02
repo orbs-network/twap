@@ -1499,7 +1499,7 @@
     "partner": "Orbs:TWAP:SpiritSwap",
     "exchangeAddress": "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
     "exchangeType": "ParaswapExchange",
-    "pathfinderKey": "SpiritSwap,SpiritSwapV2"
+    "pathfinderKey": "SpiritSwap,SpiritSwapV2,SpiritSwapV3"
   },
   "SpookySwap": {
     "chainName": "ftm",
@@ -11059,9 +11059,9 @@
     ],
     "name": "Thena",
     "partner": "Orbs:TWAP:Thena",
-    "exchangeAddress": "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
-    "exchangeType": "OpenOceanExchange",
-    "pathfinderKey": "43,47"
+    "exchangeAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+    "exchangeType": "ParaswapExchange",
+    "pathfinderKey": "Thena,ThenaFusion"
   },
   "PancakeSwap": {
     "chainName": "bsc",
@@ -12673,6 +12673,6 @@
     "partner": "Orbs:TWAP:PancakeSwap",
     "exchangeAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
     "exchangeType": "ParaswapExchange",
-    "pathfinderKey": "PancakeSwap,PancakeSwapV2,PancakeSwapV3"
+    "pathfinderKey": "PancakeSwap,PancakeSwapV2,PancakeswapV3"
   }
 }

@@ -63,7 +63,7 @@ export namespace Paraswap {
     const route = (await response.json()).priceRoute as ParaswapRoute;
     const path = getDirectPath(route, onlyDex);
 
-    let data = "";
+    let data = "0x";
     try {
       if (exchangeAdapter !== zeroAddress) {
         data = await buildSwapData(route, exchangeAdapter);

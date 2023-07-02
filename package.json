@@ -30,7 +30,7 @@
     "test:eth": "NETWORK=ETH BLOCK=14905987 hardhat test",
     "test:ftm": "NETWORK=FTM BLOCK=39800909 hardhat test",
     "test:poly": "NETWORK=POLY hardhat test",
-    "test:avax": "NETWORK=AVAX BLOCK=15609313 hardhat test",
+    "test:avax": "NETWORK=AVAX hardhat test",
     "test:arb": "NETWORK=ARB hardhat test",
     "test:bsc": "NETWORK=BSC hardhat test"
   },

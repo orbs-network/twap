@@ -56,7 +56,7 @@ export namespace OpenOcean {
     const dstUsd = bn(tokens[web3().utils.toChecksumAddress(dst.address)].usd);
     const dstAmount = bn(j.data.outAmount);
 
-    const data = j.data.data || "";
+    const data = j.data.data || "0x";
 
     return {
       dstAmount,

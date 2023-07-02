@@ -15,14 +15,16 @@ export interface TokenData {
 }
 
 export enum ParaswapOnlyDex {
-  UniSwapV2 = "Uniswap",
+  UniSwap = "Uniswap,UniswapV2,UniswapV3",
   SushiSwap = "SushiSwap",
   QuickSwap = "QuickSwap,QuickSwapV3",
-  SpiritSwap = "SpiritSwap,SpiritSwapV2",
+  SpiritSwap = "SpiritSwap,SpiritSwapV2,SpiritSwapV3",
   SpookySwap = "SpookySwap",
   Pangolin = "PangolinSwap",
-  TraderJoe = "TraderJoe",
-  PancakeSwap = "PancakeSwap,PancakeSwapV2,PancakeSwapV3",
+  TraderJoe = "TraderJoe,TraderJoeV2,TraderJoeV2.1",
+  Thena = "Thena,ThenaFusion",
+  PancakeSwap = "PancakeSwap,PancakeSwapV2,PancakeswapV3",
+  Chronos = "Chronos",
 }
 
 export enum OdosOnlyDex {
@@ -201,9 +203,9 @@ export const Configs = {
     ...ChainConfigs.bsc,
     name: "Thena",
     partner: "Orbs:TWAP:Thena",
-    exchangeAddress: "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
-    exchangeType: "OpenOceanExchange",
-    pathfinderKey: OpenOceanOnlyDex.Thena,
+    exchangeAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+    exchangeType: "ParaswapExchange",
+    pathfinderKey: ParaswapOnlyDex.Thena,
   } as Config,
 
   PancakeSwap: {

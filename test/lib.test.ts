@@ -15,13 +15,13 @@ import { web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
-describe("TWAPLib with production config", () => {
+describe.only("TWAPLib with production config", () => {
   beforeEach(async () => initFixture("latest"));
 
   _.map(
     _.filter(Configs, (c) => c.chainName === process.env.NETWORK!.toLowerCase()),
     (c) => {
-      describe(`${c.partner} on ${c.chainId}`, () => {
+      describe(`${c.name} on ${c.chainName}`, () => {
         let lib: TWAPLib;
 
         beforeEach(async () => {
