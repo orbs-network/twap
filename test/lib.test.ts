@@ -151,7 +151,7 @@ describe.only("TWAPLib with production config", () => {
           );
         });
 
-        describe.only("with order", () => {
+        describe("with order", () => {
           let orderId: number = -1;
 
           beforeEach(async function () {
