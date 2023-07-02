@@ -4407,7 +4407,7 @@
       {
         "inputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "_twap",
             "type": "address"
           },
@@ -4596,7 +4596,7 @@
         "name": "twap",
         "outputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "",
             "type": "address"
           }
@@ -6019,7 +6019,7 @@
       {
         "inputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "_twap",
             "type": "address"
           },
@@ -6208,7 +6208,7 @@
         "name": "twap",
         "outputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "",
             "type": "address"
           }
@@ -7631,7 +7631,7 @@
       {
         "inputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "_twap",
             "type": "address"
           },
@@ -7820,7 +7820,7 @@
         "name": "twap",
         "outputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "",
             "type": "address"
           }
@@ -9243,7 +9243,7 @@
       {
         "inputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "_twap",
             "type": "address"
           },
@@ -9432,7 +9432,7 @@
         "name": "twap",
         "outputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "",
             "type": "address"
           }
@@ -10855,7 +10855,7 @@
       {
         "inputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "_twap",
             "type": "address"
           },
@@ -11044,7 +11044,7 @@
         "name": "twap",
         "outputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "",
             "type": "address"
           }
@@ -12467,7 +12467,7 @@
       {
         "inputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "_twap",
             "type": "address"
           },
@@ -12656,7 +12656,7 @@
         "name": "twap",
         "outputs": [
           {
-            "internalType": "contract TWAP",
+            "internalType": "contract TWAPV3",
             "name": "",
             "type": "address"
           }

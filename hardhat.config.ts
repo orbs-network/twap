@@ -23,8 +23,11 @@ task("deploy").setAction(async () => {
 
   const takers = [];
 
-  const gas = await estimateGasPrice();
-  // const address = await deploy({ contractName: "Taker", args: [config.twapAddress, takers], waitForConfirmations: 1 });
+  const address = await deploy({
+    contractName: "Taker",
+    args: [config.twapAddress, takers],
+    waitForConfirmations: 1,
+  });
 });
 
 task("github-pages").setAction(async () => {
