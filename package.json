@@ -8,7 +8,7 @@
   "author": "Orbs",
   "license": "MIT",
   "dependencies": {
-    "@defi.org/web3-candies": "4.x"
+    "@defi.org/web3-candies": "4.16.x"
   },
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
