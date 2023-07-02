@@ -5,7 +5,6 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
-import "../IExchange.sol";
 import "../OrderLib.sol";
 import "../TWAP.sol";
 
@@ -60,7 +59,7 @@ contract Taker is Ownable {
         if (o.ask.dstToken != twap.iweth() && o.ask.dstToken != address(0) && feeExchange != address(0)) {
             uint256 dstAmount = ERC20(o.ask.dstToken).balanceOf(address(this));
             ERC20(o.ask.dstToken).safeIncreaseAllowance(feeExchange, dstAmount);
-            IExchange(feeExchange).swap(o.ask.dstToken, twap.iweth(), dstAmount, feeMinAmountOut, o.ask.data, feeData);
+            IExchangeV3(feeExchange).swap(o.ask.dstToken, twap.iweth(), dstAmount, feeMinAmountOut, feeData);
         }
 
         rescue(o.ask.dstToken);
@@ -89,4 +88,27 @@ contract Taker is Ownable {
         require(owners[msg.sender], "Taker:onlyOwners");
         _;
     }
+}
+
+interface IExchangeV3 {
+    /**
+     * Returns actual output amount after fees and price impact
+     */
+    function getAmountOut(
+        address srcToken,
+        address dstToken,
+        uint256 amountIn,
+        bytes calldata bidData
+    ) external view returns (uint256 amountOut);
+
+    /**
+     * Swaps amountIn to amount out using abi encoded data (can either be path or more complex data)
+     */
+    function swap(
+        address srcToken,
+        address dstToken,
+        uint256 amountIn,
+        uint256 amountOutMin,
+        bytes calldata bidData
+    ) external;
 }
