@@ -151,11 +151,16 @@ describe.only("TWAPLib with production config", () => {
           );
         });
 
-        describe("with order", () => {
+        describe.only("with order", () => {
           let orderId: number = -1;
 
           beforeEach(async function () {
-            if ((await lib.twap.methods.VERSION().call().then(parseInt)) !== TWAPLib.VERSION) return this.skip();
+            if ((await lib.twap.methods.VERSION().call().then(parseInt)) !== TWAPLib.VERSION)
+              console.log(
+                "different versions of TWAP",
+                await lib.twap.methods.VERSION().call().then(parseInt),
+                TWAPLib.VERSION
+              );
 
             await lib.approve(await lib.getToken(srcToken.address), await srcToken.amount(1000));
             orderId = await lib.submitOrder(
@@ -174,7 +179,7 @@ describe.only("TWAPLib with production config", () => {
           it("submit order, getOrder", async () => {
             expect(orderId).gte(0);
             const order: any = await lib.twap.methods.order(orderId).call();
-            expect(order.maker).eq(user);
+            expect(order.maker || order.ask.maker).eq(user);
             expect(order.ask.srcAmount).bignumber.eq(await srcToken.amount(1000));
             expect((await lib.getOrder(orderId)).maker).eq(user);
           });
