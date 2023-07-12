@@ -54,7 +54,7 @@ export namespace Paraswap {
       amount: amountIn.toString(),
       network: chainId.toString(),
       side: "SELL",
-      maxImpact: "50",
+      maxImpact: "100",
       includeDEXS: onlyDex || "",
       partner: partner || "",
     });
