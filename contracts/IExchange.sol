@@ -1,23 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "./OrderLib.sol";
+import {OrderLib} from "./OrderLib.sol";
 
 /**
  * Adapter between TWAP and exchange implementations
  */
 interface IExchange {
-    /**
-     * Returns actual output amount after fees and price impact
-     */
-    function getAmountOut(
-        address srcToken,
-        address dstToken,
-        uint256 amountIn,
-        bytes calldata askData,
-        bytes calldata bidData
-    ) external view returns (uint256 amountOut);
-
     /**
      * Swaps amountIn to amount out using abi encoded data (can either be path or more complex data)
      */

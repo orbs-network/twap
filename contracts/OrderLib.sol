@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "@openzeppelin/contracts/utils/math/Math.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 library OrderLib {
     struct Order {
         uint64 id; // order id
-        uint32 status; // status: deadline, canceled or completed
+        uint32 status; // deadline canceled or completed
         uint32 time; // order creation timestamp
-        uint32 filledTime; // last fill timestamp
-        uint256 srcFilledAmount; // srcToken total filled amount
         address maker; // order creator
         Ask ask; // order ask parameters
         Bid bid; // current winning bid
+        Filled filled; // total filled data
     }
 
     struct Ask {
         address exchange; // restirct swap to this exchange, or zero address for any exchange
         address srcToken; // input token
         address dstToken; // output token
-        uint256 srcAmount; // input total order amount
-        uint256 srcBidAmount; // input chunk size
-        uint256 dstMinAmount; // minimum output chunk size
+        uint256 srcBidAmount; // srcToken amount per chunk
+        uint256 dstMinAmount; // dstToken minimum output per chunk
+        uint32 count; // number of chunks
         uint32 deadline; // order duration timestamp
         uint32 bidDelay; // minimum delay in seconds before a bid can be filled
         uint32 fillDelay; // minimum delay in seconds between chunks
@@ -32,40 +31,28 @@ library OrderLib {
         uint32 time; // bid creation timestamp
         address taker; // bidder
         address exchange; // execute bid on this exchange, never zero
-        uint256 dstAmount; // dstToken actual output amount for this bid after exchange fees, taker fee and slippage
+        uint256 dstAmount; // dstToken actual output amount to maker for this bid after exchange fees, taker fee and slippage
         uint256 dstFee; // dstToken requested by taker for performing the bid and fill
         bytes data; // optional additional swap data for exchange
+    }
+
+    struct Filled {
+        uint32 time; // last fill timestamp
+        uint32 count; // filled chunks
+        uint256 dstAmount; // dstToken total filled amount (for maker)
+        uint256 dstFee; // dstToken total fee amount (for taker)
     }
 
     /**
      * new Order for msg.sender
      */
-    function newOrder(uint64 id, Ask calldata ask) internal view returns (Order memory) {
-        require(
-            block.timestamp < type(uint32).max &&
-                ask.deadline < type(uint32).max &&
-                ask.bidDelay < type(uint32).max &&
-                ask.fillDelay < type(uint32).max,
-            "uint32"
-        );
-        return
-            Order(
-                id,
-                ask.deadline, // status
-                uint32(block.timestamp), // time
-                0, // filledTime
-                0, // srcFilledAmount
-                msg.sender, // maker
-                ask,
-                Bid(
-                    0, // time
-                    address(0), // taker
-                    address(0), // exchange
-                    0, // dstAmount
-                    0, // dstFee
-                    new bytes(0) // data
-                )
-            );
+    function newOrder(uint64 id, Ask calldata ask) internal view returns (Order memory order) {
+        require(block.timestamp < type(uint32).max, "uint32");
+        order.id = id;
+        order.status = ask.deadline;
+        order.time = uint32(block.timestamp);
+        order.maker = msg.sender;
+        order.ask = ask;
     }
 
     /**
@@ -74,42 +61,29 @@ library OrderLib {
     function newBid(
         Order memory self,
         address exchange,
-        uint256 dstAmountOut,
+        uint256 dstAmount,
         uint256 dstFee,
         bytes memory data
     ) internal view {
         require(block.timestamp < type(uint32).max, "uint32");
-        self.bid = OrderLib.Bid(uint32(block.timestamp), msg.sender, exchange, dstAmountOut, dstFee, data);
+        self.bid = OrderLib.Bid(uint32(block.timestamp), msg.sender, exchange, dstAmount, dstFee, data);
     }
 
     /**
      * chunk filled
      */
-    function filled(Order memory self, uint256 srcAmountIn) internal view {
+    function newFill(Order memory self, uint256 dstAmount) internal view {
         require(block.timestamp < type(uint32).max, "uint32");
+        self.filled.time = uint32(block.timestamp);
+        self.filled.count += 1;
+        self.filled.dstAmount += dstAmount;
+        self.filled.dstFee += self.bid.dstFee;
         delete self.bid;
-        self.filledTime = uint32(block.timestamp);
-        self.srcFilledAmount += srcAmountIn;
     }
 
-    /**
-     * next chunk srcToken: either ask.srcBidAmount or leftover
-     */
-    function srcBidAmountNext(Order memory self) internal pure returns (uint256) {
-        return Math.min(self.ask.srcBidAmount, self.ask.srcAmount - self.srcFilledAmount);
-    }
-
-    /**
-     * next chunk dstToken minimum amount out
-     */
-    function dstMinAmountNext(Order memory self) internal pure returns (uint256) {
-        return (self.ask.dstMinAmount * srcBidAmountNext(self)) / self.ask.srcBidAmount;
-    }
-
-    /**
-     * next chunk expected output in dstToken, or winning bid, to be sent to maker (after fees)
-     */
-    function dstExpectedOutNext(Order memory self) internal pure returns (uint256) {
-        return Math.max(self.bid.dstAmount, dstMinAmountNext(self));
+    function hasAllowance(Order memory self, address target) internal view returns (bool) {
+        return
+            IERC20(self.ask.srcToken).balanceOf(self.maker) >= self.ask.srcBidAmount &&
+            IERC20(self.ask.srcToken).allowance(self.maker, target) >= self.ask.srcBidAmount;
     }
 }

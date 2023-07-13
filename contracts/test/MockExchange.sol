@@ -1,22 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../IExchange.sol";
+import {IExchange} from "../IExchange.sol";
 
 contract MockExchange is IExchange {
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     uint256[] public amounts;
 
     function setMockAmounts(uint256[] memory _amounts) public {
         amounts = _amounts;
-    }
-
-    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata) public view returns (uint256) {
-        return amounts[amounts.length - 1];
     }
 
     /**
@@ -30,8 +25,8 @@ contract MockExchange is IExchange {
         bytes calldata,
         bytes calldata
     ) public {
-        ERC20 srcToken = ERC20(_srcToken);
-        ERC20 dstToken = ERC20(_dstToken);
+        IERC20 srcToken = IERC20(_srcToken);
+        IERC20 dstToken = IERC20(_dstToken);
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
 
         uint256 amountOut = amounts[amounts.length - 1];

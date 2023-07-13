@@ -1,9 +1,8 @@
-import { expect } from "chai";
-import hardhatConfig from "../hardhat.config";
-import { ask, endTime, time } from "./twap-utils";
-import { dstToken, exchange, initFixture, lens, srcToken, taker, twap, user, withOdosExchange } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { expect } from "chai";
 import _ from "lodash";
+import hardhatConfig from "../hardhat.config";
+import { ask, dstToken, endTime, exchange, initFixture, lens, srcToken, taker, time, twap, user } from "./fixture";
 
 /**
  * very long test: only enable this without logs, otherwise will timeout

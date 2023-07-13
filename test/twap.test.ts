@@ -1,9 +1,19 @@
 import { account, iweth, parseEvents, web3, zeroAddress } from "@defi.org/web3-candies";
+import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
+import { expect } from "chai";
 import {
+  ask,
+  bid,
   deployer,
   dstToken,
+  endTime,
   exchange,
+  expectFilled,
+  expectUniV2SrcDstPrice,
+  fill,
   initFixture,
+  network,
+  order,
   setMockExchangeAmountOut,
   srcToken,
   swapBidDataForUniV2,
@@ -13,18 +23,15 @@ import {
   userSrcTokenStartBalance,
   withMockExchange,
   withUniswapV2Exchange,
-  network,
 } from "./fixture";
-import { expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { expect } from "chai";
-import { ask, bid, endTime, expectFilled, fill, order } from "./twap-utils";
 
-describe("TWAP", async () => {
+describe.only("TWAP", async () => {
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
+  beforeEach(() => expectUniV2SrcDstPrice(1800));
 
   it("single chunk", async () => {
-    await ask(2000, 2000, 1);
+    await ask({ srcBidAmount: 2000, dstMinAmount: 1 });
     await bid(0);
     await mineBlock(60);
     await fill(0);
@@ -33,7 +40,7 @@ describe("TWAP", async () => {
   });
 
   it("mutiple chunks", async () => {
-    await ask(10_000, 2500, 1.25);
+    await ask({ srcBidAmount: 2500, dstMinAmount: 1.25, chunks: 4 });
 
     for (let i = 1; i <= 4; i++) {
       await bid(0);
@@ -45,8 +52,8 @@ describe("TWAP", async () => {
     await expectFilled(0, 10_000, 5);
   });
 
-  it("last chunk may be partial amount", async () => {
-    await ask(10_000, 4000, 2, undefined, undefined, undefined, 60);
+  it("no partial amounts, order filled after count", async () => {
+    await ask({ srcBidAmount: 4000, dstMinAmount: 2, chunks: 2, bidDelay: 60 });
 
     await bid(0);
     await mineBlock(60);
@@ -59,15 +66,14 @@ describe("TWAP", async () => {
     await mineBlock(60);
 
     await expectFilled(0, 8000, 4);
+    expect((await order(0)).filled.count).bignumber.eq(2);
+    expect((await order(0)).filled.dstAmount).bignumber.gte(4);
 
-    await bid(0);
-    await mineBlock(60);
-    await fill(0);
-    await expectFilled(0, 10_000, 5);
+    await expectRevert(() => bid(0), "TWAP:bid:status");
   });
 
   it("outbid current bid within pending period", async () => {
-    await ask(2000, 1000, 0.5);
+    await ask({ srcBidAmount: 1000, dstMinAmount: 0.5, chunks: 2 });
 
     await bid(0);
     await mineBlock(1);
@@ -81,7 +87,7 @@ describe("TWAP", async () => {
   });
 
   it("outbid current bid within pending period same path and amount but lower fee", async () => {
-    await ask(2000, 1000, 0.5);
+    await ask({ srcBidAmount: 1000, dstMinAmount: 0.5, chunks: 2 });
 
     await bid(0);
     expect((await order(0)).bid.dstFee).bignumber.eq(await dstToken.amount(0.01));
@@ -96,12 +102,12 @@ describe("TWAP", async () => {
   });
 
   it("enforce bids 1% better than previous", async () => {
-    await ask(2000, 1000, 0.5);
+    await ask({ srcBidAmount: 1000, dstMinAmount: 0.5, chunks: 2 });
     await withMockExchange(100);
     await bid(0);
 
     await setMockExchangeAmountOut(100.999);
-    await expectRevert(() => bid(0), "low bid");
+    await expectRevert(() => bid(0), "TWAP:bid:lowBid");
 
     await setMockExchangeAmountOut(101);
     await bid(0);
@@ -109,21 +115,21 @@ describe("TWAP", async () => {
 
   it("clears stale unfilled bid after max bidding window", async () => {
     expect(await twap.methods.STALE_BID_SECONDS().call()).bignumber.eq(600);
-    await ask(2000, 1000, 0.5, undefined, undefined, 60);
+    await ask({ srcBidAmount: 1000, dstMinAmount: 0.5, chunks: 2, bidDelay: 60 });
 
     await withMockExchange(1);
     await bid(0);
     await setMockExchangeAmountOut(0.6);
 
     await mineBlock(500);
-    await expectRevert(() => bid(0), "low bid");
+    await expectRevert(() => bid(0), "TWAP:bid:lowBid");
 
     await mineBlock(100); // stale
     await bid(0); // lower bid won
   });
 
   it("supports market orders, english auction incentivizes best competitive price", async () => {
-    await ask(2000, 1000, 0.000001);
+    await ask({ srcBidAmount: 1000, dstMinAmount: 0.000001, chunks: 2 });
     await bid(0, 0.4);
     await bid(0, 0.3);
     await bid(0, 0.1);
@@ -134,7 +140,7 @@ describe("TWAP", async () => {
   });
 
   it("prevent winning the bid by manipulating exchange price", async () => {
-    await ask(10_000, 2000, 0);
+    await ask({ srcBidAmount: 2000, dstMinAmount: 0, chunks: 5 });
 
     await withMockExchange(100); // win the bid with very high price that no one can outbid
     await bid(0, 1);
@@ -143,19 +149,19 @@ describe("TWAP", async () => {
 
     await mineBlock(100);
     await setMockExchangeAmountOut(1.1); // bring price back to market
-    await expectRevert(() => fill(0), "min out"); // enforces won bid price
+    await expectRevert(() => fill(0), "TWAP:swap:dstMinAmount"); // enforces won bid price
   });
 
   it("slippage percent allows price slippage", async () => {
-    await ask(10_000, 2000, 0);
+    await ask({ srcBidAmount: 2000, dstMinAmount: 0, chunks: 5 });
     await withMockExchange(1000);
     await bid(0, 1.234, 10); // %10 slippage
     await mineBlock(60);
 
     await setMockExchangeAmountOut(850);
-    await expectRevert(() => fill(0), "min out");
+    await expectRevert(() => fill(0), "TWAP:swap:dstMinAmount");
     await setMockExchangeAmountOut(899);
-    await expectRevert(() => fill(0), "min out");
+    await expectRevert(() => fill(0), "TWAP:swap:dstMinAmount");
 
     await setMockExchangeAmountOut(900);
     await fill(0);
@@ -164,11 +170,11 @@ describe("TWAP", async () => {
   });
 
   it("slippage percent at bid time is part of the bidding war", async () => {
-    await ask(10_000, 2000, 0);
+    await ask({ srcBidAmount: 2000, dstMinAmount: 0, chunks: 5 });
     await withMockExchange(100);
     await bid(0, 1, 10); // output 89
-    await expectRevert(() => bid(0, 5, 10), "low bid"); // output 85
-    await expectRevert(() => bid(0, 6, 5), "low bid"); // output 89
+    await expectRevert(() => bid(0, 5, 10), "TWAP:bid:lowBid"); // output 85
+    await expectRevert(() => bid(0, 6, 5), "TWAP:bid:lowBid"); // output 89
     await bid(0, 5, 5); // output 90
     await bid(0, 5, 1); // output 94
     await bid(0, 1, 1); // output 98
@@ -209,7 +215,7 @@ describe("TWAP", async () => {
 
   describe("prune stale invalid order", async () => {
     it("when no approval", async () => {
-      await ask(2000, 1000, 0.5);
+      await ask({ srcBidAmount: 1000, dstMinAmount: 0.5, chunks: 2 });
 
       await srcToken.methods.approve(twap.options.address, 0).send({ from: user });
       const tx = await twap.methods.prune(0).send({ from: deployer });
@@ -222,7 +228,7 @@ describe("TWAP", async () => {
     });
 
     it("when no balance", async () => {
-      await ask(2000, 1000, 0.5);
+      await ask({ srcBidAmount: 1000, dstMinAmount: 0.5, chunks: 2 });
 
       await srcToken.methods.transfer(deployer, await srcToken.methods.balanceOf(user).call()).send({ from: user });
       await twap.methods.prune(0).send({ from: deployer });

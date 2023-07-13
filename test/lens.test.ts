@@ -9,9 +9,12 @@ import {
   twap,
   user,
   withUniswapV2Exchange,
+  ask,
+  bid,
+  endTime,
+  fill,
 } from "./fixture";
 import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
-import { ask, bid, endTime, fill } from "./twap-utils";
 import { expect } from "chai";
 import { account, maxUint256, zeroAddress } from "@defi.org/web3-candies";
 

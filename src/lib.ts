@@ -17,14 +17,14 @@ import {
   zeroAddress,
 } from "@defi.org/web3-candies";
 import type { TWAP } from "../typechain-hardhat/contracts";
-import type { Lens } from "../typechain-hardhat/contracts/periphery";
+import type { Lens } from "../typechain-hardhat/contracts/periphery/Lens.sol";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
 import { Odos } from "./odos";
 import { OpenOcean } from "./openocean";
 
 export class TWAPLib {
-  public static VERSION = 4;
+  public static VERSION = 5;
   public twap: TWAP;
   public lens: Lens;
 
@@ -112,7 +112,7 @@ export class TWAPLib {
 
   isMarketOrder = (order: Order) => order.ask.dstMinAmount.lte(1);
 
-  orderProgress = (order: Order) => parseFloat(order.srcFilledAmount.div(order.ask.srcAmount).toFixed(4));
+  orderProgress = (order: Order) => parseFloat(order.filled.srcAmount.div(order.ask.srcAmount).toFixed(4));
 
   percentAboveMarket = (srcUsdMarket: BN.Value, dstUsdMarket: BN.Value, limitDstPriceFor1Src: BN.Value) =>
     parseFloat(BN(limitDstPriceFor1Src).div(BN(srcUsdMarket).div(dstUsdMarket)).minus(1).toFixed(4));
@@ -327,10 +327,8 @@ export class TWAPLib {
     return {
       id: Number(r.id),
       status: Number(r.status),
-      time: Number(r.time || r.ask.time),
-      filledTime: Number(r.filledTime),
-      srcFilledAmount: BN(r.srcFilledAmount),
-      maker: Web3.utils.toChecksumAddress(r.maker || r.ask.maker),
+      time: Number(r.time),
+      maker: Web3.utils.toChecksumAddress(r.maker),
       ask: {
         deadline: Number(r.ask.deadline),
         bidDelay: Number(r.ask.bidDelay),
@@ -349,6 +347,12 @@ export class TWAPLib {
         dstAmount: BN(r.bid?.dstAmount || zero),
         dstFee: BN(r.bid?.dstFee || zero),
         data: r.bid?.data || "",
+      },
+      filled: {
+        time: Number(r.filled.time),
+        srcAmount: BN(r.filled.srcAmount),
+        dstAmount: BN(r.filled.dstAmount),
+        dstFee: BN(r.filled.dstFee),
       },
     };
   }
@@ -414,7 +418,7 @@ export class TWAPLib {
     if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
       throw new Error(`mismatched exchange and config`);
 
-    const srcNextChunkAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.srcFilledAmount));
+    const srcNextChunkAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.filled.srcAmount));
 
     const [srcToken, dstToken] = await Promise.all([
       this.getToken(order.ask.srcToken),
@@ -443,8 +447,6 @@ export interface Order {
   id: number;
   status: number;
   time: number;
-  filledTime: number;
-  srcFilledAmount: BN;
   maker: string;
   ask: {
     deadline: number;
@@ -464,6 +466,12 @@ export interface Order {
     dstAmount: BN;
     dstFee: BN;
     data: string;
+  };
+  filled: {
+    time: number;
+    srcAmount: BN;
+    dstAmount: BN;
+    dstFee: BN;
   };
 }
 

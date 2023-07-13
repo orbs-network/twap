@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
-import "../IExchange.sol";
-import "../OrderLib.sol";
-import "../TWAP.sol";
+import {IExchange} from "../IExchange.sol";
+import {OrderLib} from "../OrderLib.sol";
+import {TWAP} from "../TWAP.sol";
+import {IWETH} from "../IWETH.sol";
 
 /**
  * Helper contract for TWAP takers
  * optionally swaps fee to native token at fill
  */
 contract Taker is Ownable {
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     TWAP public immutable twap;
     mapping(address => bool) public owners;
@@ -58,8 +59,8 @@ contract Taker is Ownable {
         OrderLib.Order memory o = twap.order(id);
 
         if (o.ask.dstToken != twap.iweth() && o.ask.dstToken != address(0) && feeExchange != address(0)) {
-            uint256 dstAmount = ERC20(o.ask.dstToken).balanceOf(address(this));
-            ERC20(o.ask.dstToken).safeIncreaseAllowance(feeExchange, dstAmount);
+            uint256 dstAmount = IERC20(o.ask.dstToken).balanceOf(address(this));
+            IERC20(o.ask.dstToken).safeIncreaseAllowance(feeExchange, dstAmount);
             IExchange(feeExchange).swap(o.ask.dstToken, twap.iweth(), dstAmount, feeMinAmountOut, o.ask.data, feeData);
         }
 
@@ -70,16 +71,16 @@ contract Taker is Ownable {
      * Send all balance of token, wrapped native and native to sender
      */
     function rescue(address token) public onlyOwners {
-        if (ERC20(twap.iweth()).balanceOf(address(this)) > 0) {
-            IWETH(twap.iweth()).withdraw(ERC20(twap.iweth()).balanceOf(address(this)));
+        if (IERC20(twap.iweth()).balanceOf(address(this)) > 0) {
+            IWETH(twap.iweth()).withdraw(IERC20(twap.iweth()).balanceOf(address(this)));
         }
 
         if (address(this).balance > 0) {
             Address.sendValue(payable(msg.sender), address(this).balance);
         }
 
-        if (token != address(0) && ERC20(token).balanceOf(address(this)) > 0) {
-            ERC20(token).safeTransfer(msg.sender, ERC20(token).balanceOf(address(this)));
+        if (token != address(0) && IERC20(token).balanceOf(address(this)) > 0) {
+            IERC20(token).safeTransfer(msg.sender, IERC20(token).balanceOf(address(this)));
         }
     }
 

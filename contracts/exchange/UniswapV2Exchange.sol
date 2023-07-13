@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../IExchange.sol";
+import {IExchange} from "../IExchange.sol";
 
 /**
  * Adapter between IUniswapV2 and TWAP's IExchange interface
  */
 contract UniswapV2Exchange is IExchange {
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     IUniswapV2 public immutable uniswap;
 
@@ -19,7 +18,7 @@ contract UniswapV2Exchange is IExchange {
     }
 
     /**
-     * data = abi encoded: feeOnTransfer(bool), path(address[])
+     * bidData: bool feeOnTransfer, address[] path
      */
     function getAmountOut(
         address srcToken,
@@ -29,28 +28,28 @@ contract UniswapV2Exchange is IExchange {
         bytes calldata bidData
     ) public view returns (uint256 amountOut) {
         (, address[] memory path) = decode(bidData);
-        require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
+        require(path[0] == srcToken && path[path.length - 1] == dstToken, "UniswapV2Exchange:path");
         return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
     }
 
     /**
-     * data = abi encoded: feeOnTransfer(bool), path(address[])
+     * bidData: bool feeOnTransfer, address[] path
      */
     function swap(
-        address _srcToken,
-        address,
+        address srcToken,
+        address dstToken,
         uint256 amountIn,
         uint256 amountOutMin,
         bytes calldata,
         bytes calldata bidData
     ) public {
         (bool fotTokens, address[] memory path) = decode(bidData);
-        ERC20 srcToken = ERC20(_srcToken);
+        require(path[0] == srcToken && path[path.length - 1] == dstToken, "UniswapV2Exchange:path");
 
-        srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
-        amountIn = srcToken.balanceOf(address(this)); // support FoT tokens
+        IERC20(srcToken).safeTransferFrom(msg.sender, address(this), amountIn);
+        amountIn = IERC20(srcToken).balanceOf(address(this)); // support FoT tokens
 
-        srcToken.safeIncreaseAllowance(address(uniswap), amountIn);
+        IERC20(srcToken).safeIncreaseAllowance(address(uniswap), amountIn);
 
         if (fotTokens) {
             uniswap.swapExactTokensForTokensSupportingFeeOnTransferTokens(

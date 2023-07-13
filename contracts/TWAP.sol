@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "./OrderLib.sol";
-import "./IExchange.sol";
-import "./IWETH.sol";
+import {OrderLib} from "./OrderLib.sol";
+import {IExchange} from "./IExchange.sol";
+import {IWETH} from "./IWETH.sol";
 
 /**
  * ---------------------------
@@ -37,11 +36,11 @@ import "./IWETH.sol";
  *
  */
 contract TWAP is ReentrancyGuard {
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
     using Address for address;
     using OrderLib for OrderLib.Order;
 
-    uint8 public constant VERSION = 4;
+    uint8 public constant VERSION = 5;
 
     event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
     event OrderBid(
@@ -56,25 +55,24 @@ contract TWAP is ReentrancyGuard {
         address indexed maker,
         address indexed exchange,
         address taker,
-        uint256 srcAmountIn,
-        uint256 dstAmountOut,
-        uint256 dstFee,
-        uint256 srcFilledAmount
+        uint32 count,
+        uint256 dstAmount,
+        uint256 dstFee
     );
     event OrderCompleted(uint64 indexed id, address indexed maker, address indexed exchange, address taker);
     event OrderCanceled(uint64 indexed id, address indexed maker, address sender);
 
     uint32 public constant PERCENT_BASE = 100_000;
     uint32 public constant MIN_OUTBID_PERCENT = 101_000;
-    uint32 public constant STALE_BID_SECONDS = 60 * 10;
-    uint32 public constant MIN_BID_DELAY_SECONDS = 30;
+    uint32 public constant STALE_BID_SECONDS = 10 minutes;
+    uint32 public constant MIN_BID_DELAY_SECONDS = 30 seconds;
 
     uint32 public constant STATUS_CANCELED = 1;
     uint32 public constant STATUS_COMPLETED = 2;
 
     OrderLib.Order[] public book;
     uint32[] public status; // STATUS or deadline timestamp by order id, used for gas efficient order filtering
-    mapping(address => uint64[]) public makerOrders;
+    mapping(address => uint64[]) public _makerOrders;
 
     address public immutable iweth;
 
@@ -88,7 +86,7 @@ contract TWAP is ReentrancyGuard {
      * returns Order by order id
      */
     function order(uint64 id) public view returns (OrderLib.Order memory) {
-        require(id < length(), "invalid id");
+        require(id < length(), "id");
         return book[id];
     }
 
@@ -99,8 +97,27 @@ contract TWAP is ReentrancyGuard {
         return uint64(book.length);
     }
 
-    function orderIdsByMaker(address maker) external view returns (uint64[] memory) {
-        return makerOrders[maker];
+    /**
+     * returns order ids by maker
+     */
+    function makerOrders(address maker) external view returns (uint64[] memory) {
+        return _makerOrders[maker];
+    }
+
+    /**
+     * returns the dstAmountOut for the next chunk of the order, without any onchain side effects other than spent gas, by executing the swap on the exchange, with data as bid, then reverting.
+     * marked as non-view to allow to temporarily execute swap and revert.
+     * on successful swap returns the dstAmountOut but reverts the actual swap and other side effects.
+     * this does not attempt to handle MEV or protect against any other exchange manipulations.
+     */
+    function simulateAmountOut(uint64 id, address exchange, bytes calldata data) public returns (uint256 dstAmountOut) {
+        (bool success, bytes memory returndata) = address(this).delegatecall( // solhint-disable-line avoid-low-level-calls
+            abi.encodeWithSelector(this._simulateSwapAndRevert.selector, id, exchange, data)
+        );
+        require(!success, string(returndata));
+        bytes32 h;
+        (dstAmountOut, h) = abi.decode(returndata, (uint256, bytes32));
+        require(h == keccak256(abi.encode(dstAmountOut)), "TWAP:getAmountOut:simulate");
     }
 
     // -------- actions --------
@@ -110,33 +127,34 @@ contract TWAP is ReentrancyGuard {
      *
      * returns order id, emits OrderCreated
      */
-    function ask(OrderLib.Ask calldata _ask) external nonReentrant returns (uint64 id) {
+    function ask(OrderLib.Ask calldata a) external nonReentrant returns (uint64 id) {
         require(
-            _ask.srcToken != address(0) &&
-                _ask.srcToken != _ask.dstToken &&
-                (_ask.srcToken != iweth || _ask.dstToken != address(0)) &&
-                _ask.srcAmount > 0 &&
-                _ask.srcBidAmount > 0 &&
-                _ask.srcBidAmount <= _ask.srcAmount &&
-                _ask.dstMinAmount > 0 &&
-                _ask.deadline > block.timestamp &&
-                _ask.bidDelay >= MIN_BID_DELAY_SECONDS,
-            "params"
+            a.srcToken != address(0) &&
+                a.srcToken != a.dstToken &&
+                (a.srcToken != iweth || a.dstToken != address(0)) &&
+                a.srcBidAmount > 0 &&
+                a.dstMinAmount > 0 &&
+                a.count > 0 &&
+                a.deadline > block.timestamp &&
+                a.bidDelay >= MIN_BID_DELAY_SECONDS,
+            "TWAP:ask:params"
         );
 
-        OrderLib.Order memory o = OrderLib.newOrder(length(), _ask);
-        verifyMakerBalance(o);
+        OrderLib.Order memory o = OrderLib.newOrder(length(), a);
+        require(o.hasAllowance(address(this)), "TWAP:ask:allowance");
 
         book.push(o);
         status.push(o.status);
-        makerOrders[msg.sender].push(o.id);
+        _makerOrders[msg.sender].push(o.id);
+
         emit OrderCreated(o.id, o.maker, o.ask.exchange, o.ask);
         return o.id;
     }
 
     /**
      * Bid for a specific order by id (msg.sender is taker)
-     * A valid bid is higher than current bid, with sufficient price after fees and after last fill delay. Invalid bids are reverted.
+     * A valid bid is higher than current bid (current bid is stale), with sufficient price after fees and after last fill delay. Invalid bids are reverted.
+     * No token transfers or swaps are performed.
      * id: order id
      * exchange: bid to swap on exchange
      * dstFee: fee to traker in dstToken, taken from the swapped amount
@@ -151,9 +169,26 @@ contract TWAP is ReentrancyGuard {
         uint32 slippagePercent,
         bytes calldata data
     ) external nonReentrant {
-        require(exchange != address(0) && slippagePercent < PERCENT_BASE, "params");
         OrderLib.Order memory o = order(id);
-        uint256 dstAmountOut = verifyBid(o, exchange, dstFee, slippagePercent, data);
+        require(block.timestamp < o.status, "TWAP:bid:status");
+        require(block.timestamp > o.filled.time + o.ask.fillDelay, "TWAP:bid:fillDelay");
+
+        if (!o.hasAllowance(address(this))) return _cancel(id);
+
+        require(exchange != address(0) && slippagePercent < PERCENT_BASE, "TWAP:bid:params");
+        require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "TWAP:bid:exchange");
+
+        uint256 dstAmountOut = simulateAmountOut(id, exchange, data);
+
+        dstAmountOut -= (dstAmountOut * slippagePercent) / PERCENT_BASE;
+        dstAmountOut -= dstFee;
+        require(dstAmountOut >= o.ask.dstMinAmount, "TWAP:bid:dstMinAmount");
+        require(
+            dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE || // outbid by more than MIN_OUTBID_PERCENT
+                block.timestamp > o.bid.time + STALE_BID_SECONDS, // or stale bid
+            "TWAP:bid:lowBid"
+        );
+
         o.newBid(exchange, dstAmountOut, dstFee, data);
         book[id] = o;
         emit OrderBid(o.id, o.maker, exchange, slippagePercent, o.bid);
@@ -167,13 +202,33 @@ contract TWAP is ReentrancyGuard {
      */
     function fill(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
+        require(msg.sender == o.bid.taker, "TWAP:fill:taker");
+        require(block.timestamp < o.status, "TWAP:fill:status");
+        require(block.timestamp > o.bid.time + o.ask.bidDelay, "TWAP:fill:bidDelay");
 
-        (address exchange, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee) = performFill(o);
-        o.filled(srcAmountIn);
+        uint256 dstFee = o.bid.dstFee;
+        address exchange = o.bid.exchange;
 
-        emit OrderFilled(id, o.maker, exchange, msg.sender, srcAmountIn, dstAmountOut, dstFee, o.srcFilledAmount);
+        uint256 dstAmount = _swap(id, exchange, o.bid.data, o.bid.dstAmount + dstFee);
+        require(dstAmount > dstFee, "TWAP:fill:dstFee"); // redudant, for clarity
+        dstAmount -= dstFee;
+        require(dstAmount >= o.ask.dstMinAmount, "TWAP:fill:dstMinAmount"); // redudant, for clarity
 
-        if (o.srcBidAmountNext() == 0) {
+        if (o.ask.dstToken == address(0)) {
+            IWETH(iweth).withdraw(dstAmount + dstFee);
+            Address.sendValue(payable(o.bid.taker), dstFee);
+            Address.sendValue(payable(o.maker), dstAmount);
+        } else {
+            IERC20(o.ask.dstToken).safeTransfer(o.bid.taker, dstFee);
+            IERC20(o.ask.dstToken).safeTransfer(o.maker, dstAmount);
+        }
+
+        // delete bid, count++
+        o.newFill(dstAmount);
+
+        emit OrderFilled(id, o.maker, exchange, msg.sender, o.filled.count, dstAmount, dstFee);
+
+        if (o.filled.count == o.ask.count) {
             status[id] = STATUS_COMPLETED;
             o.status = STATUS_COMPLETED;
             emit OrderCompleted(o.id, o.maker, exchange, msg.sender);
@@ -188,11 +243,8 @@ contract TWAP is ReentrancyGuard {
      */
     function cancel(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
-        require(msg.sender == o.maker, "maker");
-        status[id] = STATUS_CANCELED;
-        o.status = STATUS_CANCELED;
-        book[id] = o;
-        emit OrderCanceled(o.id, o.maker, msg.sender);
+        require(msg.sender == o.maker, "TWAP:cancel:onlyMaker");
+        _cancel(id);
     }
 
     /**
@@ -202,17 +254,10 @@ contract TWAP is ReentrancyGuard {
      */
     function prune(uint64 id) external nonReentrant {
         OrderLib.Order memory o = order(id);
-        require(block.timestamp < o.status, "status");
-        require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
-        require(
-            ERC20(o.ask.srcToken).allowance(o.maker, address(this)) < o.srcBidAmountNext() ||
-                ERC20(o.ask.srcToken).balanceOf(o.maker) < o.srcBidAmountNext(),
-            "valid"
-        );
-        status[id] = STATUS_CANCELED;
-        o.status = STATUS_CANCELED;
-        book[id] = o;
-        emit OrderCanceled(o.id, o.maker, msg.sender);
+        require(block.timestamp < o.status, "TWAP:prune:status");
+        require(block.timestamp > o.filled.time + o.ask.fillDelay, "TWAP:prune:fillDelay");
+        require(!o.hasAllowance(address(this)), "TWAP:prune:valid");
+        _cancel(id);
     }
 
     /**
@@ -220,86 +265,51 @@ contract TWAP is ReentrancyGuard {
      */
 
     /**
-     * verifies the bid against the ask params, reverts on invalid bid.
-     * returns dstAmountOut after taker dstFee, which must be higher than any previous bid, unless previous bid is stale
+     * internal function, always reverts.
+     * simulates the swap on the exchange and revert with dstAmountOut, without any onchain side effects other than spent gas.
+     * marked as public and non-view to allow delegatecall here and mutate state (temporarily).
+     * on successful swap reverts with reason as 64 bytes (uint256 dstAmountOut, bytes32 hash).
+     * the hash must be checked by the caller to ensure the result is an actual dstAmountOut and not other revert reason data.
+     * this does not attempt to handle MEV or protect against any other exchange manipulations.
      */
-    function verifyBid(
-        OrderLib.Order memory o,
-        address exchange,
-        uint256 dstFee,
-        uint32 slippagePercent,
-        bytes calldata data
-    ) private view returns (uint256 dstAmountOut) {
-        require(block.timestamp < o.status, "status"); // deadline, canceled or completed
-        require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
-        require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
-
-        dstAmountOut = IExchange(exchange).getAmountOut(
-            o.ask.srcToken,
-            _dstToken(o),
-            o.srcBidAmountNext(),
-            o.ask.data,
-            data
-        );
-        dstAmountOut -= (dstAmountOut * slippagePercent) / PERCENT_BASE;
-        dstAmountOut -= dstFee;
-
-        require(
-            dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE || // outbid by more than MIN_OUTBID_PERCENT
-                block.timestamp > o.bid.time + STALE_BID_SECONDS, // or stale bid
-            "low bid"
-        );
-        require(dstAmountOut >= o.dstMinAmountNext(), "min out");
-        verifyMakerBalance(o);
-    }
-
-    /**
-     * executes the winning bid. reverts if bid no longer valid.
-     * transfers next chunk srcToken amount from maker, swaps via bid exchange with bid data, transfers dstFee to taker (msg.sender) and
-     * transfers all other dstToken amount to maker
-     */
-    function performFill(
-        OrderLib.Order memory o
-    ) private returns (address exchange, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee) {
-        require(msg.sender == o.bid.taker, "taker");
-        require(block.timestamp < o.status, "status"); // deadline, canceled or completed
-        require(block.timestamp > o.bid.time + o.ask.bidDelay, "bid delay");
-
-        exchange = o.bid.exchange;
-        dstFee = o.bid.dstFee;
-        srcAmountIn = o.srcBidAmountNext();
-        uint256 minOut = o.dstExpectedOutNext();
-
-        ERC20(o.ask.srcToken).safeTransferFrom(o.maker, address(this), srcAmountIn);
-        srcAmountIn = ERC20(o.ask.srcToken).balanceOf(address(this)); // support FoT tokens
-        ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
-
-        IExchange(exchange).swap(o.ask.srcToken, _dstToken(o), srcAmountIn, minOut + dstFee, o.ask.data, o.bid.data);
-
-        dstAmountOut = ERC20(_dstToken(o)).balanceOf(address(this)); // support FoT tokens
-        dstAmountOut -= dstFee;
-        require(dstAmountOut >= minOut, "min out");
-
-        if (o.ask.dstToken == address(0)) {
-            IWETH(iweth).withdraw(ERC20(iweth).balanceOf(address(this)));
-            Address.sendValue(payable(o.bid.taker), dstFee);
-            Address.sendValue(payable(o.maker), dstAmountOut);
-        } else {
-            ERC20(_dstToken(o)).safeTransfer(o.bid.taker, dstFee);
-            ERC20(_dstToken(o)).safeTransfer(o.maker, dstAmountOut);
+    function _simulateSwapAndRevert(uint64 id, address exchange, bytes calldata data) public {
+        uint256 dstAmountOut = _swap(id, exchange, data, 1);
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            let ptr := mload(0x40) // load the free memory pointer
+            mstore(ptr, dstAmountOut) // store the value in memory
+            mstore(add(ptr, 32), keccak256(ptr, 32)) // concat the hash of the value
+            revert(ptr, 64) // revert with the memory data as the message (uint256, bytes32)
         }
     }
 
-    /**
-     * reverts if maker does not hold enough balance srcToken or allowance to be spent here for the next chunk
-     */
-    function verifyMakerBalance(OrderLib.Order memory o) private view {
-        require(ERC20(o.ask.srcToken).allowance(o.maker, address(this)) >= o.srcBidAmountNext(), "maker allowance");
-        require(ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext(), "maker balance");
+    function _swap(
+        uint64 id,
+        address exchange,
+        bytes memory bidData,
+        uint256 dstMinAmount
+    ) private returns (uint256 dstAmountOut) {
+        OrderLib.Order memory o = order(id);
+        uint256 srcAmountIn = o.ask.srcBidAmount;
+        address dstToken = o.ask.dstToken == address(0) ? iweth : o.ask.dstToken;
+
+        IERC20(o.ask.srcToken).safeTransferFrom(o.maker, address(this), srcAmountIn);
+        srcAmountIn = IERC20(o.ask.srcToken).balanceOf(address(this)); // support FoT
+
+        IERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
+
+        IExchange(exchange).swap(o.ask.srcToken, dstToken, srcAmountIn, dstMinAmount, o.ask.data, bidData);
+
+        dstAmountOut = IERC20(dstToken).balanceOf(address(this)); // support FoT
+        require(dstAmountOut >= dstMinAmount, "TWAP:swap:dstMinAmount");
     }
 
-    function _dstToken(OrderLib.Order memory o) private view returns (address) {
-        return o.ask.dstToken == address(0) ? iweth : o.ask.dstToken;
+    function _cancel(uint64 id) private {
+        OrderLib.Order memory o = order(id);
+        status[id] = STATUS_CANCELED;
+        o.status = STATUS_CANCELED;
+        book[id] = o;
+        emit OrderCanceled(o.id, o.maker, msg.sender);
     }
 
     receive() external payable {} // solhint-disable-line no-empty-blocks

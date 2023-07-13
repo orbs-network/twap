@@ -8,6 +8,9 @@ import {
   network as cnet,
   networks,
   web3,
+  block,
+  zeroAddress,
+  convertDecimals,
   erc20FromData,
 } from "@defi.org/web3-candies";
 import {
@@ -21,8 +24,9 @@ import {
 import { expect } from "chai";
 import _ from "lodash";
 import type { IExchange, TWAP } from "../typechain-hardhat/contracts";
-import { Lens } from "../typechain-hardhat/contracts/periphery";
+import { Lens } from "../typechain-hardhat/contracts/periphery/Lens.sol";
 import type { MockExchange } from "../typechain-hardhat/contracts/test";
+import BN from "bignumber.js";
 
 useChaiBigNumber();
 
@@ -191,7 +195,16 @@ async function withUniswapV2Path() {
   swapBidDataForUniV2 = web3().eth.abi.encodeParameters(["bool", "address[]"], [false, path]);
 }
 
+export async function expectUniV2SrcDstPrice(expectedPrice: number) {
+  const dstOut = await (exchange as any).methods
+    .getAmountOut(srcToken.address, dstToken.address, await srcToken.amount(expectedPrice), [], swapBidDataForUniV2)
+    .call();
+  expect(dstOut).bignumber.closeTo(1e18, 0.01e18);
+}
+
 export async function fundSrcTokenFromWhale(target: string, amount: number) {
+  if (BN(await srcToken.methods.balanceOf(target).call()).gt(await srcToken.amount(amount)))
+    throw new Error("already funded");
   tag(srcTokenWhale, "srcTokenWhale");
   await impersonate(srcTokenWhale);
   await setBalance(srcTokenWhale, ether.times(100));
@@ -201,6 +214,8 @@ export async function fundSrcTokenFromWhale(target: string, amount: number) {
 }
 
 async function fundDstToken(target: string, amount: number) {
+  if (BN(await dstToken.methods.balanceOf(target).call()).gt(await dstToken.amount(amount)))
+    throw new Error("already funded");
   tag(dstTokenWhale, "dstTokenWhale");
   await impersonate(dstTokenWhale);
   await setBalance(dstTokenWhale, ether.times(100));
@@ -218,4 +233,100 @@ export async function setMockExchangeAmountOut(dstAmountOut: number) {
   await (exchange as MockExchange).methods
     .setMockAmounts([0, await dstToken.amount(dstAmountOut)])
     .send({ from: deployer });
+}
+
+export async function ask(p: {
+  srcBidAmount: number;
+  dstMinAmount?: number;
+  chunks?: number;
+  deadline?: number;
+  exchange?: string;
+  bidDelay?: number;
+  fillDelay?: number;
+  user?: string;
+}) {
+  await srcToken.methods
+    .approve(twap.options.address, (await srcToken.amount(p.srcBidAmount * (p.chunks || 1))).toFixed(0))
+    .send({ from: p.user || user });
+  return twap.methods
+    .ask([
+      p.exchange || zeroAddress,
+      srcToken.address,
+      dstToken.address,
+      (await srcToken.amount(p.srcBidAmount)).toFixed(0),
+      p.dstMinAmount ? (await srcToken.amount(p.dstMinAmount)).toFixed(0) : 1,
+      p.chunks || 1,
+      p.deadline || endTime(),
+      p.bidDelay || 30,
+      p.fillDelay || 0,
+      [],
+    ])
+    .send({ from: p.user || user });
+}
+
+export async function _ask(
+  srcAmount: number,
+  srcBidAmount: number,
+  dstMinAmount: number,
+  deadline: number = 0,
+  exchange: string = zeroAddress,
+  bidDelay: number = 30,
+  fillDelay: number = 0,
+  _user: string = user
+) {
+  deadline = deadline || (await time()) + 1000;
+  const _srcAmount = await srcToken.amount(srcAmount);
+  const _srcBidAmount = await srcToken.amount(srcBidAmount);
+  const _dstMinAmount = await dstToken.amount(dstMinAmount);
+  const chunks = _srcAmount.div(_srcBidAmount);
+  await srcToken.methods.approve(twap.options.address, _srcAmount).send({ from: _user });
+  return twap.methods
+    .ask([
+      exchange,
+      srcToken.address,
+      dstToken.address,
+      srcBidAmount.toFixed(0),
+      BN.max(dstMinAmount, 1).toFixed(0),
+      chunks.toFixed(0),
+      deadline,
+      bidDelay,
+      fillDelay,
+      [],
+    ])
+    .send({ from: _user });
+}
+
+export async function bid(id: number, fee: number = 0.01, slippagePercent = 0, swapData: string = swapBidDataForUniV2) {
+  return twap.methods
+    .bid(id, exchange.options.address, await dstToken.amount(fee), slippagePercent * 1000, swapData)
+    .send({ from: taker });
+}
+
+export async function fill(id: number) {
+  return twap.methods.fill(id).send({ from: taker });
+}
+
+export async function order(id: number): Promise<any> {
+  return twap.methods.order(id).call();
+}
+
+export async function expectFilled(id: number, srcExactAmount: number, dstMinAmount: number) {
+  const o = await order(id);
+  expect(BN(o.ask.srcBidAmount).times(o.filled.count)).bignumber.eq(await srcToken.amount(srcExactAmount));
+
+  expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
+    await srcToken.amount(userSrcTokenStartBalance - srcExactAmount)
+  );
+
+  expect(await dstToken.methods.balanceOf(user).call())
+    .bignumber.gte(await dstToken.amount(dstMinAmount))
+    .closeTo(await dstToken.amount(dstMinAmount), await dstToken.amount(dstMinAmount * 0.2));
+}
+
+export async function time() {
+  return (await block()).timestamp;
+}
+
+export function endTime() {
+  return 2 ** 32 - 2;
 }

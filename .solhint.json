@@ -7,7 +7,6 @@
     "func-param-name-mixedcase": "warn",
     "constructor-syntax": "warn",
     "code-complexity": "warn",
-    "not-rely-on-time": "off",
-    "no-global-import": "off"
+    "not-rely-on-time": "off"
   }
 }

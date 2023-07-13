@@ -4,9 +4,11 @@ import BigNumber from "bignumber.js";
 import { expect } from "chai";
 import type { Taker } from "../typechain-hardhat/contracts/periphery";
 import {
+  ask,
   deployer,
   dstToken,
   exchange,
+  expectFilled,
   fundSrcTokenFromWhale,
   initFixture,
   network,
@@ -17,7 +19,6 @@ import {
   user,
   withUniswapV2Exchange,
 } from "./fixture";
-import { ask, expectFilled } from "./twap-utils";
 
 describe("Taker", async () => {
   let takerContract: Taker;

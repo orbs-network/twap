@@ -1,22 +1,20 @@
-import { exchange, initFixture, network, taker, twap, user, withUniswapV2Exchange } from "./fixture";
 import {
   Abi,
+  Token,
   bn18,
   chainId,
   contract,
   erc20,
-  ether,
   iweth,
   maxUint256,
   networks,
-  Token,
   web3,
   zero,
   zeroAddress,
 } from "@defi.org/web3-candies";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { endTime } from "./twap-utils";
+import { endTime, exchange, initFixture, network, taker, twap, user, withUniswapV2Exchange } from "./fixture";
 
 describe("FeeOnTransfer tokens", async () => {
   beforeEach(() => initFixture());

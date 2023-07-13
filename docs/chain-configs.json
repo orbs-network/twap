@@ -197,11 +197,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -209,6 +204,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -269,26 +269,20 @@
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "srcAmountIn",
-            "type": "uint256"
+            "internalType": "uint32",
+            "name": "count",
+            "type": "uint32"
           },
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "dstAmount",
             "type": "uint256"
           },
           {
             "indexed": false,
             "internalType": "uint256",
             "name": "dstFee",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
             "type": "uint256"
           }
         ],
@@ -389,6 +383,58 @@
       {
         "inputs": [
           {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateSwapAndRevert",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "components": [
               {
                 "internalType": "address",
@@ -407,11 +453,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -419,6 +460,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -442,7 +488,7 @@
               }
             ],
             "internalType": "struct OrderLib.Ask",
-            "name": "_ask",
+            "name": "a",
             "type": "tuple"
           }
         ],
@@ -516,16 +562,6 @@
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
-            "name": "filledTime",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "maker",
             "type": "address"
@@ -549,11 +585,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -561,6 +592,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -622,6 +658,33 @@
             ],
             "internalType": "struct OrderLib.Bid",
             "name": "bid",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OrderLib.Filled",
+            "name": "filled",
             "type": "tuple"
           }
         ],
@@ -732,16 +795,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -765,11 +818,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -777,6 +825,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -839,30 +892,38 @@
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
                 "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
+                "type": "tuple"
               }
             ],
             "internalType": "struct OrderLib.Order",
             "name": "",
             "type": "tuple"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "maker",
-            "type": "address"
-          }
-        ],
-        "name": "orderIdsByMaker",
-        "outputs": [
-          {
-            "internalType": "uint64[]",
-            "name": "",
-            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -958,16 +1019,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -991,11 +1042,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -1003,6 +1049,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -1064,6 +1115,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -1113,16 +1191,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -1146,11 +1214,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -1158,6 +1221,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -1219,6 +1287,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -1268,16 +1363,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -1301,11 +1386,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -1313,6 +1393,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -1374,6 +1459,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -1805,11 +1917,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -1817,6 +1924,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -1877,26 +1989,20 @@
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "srcAmountIn",
-            "type": "uint256"
+            "internalType": "uint32",
+            "name": "count",
+            "type": "uint32"
           },
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "dstAmount",
             "type": "uint256"
           },
           {
             "indexed": false,
             "internalType": "uint256",
             "name": "dstFee",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
             "type": "uint256"
           }
         ],
@@ -1997,6 +2103,58 @@
       {
         "inputs": [
           {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateSwapAndRevert",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "components": [
               {
                 "internalType": "address",
@@ -2015,11 +2173,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -2027,6 +2180,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -2050,7 +2208,7 @@
               }
             ],
             "internalType": "struct OrderLib.Ask",
-            "name": "_ask",
+            "name": "a",
             "type": "tuple"
           }
         ],
@@ -2124,16 +2282,6 @@
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
-            "name": "filledTime",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "maker",
             "type": "address"
@@ -2157,11 +2305,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -2169,6 +2312,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -2230,6 +2378,33 @@
             ],
             "internalType": "struct OrderLib.Bid",
             "name": "bid",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OrderLib.Filled",
+            "name": "filled",
             "type": "tuple"
           }
         ],
@@ -2340,16 +2515,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -2373,11 +2538,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -2385,6 +2545,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -2447,30 +2612,38 @@
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
                 "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
+                "type": "tuple"
               }
             ],
             "internalType": "struct OrderLib.Order",
             "name": "",
             "type": "tuple"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "maker",
-            "type": "address"
-          }
-        ],
-        "name": "orderIdsByMaker",
-        "outputs": [
-          {
-            "internalType": "uint64[]",
-            "name": "",
-            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -2566,16 +2739,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -2599,11 +2762,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -2611,6 +2769,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -2672,6 +2835,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -2721,16 +2911,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -2754,11 +2934,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -2766,6 +2941,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -2827,6 +3007,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -2876,16 +3083,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -2909,11 +3106,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -2921,6 +3113,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -2982,6 +3179,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -3416,11 +3640,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -3428,6 +3647,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -3488,26 +3712,20 @@
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "srcAmountIn",
-            "type": "uint256"
+            "internalType": "uint32",
+            "name": "count",
+            "type": "uint32"
           },
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "dstAmount",
             "type": "uint256"
           },
           {
             "indexed": false,
             "internalType": "uint256",
             "name": "dstFee",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
             "type": "uint256"
           }
         ],
@@ -3608,6 +3826,58 @@
       {
         "inputs": [
           {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateSwapAndRevert",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "components": [
               {
                 "internalType": "address",
@@ -3626,11 +3896,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -3638,6 +3903,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -3661,7 +3931,7 @@
               }
             ],
             "internalType": "struct OrderLib.Ask",
-            "name": "_ask",
+            "name": "a",
             "type": "tuple"
           }
         ],
@@ -3735,16 +4005,6 @@
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
-            "name": "filledTime",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "maker",
             "type": "address"
@@ -3768,11 +4028,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -3780,6 +4035,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -3841,6 +4101,33 @@
             ],
             "internalType": "struct OrderLib.Bid",
             "name": "bid",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OrderLib.Filled",
+            "name": "filled",
             "type": "tuple"
           }
         ],
@@ -3951,16 +4238,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -3984,11 +4261,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -3996,6 +4268,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -4058,30 +4335,38 @@
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
                 "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
+                "type": "tuple"
               }
             ],
             "internalType": "struct OrderLib.Order",
             "name": "",
             "type": "tuple"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "maker",
-            "type": "address"
-          }
-        ],
-        "name": "orderIdsByMaker",
-        "outputs": [
-          {
-            "internalType": "uint64[]",
-            "name": "",
-            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -4177,16 +4462,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -4210,11 +4485,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -4222,6 +4492,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -4283,6 +4558,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -4332,16 +4634,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -4365,11 +4657,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -4377,6 +4664,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -4438,6 +4730,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -4487,16 +4806,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -4520,11 +4829,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -4532,6 +4836,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -4593,6 +4902,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -6527,11 +6863,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -6539,6 +6870,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -6599,26 +6935,20 @@
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "srcAmountIn",
-            "type": "uint256"
+            "internalType": "uint32",
+            "name": "count",
+            "type": "uint32"
           },
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "dstAmount",
             "type": "uint256"
           },
           {
             "indexed": false,
             "internalType": "uint256",
             "name": "dstFee",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
             "type": "uint256"
           }
         ],
@@ -6719,6 +7049,58 @@
       {
         "inputs": [
           {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateSwapAndRevert",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "components": [
               {
                 "internalType": "address",
@@ -6737,11 +7119,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -6749,6 +7126,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -6772,7 +7154,7 @@
               }
             ],
             "internalType": "struct OrderLib.Ask",
-            "name": "_ask",
+            "name": "a",
             "type": "tuple"
           }
         ],
@@ -6846,16 +7228,6 @@
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
-            "name": "filledTime",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "maker",
             "type": "address"
@@ -6879,11 +7251,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -6891,6 +7258,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -6952,6 +7324,33 @@
             ],
             "internalType": "struct OrderLib.Bid",
             "name": "bid",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OrderLib.Filled",
+            "name": "filled",
             "type": "tuple"
           }
         ],
@@ -7062,16 +7461,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -7095,11 +7484,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -7107,6 +7491,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -7169,30 +7558,38 @@
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
                 "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
+                "type": "tuple"
               }
             ],
             "internalType": "struct OrderLib.Order",
             "name": "",
             "type": "tuple"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "maker",
-            "type": "address"
-          }
-        ],
-        "name": "orderIdsByMaker",
-        "outputs": [
-          {
-            "internalType": "uint64[]",
-            "name": "",
-            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -7288,16 +7685,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -7321,11 +7708,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -7333,6 +7715,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -7394,6 +7781,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -7443,16 +7857,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -7476,11 +7880,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -7488,6 +7887,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -7549,6 +7953,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -7598,16 +8029,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -7631,11 +8052,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -7643,6 +8059,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -7704,6 +8125,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -8137,11 +8585,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -8149,6 +8592,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -8209,26 +8657,20 @@
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "srcAmountIn",
-            "type": "uint256"
+            "internalType": "uint32",
+            "name": "count",
+            "type": "uint32"
           },
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "dstAmount",
             "type": "uint256"
           },
           {
             "indexed": false,
             "internalType": "uint256",
             "name": "dstFee",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
             "type": "uint256"
           }
         ],
@@ -8329,6 +8771,58 @@
       {
         "inputs": [
           {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "_simulateSwapAndRevert",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "components": [
               {
                 "internalType": "address",
@@ -8347,11 +8841,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -8359,6 +8848,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -8382,7 +8876,7 @@
               }
             ],
             "internalType": "struct OrderLib.Ask",
-            "name": "_ask",
+            "name": "a",
             "type": "tuple"
           }
         ],
@@ -8456,16 +8950,6 @@
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
-            "name": "filledTime",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcFilledAmount",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "maker",
             "type": "address"
@@ -8489,11 +8973,6 @@
               },
               {
                 "internalType": "uint256",
-                "name": "srcAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
                 "name": "srcBidAmount",
                 "type": "uint256"
               },
@@ -8501,6 +8980,11 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
               },
               {
                 "internalType": "uint32",
@@ -8562,6 +9046,33 @@
             ],
             "internalType": "struct OrderLib.Bid",
             "name": "bid",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "count",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OrderLib.Filled",
+            "name": "filled",
             "type": "tuple"
           }
         ],
@@ -8672,16 +9183,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -8705,11 +9206,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -8717,6 +9213,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -8779,30 +9280,38 @@
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
                 "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
+                "type": "tuple"
               }
             ],
             "internalType": "struct OrderLib.Order",
             "name": "",
             "type": "tuple"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "maker",
-            "type": "address"
-          }
-        ],
-        "name": "orderIdsByMaker",
-        "outputs": [
-          {
-            "internalType": "uint64[]",
-            "name": "",
-            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -8898,16 +9407,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -8931,11 +9430,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -8943,6 +9437,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -9004,6 +9503,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -9053,16 +9579,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -9086,11 +9602,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -9098,6 +9609,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -9159,6 +9675,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],
@@ -9208,16 +9751,6 @@
                 "type": "uint32"
               },
               {
-                "internalType": "uint32",
-                "name": "filledTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "srcFilledAmount",
-                "type": "uint256"
-              },
-              {
                 "internalType": "address",
                 "name": "maker",
                 "type": "address"
@@ -9241,11 +9774,6 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "srcAmount",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
                     "name": "srcBidAmount",
                     "type": "uint256"
                   },
@@ -9253,6 +9781,11 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
                   },
                   {
                     "internalType": "uint32",
@@ -9314,6 +9847,33 @@
                 ],
                 "internalType": "struct OrderLib.Bid",
                 "name": "bid",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "count",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OrderLib.Filled",
+                "name": "filled",
                 "type": "tuple"
               }
             ],

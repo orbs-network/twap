@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../IExchange.sol";
+import {IExchange} from "../IExchange.sol";
 
 /**
  * Adapter between PangolinDAAS and TWAP's IExchange interface
  */
 contract PangolinDaasExchange is IExchange {
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     IPangolinDaas public immutable pangolin;
 
@@ -30,7 +29,7 @@ contract PangolinDaasExchange is IExchange {
         bytes calldata bidData
     ) public view returns (uint256 amountOut) {
         (address partnerDaas, , address[] memory path) = decode(askData, bidData);
-        require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
+        require(path[0] == srcToken && path[path.length - 1] == dstToken, "PangolinDaasExchange:path");
         uint256 result = (pangolin.getAmountsOut(amountIn, path)[path.length - 1]);
 
         (, , uint24 feeTotal, , ) = pangolin.getFeeInfo(partnerDaas); // getAmountOut doesn't take the partner affiliate fee into account, which will be deducted when swapping
@@ -42,20 +41,20 @@ contract PangolinDaasExchange is IExchange {
      * bidData = abi encoded: feeOnTransfer(bool), path(address[])
      */
     function swap(
-        address _srcToken,
-        address,
+        address srcToken,
+        address dstToken,
         uint256 amountIn,
         uint256 amountOutMin,
         bytes calldata askData,
         bytes calldata bidData
     ) public {
         (address partnerDaas, bool fotTokens, address[] memory path) = decode(askData, bidData);
-        ERC20 srcToken = ERC20(_srcToken);
+        require(path[0] == srcToken && path[path.length - 1] == dstToken, "PangolinDaasExchange:path");
 
-        srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
-        amountIn = srcToken.balanceOf(address(this)); // support FoT tokens
+        IERC20(srcToken).safeTransferFrom(msg.sender, address(this), amountIn);
+        amountIn = IERC20(srcToken).balanceOf(address(this)); // support FoT tokens
 
-        srcToken.safeIncreaseAllowance(address(pangolin), amountIn);
+        IERC20(srcToken).safeIncreaseAllowance(address(pangolin), amountIn);
 
         if (fotTokens) {
             pangolin.swapExactTokensForTokensSupportingFeeOnTransferTokens(

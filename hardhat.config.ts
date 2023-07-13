@@ -38,19 +38,6 @@ task("github-pages").setAction(async () => {
 });
 
 export default _.merge(hardhatDefaultConfig(), {
-  solidity: {
-    compilers: [
-      {
-        version: "0.8.16",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
-    ],
-  },
   networks: {
     hardhat: {
       blockGasLimit: 15e6,

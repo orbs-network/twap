@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.x;
 
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
-import "../OrderLib.sol";
-import "../TWAP.sol";
+import {OrderLib} from "../OrderLib.sol";
+import {TWAP} from "../TWAP.sol";
 
 /**
  * Helper contract to allow for efficient paginated filtered reads of Orders, instead of relying on events
@@ -24,7 +25,7 @@ contract Lens {
     }
 
     function makerOrders(address maker) external view returns (OrderLib.Order[] memory result) {
-        uint64[] memory orderIds = twap.orderIdsByMaker(maker);
+        uint64[] memory orderIds = twap.makerOrders(maker);
 
         result = new OrderLib.Order[](orderIds.length);
         for (uint64 i = 0; i < result.length; i++) {
@@ -46,16 +47,16 @@ contract Lens {
     ) external view returns (OrderLib.Order[] memory result) {
         OrderLib.Order[] memory orders = paginated(lastIndex, pageSize);
         uint64 count = 0;
+        uint32 stale = twap.STALE_BID_SECONDS();
 
         for (uint64 i = 0; i < orders.length; i++) {
             uint64 id = lastIndex - i;
             if (block.timestamp < twap.status(id)) {
                 OrderLib.Order memory o = twap.order(id);
                 if (
-                    block.timestamp > o.filledTime + o.ask.fillDelay && // after fill delay
-                    (o.bid.taker != taker || block.timestamp > o.bid.time + twap.STALE_BID_SECONDS()) && // other taker or stale bid
-                    ERC20(o.ask.srcToken).allowance(o.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
-                    ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext() // maker balance
+                    block.timestamp > o.filled.time + o.ask.fillDelay &&
+                    (o.bid.taker != taker || block.timestamp > o.bid.time + stale) &&
+                    o.hasAllowance(address(twap))
                 ) {
                     orders[count] = o;
                     count++;
@@ -88,10 +89,9 @@ contract Lens {
             if (block.timestamp < twap.status(id)) {
                 OrderLib.Order memory o = twap.order(id);
                 if (
-                    o.bid.taker == taker && // winning taker
-                    block.timestamp > o.bid.time + o.ask.bidDelay && // after bid delay
-                    ERC20(o.ask.srcToken).allowance(o.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
-                    ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext() // maker balance
+                    o.bid.taker == taker &&
+                    block.timestamp > o.bid.time + o.ask.bidDelay &&
+                    o.hasAllowance(address(twap))
                 ) {
                     orders[count] = o;
                     count++;
@@ -106,7 +106,7 @@ contract Lens {
     }
 
     function paginated(uint64 lastIndex, uint64 pageSize) private view returns (OrderLib.Order[] memory) {
-        require(lastIndex < length(), "lastIndex");
+        require(lastIndex < length(), "Lens:paginated:lastIndex");
         return new OrderLib.Order[](Math.min(lastIndex + 1, pageSize));
     }
 }

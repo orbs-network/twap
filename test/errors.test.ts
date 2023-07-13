@@ -12,11 +12,16 @@ import {
   user,
   withMockExchange,
   withUniswapV2Exchange,
+  ask,
+  bid,
+  endTime,
+  fill,
+  order,
+  time,
 } from "./fixture";
 import { account, zeroAddress } from "@defi.org/web3-candies";
 import { deployArtifact, expectRevert, mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
-import { ask, bid, endTime, fill, order, time } from "./twap-utils";
 import { MockExchange } from "../typechain-hardhat/contracts/test";
 
 describe("Errors", () => {
