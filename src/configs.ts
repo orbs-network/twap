@@ -212,7 +212,7 @@ export const Configs = {
     ...ChainConfigs.bsc,
     name: "PancakeSwap",
     partner: "Orbs:TWAP:PancakeSwap",
-    exchangeAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+    exchangeAddress: "0x3dD428151c697Aa1a3E5d0ee6A52768E70D85daE",
     exchangeType: "ParaswapExchange",
     pathfinderKey: ParaswapOnlyDex.PancakeSwap,
   } as Config,

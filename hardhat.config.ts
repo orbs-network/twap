@@ -21,9 +21,9 @@ task("deploy").setAction(async () => {
   if (isHardhatNetwork()) throw new Error("on hardhat network!");
   const config = require("./src/configs").chainConfig(await chainId());
 
-  const takers = [];
+  // const takers = [];
 
-  const gas = await estimateGasPrice();
+  // const gas = await estimateGasPrice();
   // const address = await deploy({ contractName: "Taker", args: [config.twapAddress, takers], waitForConfirmations: 1 });
 });
 
