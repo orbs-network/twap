@@ -2,7 +2,20 @@ import { mineBlock } from "@defi.org/web3-candies/dist/hardhat";
 import { expect } from "chai";
 import _ from "lodash";
 import hardhatConfig from "../hardhat.config";
-import { ask, dstToken, endTime, exchange, initFixture, lens, srcToken, taker, time, twap, user } from "./fixture";
+import {
+  ask,
+  dstToken,
+  endTime,
+  exchange,
+  initFixture,
+  lens,
+  srcToken,
+  taker,
+  time,
+  twap,
+  user,
+  withUniswapV2Exchange,
+} from "./fixture";
 
 /**
  * very long test: only enable this without logs, otherwise will timeout
@@ -14,14 +27,13 @@ xdescribe("maxgas: special test: large order history, paginated reads", async ()
   const PAGE_SIZE = 2500; // under 15m gas
 
   beforeEach(() => initFixture());
-
-  // beforeEach(() => withOdosExchange());
+  beforeEach(() => withUniswapV2Exchange());
 
   beforeEach(async () => {
     expect(hardhatConfig.networks?.hardhat?.blockGasLimit).eq(ASSUME_MAX_GAS);
-    await ask(2000, 123, 0.5, endTime());
+    await ask({ srcBidAmount: 123, dstMinAmount: 0.5, chunks: 10, deadline: endTime() });
     await manyExpiredAsks();
-    await ask(2000, 456, 0.5);
+    await ask({ srcBidAmount: 456 });
     expect(parseInt(await lens.methods.length().call())).eq(EXPIRED_ASKS + 2);
   });
 
@@ -47,10 +59,9 @@ xdescribe("maxgas: special test: large order history, paginated reads", async ()
 
   async function manyExpiredAsks() {
     await srcToken.methods
-      .approve(twap.options.address, (await srcToken.amount(2000)).times(EXPIRED_ASKS))
+      .approve(twap.options.address, (await srcToken.amount(2000)).times(EXPIRED_ASKS).toFixed(0))
       .send({ from: user });
     const now = await time();
-    const _srcAmount = await srcToken.amount(2000);
     const _srcBidAmount = await srcToken.amount(1000);
     const _dstMinAmount = await dstToken.amount(0.5);
 
@@ -64,9 +75,9 @@ xdescribe("maxgas: special test: large order history, paginated reads", async ()
               exchange.options.address,
               srcToken.address,
               dstToken.address,
-              _srcAmount.toString(),
               _srcBidAmount.toString(),
               _dstMinAmount.toString(),
+              2,
               now + 1000 + i + (EXPIRED_ASKS / 10) * chunk,
               60,
               60,

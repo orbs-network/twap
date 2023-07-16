@@ -25,7 +25,7 @@ import {
   withUniswapV2Exchange,
 } from "./fixture";
 
-describe.only("TWAP", async () => {
+describe("TWAP", async () => {
   beforeEach(() => initFixture());
   beforeEach(() => withUniswapV2Exchange());
   beforeEach(() => expectUniV2SrcDstPrice(1800));

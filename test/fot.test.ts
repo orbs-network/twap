@@ -24,8 +24,8 @@ describe("FeeOnTransfer tokens", async () => {
 
   beforeEach("deploy mock deflationary token", async () => {
     token = erc20("FoT", (await deployArtifact("MockDeflationaryToken", { from: user })).options.address);
-    await expect(await token.methods.balanceOf(user).call()).bignumber.eq("100e18");
-    await expect(await web3().eth.getBalance(user)).bignumber.gte("100e18");
+    expect(await token.methods.balanceOf(user).call()).bignumber.eq("100e18");
+    expect(await web3().eth.getBalance(user)).bignumber.gte("100e18");
   });
 
   beforeEach("add liquidity, 50 token + 100 eth", async () => {
@@ -40,8 +40,8 @@ describe("FeeOnTransfer tokens", async () => {
         token.address,
         network.wToken.address,
         (await token.amount(10)).toString(),
-        (await token.amount(10)).toString(),
         bn18().toString(),
+        1,
         endTime(),
         60,
         60,
@@ -85,7 +85,9 @@ describe("FeeOnTransfer tokens", async () => {
       );
 
       expect(
-        await exchange.methods.getAmountOut(token.options.address, network.wToken.address, amountIn, [], data).call()
+        await (exchange as any).methods
+          .getAmountOut(token.options.address, network.wToken.address, amountIn, [], data)
+          .call()
       ).bignumber.closeTo(bn18(18.1), bn18(0.1)); // including exchange fee ~ 0.2-0.3%
 
       expect(await token.methods.balanceOf(user).call()).bignumber.eq(bn18(50));

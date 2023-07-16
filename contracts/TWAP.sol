@@ -86,7 +86,7 @@ contract TWAP is ReentrancyGuard {
      * returns Order by order id
      */
     function order(uint64 id) public view returns (OrderLib.Order memory) {
-        require(id < length(), "id");
+        require(id < length(), "TWAP:order:id");
         return book[id];
     }
 

@@ -28,7 +28,7 @@ describe("IExchange implementations", async () => {
     it("prevent invalid paths", async () => {
       await expectRevert(
         () =>
-          exchange.methods
+          (exchange as any).methods
             .getAmountOut(
               srcToken.address,
               dstToken.address,
@@ -37,14 +37,14 @@ describe("IExchange implementations", async () => {
               web3().eth.abi.encodeParameters(["bool", "address[]"], [false, [dstToken.address, srcToken.address]])
             )
             .call(),
-        "UE1"
+        "UniswapV2Exchange:path"
       );
     });
 
     it("swap", async () => {
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
 
-      const expectedOut = await exchange.methods
+      const expectedOut = await (exchange as any).methods
         .getAmountOut(srcToken.address, dstToken.address, await srcToken.amount(100), [], swapBidDataForUniV2)
         .call();
       expect(expectedOut).bignumber.gt(zero);
@@ -70,17 +70,6 @@ describe("IExchange implementations", async () => {
 
     beforeEach(() => withParaswapExchange());
 
-    it("getAmountOut using pure encoded data from offchain", async () => {
-      const encodedSwapData = web3().eth.abi.encodeParameters(
-        ["uint256", "bytes"],
-        [await dstToken.amount(123456789), []]
-      );
-      const expectedOut = await exchange.methods
-        .getAmountOut(zeroAddress, zeroAddress, zero, [], encodedSwapData)
-        .call();
-      expect(expectedOut).bignumber.eq(await dstToken.amount(123456789));
-    });
-
     it("swap with data from paraswap", async () => {
       const paraswapRoute = await Paraswap.findRoute(
         await chainId(),
@@ -92,14 +81,9 @@ describe("IExchange implementations", async () => {
       expect(paraswapRoute.dstAmount).bignumber.gte(await dstToken.amount(1));
       const dstMinOut = BigNumber(paraswapRoute.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
 
-      const encodedData = web3().eth.abi.encodeParameters(
-        ["uint256", "bytes"],
-        [paraswapRoute.dstAmount.toFixed(0), paraswapRoute.data]
-      );
-
       await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
       await exchange.methods
-        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], encodedData)
+        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], paraswapRoute.data)
         .send({ from: user });
 
       expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
@@ -125,7 +109,7 @@ describe("IExchange implementations", async () => {
 
         expect((await pangolin.methods.getFeeInfo(pangolinDaasSamplePartner).call()).feeTotal).bignumber.eq(100); // 1%
 
-        const expectedOut = await exchange.methods
+        const expectedOut = await (exchange as any).methods
           .getAmountOut(
             srcToken.address,
             dstToken.address,
@@ -165,17 +149,6 @@ describe("IExchange implementations", async () => {
 
       beforeEach(() => withOdosExchange());
 
-      it("getAmountOut using pure encoded data from offchain", async () => {
-        const encodedSwapData = web3().eth.abi.encodeParameters(
-          ["uint256", "bytes"],
-          [await dstToken.amount(123456789), []]
-        );
-        const expectedOut = await exchange.methods
-          .getAmountOut(zeroAddress, zeroAddress, zero, [], encodedSwapData)
-          .call();
-        expect(expectedOut).bignumber.eq(await dstToken.amount(123456789));
-      });
-
       it("swap with data from odos api", async () => {
         const odosRoute = await Odos.findRoute(
           await chainId(),
@@ -200,47 +173,36 @@ describe("IExchange implementations", async () => {
       });
     });
 
-  describe("OpenOceanExchange", () => {
-    beforeEach("must run on latest block due to odos backend", async function () {
-      await initFixture("latest");
+  if (process.env.NETWORK!.toLowerCase() === "bsc")
+    describe("OpenOceanExchange", () => {
+      beforeEach("must run on latest block due to odos backend", async function () {
+        await initFixture("latest");
+      });
+
+      beforeEach(() => withOpenOceanExchange());
+
+      it("swap with data from OpenOcean api", async () => {
+        const route = await OpenOcean.findRoute(
+          await chainId(),
+          { address: srcToken.address, decimals: await srcToken.decimals(), symbol: "" },
+          { address: dstToken.address, decimals: await dstToken.decimals(), symbol: "" },
+          await srcToken.amount(10_000),
+          exchange.options.address,
+          OpenOceanOnlyDex.Thena
+        );
+        expect(route.dstAmount).bignumber.gte(await dstToken.amount(1));
+        const dstMinOut = BigNumber(route.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
+
+        expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
+        await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
+        await exchange.methods
+          .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], route.data)
+          .send({ from: user });
+
+        expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
+          (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(10_000))
+        );
+        expect(await dstToken.methods.balanceOf(user).call()).bignumber.gte(dstMinOut);
+      });
     });
-
-    beforeEach(() => withOpenOceanExchange());
-
-    it("getAmountOut using pure encoded data from offchain", async () => {
-      const encodedSwapData = web3().eth.abi.encodeParameters(
-        ["uint256", "bytes"],
-        [await dstToken.amount(123456789), []]
-      );
-      const expectedOut = await exchange.methods
-        .getAmountOut(zeroAddress, zeroAddress, zero, [], encodedSwapData)
-        .call();
-      expect(expectedOut).bignumber.eq(await dstToken.amount(123456789));
-    });
-
-    it("swap with data from OpenOcean api", async () => {
-      const odosRoute = await OpenOcean.findRoute(
-        await chainId(),
-        { address: srcToken.address, decimals: await srcToken.decimals(), symbol: "" },
-        { address: dstToken.address, decimals: await dstToken.decimals(), symbol: "" },
-        await srcToken.amount(10_000),
-        exchange.options.address,
-        OpenOceanOnlyDex.Thena
-      );
-      expect(odosRoute.dstAmount).bignumber.gte(await dstToken.amount(1));
-      const dstMinOut = BigNumber(odosRoute.dstAmount).times(0.99).integerValue(BigNumber.ROUND_FLOOR);
-      const encodedSwapData = web3().eth.abi.encodeParameters(["uint256", "bytes"], [dstMinOut, odosRoute.data]);
-
-      expect(await dstToken.methods.balanceOf(user).call()).bignumber.zero;
-      await srcToken.methods.approve(exchange.options.address, maxUint256).send({ from: user });
-      await exchange.methods
-        .swap(srcToken.address, dstToken.address, await srcToken.amount(10_000), dstMinOut, [], encodedSwapData)
-        .send({ from: user });
-
-      expect(await srcToken.methods.balanceOf(user).call()).bignumber.eq(
-        (await srcToken.amount(userSrcTokenStartBalance)).minus(await srcToken.amount(10_000))
-      );
-      expect(await dstToken.methods.balanceOf(user).call()).bignumber.gte(dstMinOut);
-    });
-  });
 });

@@ -17,7 +17,7 @@ import {
   zeroAddress,
 } from "@defi.org/web3-candies";
 import type { TWAP } from "../typechain-hardhat/contracts";
-import type { Lens } from "../typechain-hardhat/contracts/periphery/Lens.sol";
+import type { Lens } from "../typechain-hardhat/contracts/periphery/Lens";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
 import { Odos } from "./odos";

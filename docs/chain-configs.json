@@ -383,30 +383,25 @@
       {
         "inputs": [
           {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
             "internalType": "address",
-            "name": "exchange",
+            "name": "",
             "type": "address"
           },
           {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
-        "name": "_simulateAmountOut",
-        "outputs": [
-          {
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "",
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
+        "name": "_makerOrders",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -747,21 +742,16 @@
         "inputs": [
           {
             "internalType": "address",
-            "name": "",
+            "name": "maker",
             "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "name": "makerOrders",
         "outputs": [
           {
-            "internalType": "uint64",
+            "internalType": "uint64[]",
             "name": "",
-            "type": "uint64"
+            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -939,6 +929,35 @@
         ],
         "name": "prune",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -2103,30 +2122,25 @@
       {
         "inputs": [
           {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
             "internalType": "address",
-            "name": "exchange",
+            "name": "",
             "type": "address"
           },
           {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
-        "name": "_simulateAmountOut",
-        "outputs": [
-          {
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "",
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
+        "name": "_makerOrders",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -2467,21 +2481,16 @@
         "inputs": [
           {
             "internalType": "address",
-            "name": "",
+            "name": "maker",
             "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "name": "makerOrders",
         "outputs": [
           {
-            "internalType": "uint64",
+            "internalType": "uint64[]",
             "name": "",
-            "type": "uint64"
+            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -2659,6 +2668,35 @@
         ],
         "name": "prune",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -3826,30 +3864,25 @@
       {
         "inputs": [
           {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
             "internalType": "address",
-            "name": "exchange",
+            "name": "",
             "type": "address"
           },
           {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
-        "name": "_simulateAmountOut",
-        "outputs": [
-          {
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "",
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
+        "name": "_makerOrders",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -4190,21 +4223,16 @@
         "inputs": [
           {
             "internalType": "address",
-            "name": "",
+            "name": "maker",
             "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "name": "makerOrders",
         "outputs": [
           {
-            "internalType": "uint64",
+            "internalType": "uint64[]",
             "name": "",
-            "type": "uint64"
+            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -4382,6 +4410,35 @@
         ],
         "name": "prune",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -7049,30 +7106,25 @@
       {
         "inputs": [
           {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
             "internalType": "address",
-            "name": "exchange",
+            "name": "",
             "type": "address"
           },
           {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
-        "name": "_simulateAmountOut",
-        "outputs": [
-          {
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "",
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
+        "name": "_makerOrders",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -7413,21 +7465,16 @@
         "inputs": [
           {
             "internalType": "address",
-            "name": "",
+            "name": "maker",
             "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "name": "makerOrders",
         "outputs": [
           {
-            "internalType": "uint64",
+            "internalType": "uint64[]",
             "name": "",
-            "type": "uint64"
+            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -7605,6 +7652,35 @@
         ],
         "name": "prune",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -8771,30 +8847,25 @@
       {
         "inputs": [
           {
-            "internalType": "uint64",
-            "name": "id",
-            "type": "uint64"
-          },
-          {
             "internalType": "address",
-            "name": "exchange",
+            "name": "",
             "type": "address"
           },
           {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
-        "name": "_simulateAmountOut",
-        "outputs": [
-          {
             "internalType": "uint256",
-            "name": "dstAmountOut",
+            "name": "",
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
+        "name": "_makerOrders",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -9135,21 +9206,16 @@
         "inputs": [
           {
             "internalType": "address",
-            "name": "",
+            "name": "maker",
             "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "name": "makerOrders",
         "outputs": [
           {
-            "internalType": "uint64",
+            "internalType": "uint64[]",
             "name": "",
-            "type": "uint64"
+            "type": "uint64[]"
           }
         ],
         "stateMutability": "view",
@@ -9327,6 +9393,35 @@
         ],
         "name": "prune",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "simulateAmountOut",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       },

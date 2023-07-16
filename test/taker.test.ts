@@ -28,7 +28,7 @@ describe("Taker", async () => {
 
   beforeEach(async () => {
     takerContract = await deployArtifact<Taker>("Taker", { from: deployer }, [twap.options.address, [taker, deployer]]);
-    await ask(2000, 1000, 0.5);
+    await ask({ srcBidAmount: 1000, dstMinAmount: 0.5 });
   });
 
   afterEach(async () => {

@@ -81,7 +81,7 @@ async function initTokens() {
       srcToken = erc20s.poly.USDC();
       dstToken = erc20s.poly.WETH();
       srcTokenWhale = "0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245";
-      dstTokenWhale = "0x72A53cDBBcc1b9efa39c834A540550e23463AAcB";
+      dstTokenWhale = "0x28424507fefb6f7f8E9D3860F56504E4e5f5f390";
       return;
 
     case networks.ftm.id:
@@ -254,7 +254,7 @@ export async function ask(p: {
       srcToken.address,
       dstToken.address,
       (await srcToken.amount(p.srcBidAmount)).toFixed(0),
-      p.dstMinAmount ? (await srcToken.amount(p.dstMinAmount)).toFixed(0) : 1,
+      p.dstMinAmount ? (await dstToken.amount(p.dstMinAmount)).toFixed(0) : 1,
       p.chunks || 1,
       p.deadline || endTime(),
       p.bidDelay || 30,
