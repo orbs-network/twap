@@ -8,6 +8,7 @@ import {
   network as cnet,
   networks,
   web3,
+  erc20FromData,
 } from "@defi.org/web3-candies";
 import {
   deployArtifact,
@@ -107,6 +108,21 @@ async function initTokens() {
       dstTokenWhale = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
       return;
 
+    case networks.glmr.id:
+      srcToken = erc20FromData({
+        symbol: "USDC",
+        decimals: 6,
+        address: "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9",
+      });
+      dstToken = erc20FromData({
+        symbol: "WETH",
+        decimals: 18,
+        address: "0x30D2a9F5FDf90ACe8c17952cbb4eE48a55D916A7",
+      });
+      srcTokenWhale = "0x02e9081DfadD37A852F9a73C4d7d69e615E61334";
+      dstTokenWhale = "0xc3090f41Eb54A7f18587FD6651d4D3ab477b07a4";
+      return;
+
     default:
       throw new Error(`unhandled NETWORK ${process.env.NETWORK}`);
   }
@@ -124,6 +140,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
         avax: "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106", // Pangolin
         arb: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", // Sushiswap
         bsc: "0x10ED43C718714eb63d5aA57B78B54704E256024E", // Pancakeswap
+        glmr: "0x70085a09d30d6f8c4ecf6ee10120d1847383bb57", // StellaSwap V2
       },
       (impl, k) => k === network.shortname
     );
@@ -167,6 +184,7 @@ async function withUniswapV2Path() {
     avax: [srcToken.address, erc20sData.avax.WAVAX.address, dstToken.address],
     arb: [srcToken.address, dstToken.address],
     bsc: [srcToken.address, erc20sData.bsc.WBNB.address, dstToken.address],
+    glmr: [srcToken.address, erc20sData.glmr.WGLMR.address, dstToken.address],
   };
   const path = paths[network.shortname];
   if (!path) throw new Error(`no UniswapV2 path for ${network?.name}`);
@@ -192,7 +210,7 @@ async function fundDstToken(target: string, amount: number) {
 
 export async function withMockExchange(dstAmountOut: number) {
   exchange = await deployArtifact("MockExchange", { from: deployer });
-  await fundDstToken(exchange.options.address, 10_000);
+  await fundDstToken(exchange.options.address, 1_000);
   await setMockExchangeAmountOut(dstAmountOut);
 }
 

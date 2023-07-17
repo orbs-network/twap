@@ -15,7 +15,7 @@ import { web3, zeroAddress } from "@defi.org/web3-candies";
 import BN from "bignumber.js";
 import _ from "lodash";
 
-describe.only("TWAPLib with production config", () => {
+describe("TWAPLib with production config", () => {
   beforeEach(async () => initFixture("latest"));
 
   _.map(

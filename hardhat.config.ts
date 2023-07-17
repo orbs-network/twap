@@ -1,11 +1,7 @@
-import { chainId, contract, estimateGasPrice, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
+import { chainId } from "@defi.org/web3-candies";
 import {
-  artifact,
-  askDeployer,
-  askFees,
-  deploy,
   hardhatDefaultConfig,
-  isHardhatNetwork,
+  isHardhatNetwork
 } from "@defi.org/web3-candies/dist/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-web3";
@@ -59,5 +55,8 @@ export default _.merge(hardhatDefaultConfig(), {
     hardhat: {
       blockGasLimit: 15e6,
     },
+  },
+  mocha: {
+    retries: 2,
   },
 } as HardhatUserConfig);

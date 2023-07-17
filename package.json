@@ -32,7 +32,8 @@
     "test:poly": "NETWORK=POLY hardhat test",
     "test:avax": "NETWORK=AVAX hardhat test",
     "test:arb": "NETWORK=ARB hardhat test",
-    "test:bsc": "NETWORK=BSC hardhat test"
+    "test:bsc": "NETWORK=BSC hardhat test",
+    "test:glmr": "NETWORK=GLMR hardhat test"
   },
   "prettier": {
     "printWidth": 120

@@ -75,7 +75,7 @@ describe("FeeOnTransfer tokens", async () => {
       await expectRevert(
         () =>
           exchange.methods.swap(token.options.address, network.wToken.address, 100, 0, [], data).send({ from: user }),
-        /(UniswapV2|Pancake|Pangolin): K/
+        /(UniswapV2|Pancake|Pangolin|StellaSwapV2): K/
       );
     });
 
