@@ -69,7 +69,7 @@ export class TWAPLib {
   estimatedDelayBetweenChunksMillis = () => this.config.bidDelaySeconds * 1000 * 2;
 
   /**
-   * includes the bidding war and block settelment
+   * includes the bidding war and block settlement
    */
   fillDelayUiMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
     BN.max(
@@ -77,6 +77,9 @@ export class TWAPLib {
       BN(this.estimatedDelayBetweenChunksMillis())
     ).toNumber();
 
+  /**
+   * to be sent to the TWAP contract, does not include the bidding war and block settlement
+   */
   fillDelayMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
     this.fillDelayUiMillis(totalChunks, maxDurationMillis) - this.estimatedDelayBetweenChunksMillis();
 
@@ -112,7 +115,7 @@ export class TWAPLib {
 
   isMarketOrder = (order: Order) => order.ask.dstMinAmount.lte(1);
 
-  orderProgress = (order: Order) => parseFloat(order.filled.srcAmount.div(order.ask.srcAmount).toFixed(4));
+  orderProgress = (order: Order) => order.filled.count / order.ask.count;
 
   percentAboveMarket = (srcUsdMarket: BN.Value, dstUsdMarket: BN.Value, limitDstPriceFor1Src: BN.Value) =>
     parseFloat(BN(limitDstPriceFor1Src).div(BN(srcUsdMarket).div(dstUsdMarket)).minus(1).toFixed(4));
@@ -190,9 +193,9 @@ export class TWAPLib {
   validateOrderInputs(
     srcToken: TokenData,
     dstToken: TokenData,
-    srcAmount: BN.Value,
-    srcChunkAmount: BN.Value,
-    dstMinChunkAmountOut: BN.Value,
+    srcBidAmount: BN.Value,
+    dstMinAmountOut: BN.Value,
+    count: BN.Value,
     deadline: BN.Value,
     fillDelaySeconds: BN.Value,
     srcUsd: BN.Value
@@ -202,10 +205,9 @@ export class TWAPLib {
 
     if (BN(srcAmount).lte(0)) return OrderInputValidation.invalidSrcAmount;
 
-    if (BN(srcChunkAmount).lte(0) || BN(srcChunkAmount).gt(srcAmount))
-      return OrderInputValidation.invalidSrcChunkAmount;
+    if (BN(srcBidAmount).lte(0) || BN(srcBidAmount).gt(srcAmount)) return OrderInputValidation.invalidSrcChunkAmount;
 
-    if (BN(dstMinChunkAmountOut).lte(0)) return OrderInputValidation.invalidDstMinChunkAmountOut;
+    if (BN(dstMinAmountOut).lte(0)) return OrderInputValidation.invalidDstMinChunkAmountOut;
 
     if (BN(deadline).integerValue(BN.ROUND_FLOOR).lte(Date.now())) return OrderInputValidation.invalidDeadline;
 
@@ -214,7 +216,7 @@ export class TWAPLib {
     if (BN(srcUsd).lte(0)) return OrderInputValidation.invalidSrcUsd;
 
     if (
-      BN(srcChunkAmount)
+      BN(srcBidAmount)
         .times(srcUsd)
         .lt(BN(this.config.minChunkSizeUsd).times(BN(10).pow(srcToken.decimals)))
     )
@@ -330,15 +332,16 @@ export class TWAPLib {
       time: Number(r.time),
       maker: Web3.utils.toChecksumAddress(r.maker),
       ask: {
-        deadline: Number(r.ask.deadline),
-        bidDelay: Number(r.ask.bidDelay),
-        fillDelay: Number(r.ask.fillDelay),
         exchange: Web3.utils.toChecksumAddress(r.ask.exchange),
         srcToken: Web3.utils.toChecksumAddress(r.ask.srcToken),
         dstToken: Web3.utils.toChecksumAddress(r.ask.dstToken),
-        srcAmount: BN(r.ask.srcAmount),
         srcBidAmount: BN(r.ask.srcBidAmount),
         dstMinAmount: BN(r.ask.dstMinAmount),
+        count: Number(r.ask.count),
+        bidDelay: Number(r.ask.bidDelay),
+        fillDelay: Number(r.ask.fillDelay),
+        deadline: Number(r.ask.deadline),
+        data: r.ask.data || "",
       },
       bid: {
         time: Number(r.bid?.time || 0),
@@ -349,10 +352,10 @@ export class TWAPLib {
         data: r.bid?.data || "",
       },
       filled: {
-        time: Number(r.filled.time),
-        srcAmount: BN(r.filled.srcAmount),
-        dstAmount: BN(r.filled.dstAmount),
-        dstFee: BN(r.filled.dstFee),
+        time: Number(r.filled?.time || 0),
+        count: Number(r.filled?.count || 0),
+        dstAmount: BN(r.filled?.dstAmount || 0),
+        dstFee: BN(r.filled?.dstFee || 0),
       },
     };
   }
@@ -418,14 +421,12 @@ export class TWAPLib {
     if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
       throw new Error(`mismatched exchange and config`);
 
-    const srcNextChunkAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.filled.srcAmount));
-
     const [srcToken, dstToken] = await Promise.all([
       this.getToken(order.ask.srcToken),
       this.getToken(order.ask.dstToken),
     ]);
 
-    return await this.findRoute(srcToken, dstToken, srcNextChunkAmountIn);
+    return await this.findRoute(srcToken, dstToken, order.ask.srcBidAmount);
   }
 
   encodeBidData(route: Paraswap.Route | Odos.Route | OpenOcean.Route) {
@@ -436,7 +437,7 @@ export class TWAPLib {
       case "ParaswapExchange":
       case "OdosExchange":
       case "OpenOceanExchange":
-        return web3().eth.abi.encodeParameters(["uint256", "bytes"], [route.dstAmount.toFixed(0), route.data]);
+        return route.data;
       default:
         throw new Error(`unknown exchange type ${this.config.exchangeType}`);
     }
@@ -449,15 +450,16 @@ export interface Order {
   time: number;
   maker: string;
   ask: {
-    deadline: number;
-    bidDelay: number;
-    fillDelay: number;
     exchange: string;
     srcToken: string;
     dstToken: string;
-    srcAmount: BN;
     srcBidAmount: BN;
     dstMinAmount: BN;
+    count: number;
+    bidDelay: number;
+    fillDelay: number;
+    deadline: number;
+    data: string;
   };
   bid: {
     time: number;
@@ -469,7 +471,7 @@ export interface Order {
   };
   filled: {
     time: number;
-    srcAmount: BN;
+    count: number;
     dstAmount: BN;
     dstFee: BN;
   };
