@@ -42,7 +42,7 @@ export interface Config {
   twapAddress: string;
   lensAddress: string;
   bidDelaySeconds: number;
-  minChunkSizeUsd: number;
+  minSrcBidAmountUsd: number;
   nativeToken: TokenData;
   wToken: TokenData;
   twapAbi: any;
@@ -75,7 +75,7 @@ export const ChainConfigs = {
     twapAddress: "",
     lensAddress: "",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 100,
+    minSrcBidAmountUsd: 100,
     nativeToken: networks.eth.native,
     wToken: networks.eth.wToken,
     ...defaultAbis,
@@ -87,7 +87,7 @@ export const ChainConfigs = {
     twapAddress: "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
     lensAddress: "0x3b7C090857a4068e16396550423ebadae502768F",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minSrcBidAmountUsd: 10,
     nativeToken: networks.bsc.native,
     wToken: networks.bsc.wToken,
     ...defaultAbis,
@@ -99,7 +99,7 @@ export const ChainConfigs = {
     twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
     lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minSrcBidAmountUsd: 10,
     nativeToken: networks.arb.native,
     wToken: networks.arb.wToken,
     ...defaultAbis,
@@ -111,7 +111,7 @@ export const ChainConfigs = {
     twapAddress: "0xBb9F828E34A1327607c3e4eA3dD35891398DD5EE",
     lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minSrcBidAmountUsd: 10,
     nativeToken: networks.ftm.native,
     wToken: networks.ftm.wToken,
     twapAbi: twapAbiV3,
@@ -125,7 +125,7 @@ export const ChainConfigs = {
     twapAddress: "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
     lensAddress: "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minSrcBidAmountUsd: 10,
     nativeToken: networks.poly.native,
     wToken: networks.poly.wToken,
     ...defaultAbis,
@@ -137,7 +137,7 @@ export const ChainConfigs = {
     twapAddress: "0xF2687e119B0A4aB00bED9c9F425403566D605020",
     lensAddress: "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minSrcBidAmountUsd: 10,
     nativeToken: networks.avax.native,
     wToken: networks.avax.wToken,
     ...defaultAbis,

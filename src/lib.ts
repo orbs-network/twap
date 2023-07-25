@@ -34,7 +34,7 @@ export class TWAPLib {
     this.lens = contract<Lens>(config.lensAbi, config.lensAddress);
   }
 
-  dstAmount = (
+  getDstAmount = (
     srcToken: TokenData,
     dstToken: TokenData,
     srcAmount: BN.Value,
@@ -55,38 +55,31 @@ export class TWAPLib {
 
   isValidChain = (chainId: number) => chainId === this.config.chainId;
 
-  maxPossibleChunks = (srcToken: TokenData, srcAmount: BN.Value, srcUsd: BN.Value) =>
-    BN.max(1, BN(srcAmount).div(BN(10).pow(srcToken.decimals).div(srcUsd).times(this.config.minChunkSizeUsd)))
+  getMaxCount = (srcToken: TokenData, srcAmount: BN.Value, srcUsd: BN.Value) =>
+    BN.max(1, BN(srcAmount).div(BN(10).pow(srcToken.decimals).div(srcUsd).times(this.config.minSrcBidAmountUsd)))
       .integerValue(BN.ROUND_FLOOR)
       .toNumber();
 
-  srcChunkAmount = (srcAmount: BN.Value, totalChunks: BN.Value) =>
-    BN(srcAmount).div(totalChunks).integerValue(BN.ROUND_FLOOR);
+  getSrcBidAmount = (srcAmount: BN.Value, count: BN.Value) => BN(srcAmount).div(count).integerValue(BN.ROUND_FLOOR);
 
-  totalChunks = (srcAmount: BN.Value, srcChunkAmount: BN.Value) =>
-    BN(srcAmount).div(srcChunkAmount).integerValue(BN.ROUND_CEIL).toNumber();
-
-  estimatedDelayBetweenChunksMillis = () => this.config.bidDelaySeconds * 1000 * 2;
+  getEstimatedBidDelayMillis = () => this.config.bidDelaySeconds * 1000 * 2;
 
   /**
-   * includes the bidding war and block settlement
+   * to be shown in UI, includes the bidding war and block settlement
    */
-  fillDelayUiMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
-    BN.max(
-      BN(totalChunks).gt(1) ? BN(maxDurationMillis).div(totalChunks) : 0,
-      BN(this.estimatedDelayBetweenChunksMillis())
-    ).toNumber();
+  getFillDelayUiMillis = (count: BN.Value, maxDurationMillis: BN.Value) =>
+    BN.max(BN(count).gt(1) ? BN(maxDurationMillis).div(count) : 0, BN(this.getEstimatedBidDelayMillis())).toNumber();
 
   /**
    * to be sent to the TWAP contract, does not include the bidding war and block settlement
    */
-  fillDelayMillis = (totalChunks: BN.Value, maxDurationMillis: BN.Value) =>
-    this.fillDelayUiMillis(totalChunks, maxDurationMillis) - this.estimatedDelayBetweenChunksMillis();
+  getFillDelayMillis = (count: BN.Value, maxDurationMillis: BN.Value) =>
+    this.getFillDelayUiMillis(count, maxDurationMillis) - this.getEstimatedBidDelayMillis();
 
-  dstMinAmountOut = (
+  getDstMinAmountOut = (
     srcToken: TokenData,
     dstToken: TokenData,
-    srcChunkAmount: BN.Value,
+    srcBidAmount: BN.Value,
     limitDstPriceFor1Src: BN.Value,
     isMarketOrder: boolean
   ) =>
@@ -95,32 +88,32 @@ export class TWAPLib {
       : BN.max(
           1,
           convertDecimals(
-            BN(srcChunkAmount).times(limitDstPriceFor1Src),
+            BN(srcBidAmount).times(limitDstPriceFor1Src),
             srcToken.decimals,
             dstToken.decimals
           ).integerValue(BN.ROUND_FLOOR)
         );
 
-  dstPriceFor1Src = (
+  getLimitDstPriceFor1Src = (
     srcToken: TokenData,
     dstToken: TokenData,
     srcUsdMarket: BN.Value,
     dstUsdMarket: BN.Value,
-    srcChunkAmount: BN.Value,
-    dstMinAmountOut: BN.Value
+    srcBidAmount: BN.Value,
+    dstMinAmount: BN.Value
   ) =>
-    BN(dstMinAmountOut).eq(1)
+    BN(dstMinAmount).eq(1)
       ? BN(srcUsdMarket).div(dstUsdMarket)
-      : BN(dstMinAmountOut).div(convertDecimals(BN(srcChunkAmount), srcToken.decimals, dstToken.decimals));
+      : BN(dstMinAmount).div(convertDecimals(BN(srcBidAmount), srcToken.decimals, dstToken.decimals));
 
   isMarketOrder = (order: Order) => order.ask.dstMinAmount.lte(1);
 
-  orderProgress = (order: Order) => order.filled.count / order.ask.count;
+  getOrderProgress = (order: Order) => order.filled.count / order.ask.count;
 
-  percentAboveMarket = (srcUsdMarket: BN.Value, dstUsdMarket: BN.Value, limitDstPriceFor1Src: BN.Value) =>
-    parseFloat(BN(limitDstPriceFor1Src).div(BN(srcUsdMarket).div(dstUsdMarket)).minus(1).toFixed(4));
+  getPercentAboveMarket = (srcUsdMarket: BN.Value, dstUsdMarket: BN.Value, limitDstPriceFor1Src: BN.Value) =>
+    BN(limitDstPriceFor1Src).div(BN(srcUsdMarket).div(dstUsdMarket)).minus(1).toNumber();
 
-  status = (order: Order) =>
+  getStatus = (order: Order) =>
     order.status > Date.now() / 1000
       ? Status.Open
       : order.status === 1
@@ -194,7 +187,7 @@ export class TWAPLib {
     srcToken: TokenData,
     dstToken: TokenData,
     srcBidAmount: BN.Value,
-    dstMinAmountOut: BN.Value,
+    dstMinAmount: BN.Value,
     count: BN.Value,
     deadline: BN.Value,
     fillDelaySeconds: BN.Value,
@@ -203,11 +196,9 @@ export class TWAPLib {
     const tokensValidation = this.validateTokens(srcToken, dstToken);
     if (tokensValidation === TokensValidation.invalid) return OrderInputValidation.invalidTokens;
 
-    if (BN(srcAmount).lte(0)) return OrderInputValidation.invalidSrcAmount;
+    if (BN(count).lte(0)) return OrderInputValidation.invalidCount;
 
-    if (BN(srcBidAmount).lte(0) || BN(srcBidAmount).gt(srcAmount)) return OrderInputValidation.invalidSrcChunkAmount;
-
-    if (BN(dstMinAmountOut).lte(0)) return OrderInputValidation.invalidDstMinChunkAmountOut;
+    if (BN(dstMinAmount).lte(0)) return OrderInputValidation.invalidDstMinAmount;
 
     if (BN(deadline).integerValue(BN.ROUND_FLOOR).lte(Date.now())) return OrderInputValidation.invalidDeadline;
 
@@ -216,11 +207,12 @@ export class TWAPLib {
     if (BN(srcUsd).lte(0)) return OrderInputValidation.invalidSrcUsd;
 
     if (
+      BN(srcBidAmount).lte(0) ||
       BN(srcBidAmount)
         .times(srcUsd)
-        .lt(BN(this.config.minChunkSizeUsd).times(BN(10).pow(srcToken.decimals)))
+        .lt(BN(this.config.minSrcBidAmountUsd).times(BN(10).pow(srcToken.decimals)))
     )
-      return OrderInputValidation.invalidSmallestSrcChunkUsd;
+      return OrderInputValidation.invalidSrcBidAmount;
 
     return OrderInputValidation.valid;
   }
@@ -228,9 +220,9 @@ export class TWAPLib {
   async submitOrder(
     srcToken: TokenData,
     dstToken: TokenData,
-    srcAmount: BN.Value,
-    srcChunkAmount: BN.Value,
-    dstMinChunkAmountOut: BN.Value,
+    srcBidAmount: BN.Value,
+    dstMinAmount: BN.Value,
+    count: number,
     deadline: number,
     fillDelaySeconds: number,
     srcUsd: BN.Value,
@@ -241,9 +233,9 @@ export class TWAPLib {
     const validation = this.validateOrderInputs(
       srcToken,
       dstToken,
-      srcAmount,
-      srcChunkAmount,
-      dstMinChunkAmountOut,
+      srcBidAmount,
+      dstMinAmount,
+      count,
       deadline,
       fillDelaySeconds,
       srcUsd
@@ -260,8 +252,8 @@ export class TWAPLib {
       srcToken.address,
       dstToken.address,
       BN(srcAmount).toFixed(0),
-      BN(srcChunkAmount).toFixed(0),
-      BN(dstMinChunkAmountOut).toFixed(0),
+      BN(srcBidAmount).toFixed(0),
+      BN(dstMinAmount).toFixed(0),
       BN(deadline).div(1000).toFixed(0),
       BN(this.config.bidDelaySeconds).toFixed(0),
       BN(fillDelaySeconds).toFixed(0),
@@ -487,13 +479,12 @@ export enum Status {
 export enum OrderInputValidation {
   valid = "valid",
   invalidTokens = "invalidTokens",
-  invalidSrcAmount = "invalidSrcAmount",
-  invalidSrcChunkAmount = "invalidSrcChunkAmount",
-  invalidDstMinChunkAmountOut = "invalidDstMinChunkAmountOut",
+  invalidCount = "invalidCount",
+  invalidSrcBidAmount = "invalidSrcBidAmount",
+  invalidDstMinAmount = "invalidDstMinAmount",
   invalidDeadline = "invalidDeadline",
   invalidFillDelaySeconds = "invalidFillDelaySeconds",
   invalidSrcUsd = "invalidSrcUsd",
-  invalidSmallestSrcChunkUsd = "invalidSmallestSrcChunkUsd",
 }
 
 export enum TokensValidation {
