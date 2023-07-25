@@ -203,9 +203,9 @@ export const Configs = {
     ...ChainConfigs.bsc,
     name: "Thena",
     partner: "Orbs:TWAP:Thena",
-    exchangeAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    exchangeType: "ParaswapExchange",
-    pathfinderKey: ParaswapOnlyDex.Thena,
+    exchangeAddress: "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
+    exchangeType: "OpenOceanExchange",
+    pathfinderKey: OpenOceanOnlyDex.Thena,
   } as Config,
 
   PancakeSwap: {

@@ -6,7 +6,7 @@ import _ from "lodash";
 
 useChaiBigNumber();
 
-describe.only("Paraswap", () => {
+describe("Paraswap", () => {
   _.map(
     _.filter(Configs, (c) => c.chainName === process.env.NETWORK!.toLowerCase()),
     (c) => {
