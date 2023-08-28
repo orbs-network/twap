@@ -84,7 +84,7 @@ async function initTokens() {
       srcToken = erc20s.ftm.USDC();
       dstToken = erc20s.ftm.WETH();
       srcTokenWhale = "0x95bf7E307BC1ab0BA38ae10fc27084bC36FcD605";
-      dstTokenWhale = "0x25c130B2624CF12A4Ea30143eF50c5D68cEFA22f";
+      dstTokenWhale = "0x632085aA7924DF37f64950C58B9Fe5D9fDBA80ef";
       return;
 
     case networks.avax.id:

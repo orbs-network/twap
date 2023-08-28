@@ -1,7 +1,11 @@
-import { chainId } from "@defi.org/web3-candies";
+import { chainId, contract, findBlock, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
 import {
+  askAddress,
+  askDeployer,
+  askFees,
+  deploy,
   hardhatDefaultConfig,
-  isHardhatNetwork
+  isHardhatNetwork,
 } from "@defi.org/web3-candies/dist/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-web3";
@@ -16,11 +20,6 @@ import _ from "lodash";
 task("deploy").setAction(async () => {
   if (isHardhatNetwork()) throw new Error("on hardhat network!");
   const config = require("./src/configs").chainConfig(await chainId());
-
-  // const takers = [];
-
-  // const gas = await estimateGasPrice();
-  // const address = await deploy({ contractName: "Taker", args: [config.twapAddress, takers], waitForConfirmations: 1 });
 });
 
 task("github-pages").setAction(async () => {
@@ -57,6 +56,6 @@ export default _.merge(hardhatDefaultConfig(), {
     },
   },
   mocha: {
-    retries: 2,
+    retries: 0,
   },
 } as HardhatUserConfig);

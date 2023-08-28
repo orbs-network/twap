@@ -3,7 +3,6 @@ import _ from "lodash";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
-import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
 
 export { nativeTokenAddresses, zeroAddress } from "@defi.org/web3-candies";
 
@@ -107,16 +106,14 @@ export const ChainConfigs = {
   ftm: {
     chainName: "ftm",
     chainId: 250,
-    twapVersion: 3,
-    twapAddress: "0xBb9F828E34A1327607c3e4eA3dD35891398DD5EE",
-    lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
+    twapVersion: 4,
+    twapAddress: "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
+    lensAddress: "0x6E78fA5d48aedF302e48ef3fbD97FD11b4e98d8B",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     nativeToken: networks.ftm.native,
     wToken: networks.ftm.wToken,
-    twapAbi: twapAbiV3,
-    lensAbi: lensAbiV3,
-    takerAbi: takerAbiV3,
+    ...defaultAbis,
   },
   poly: {
     chainName: "poly",
@@ -147,6 +144,7 @@ export const ChainConfigs = {
 export const Configs = {
   SpiritSwap: {
     ...ChainConfigs.ftm,
+    twapVersion: 3,
     name: "SpiritSwap",
     partner: "Orbs:TWAP:SpiritSwap",
     exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
@@ -158,7 +156,7 @@ export const Configs = {
     ...ChainConfigs.ftm,
     name: "SpookySwap",
     partner: "Orbs:TWAP:SpookySwap",
-    exchangeAddress: "0x4b5815D263549Ff9b54a3838693C3DC0dbE7e597",
+    exchangeAddress: "0x704b9764cb36B8856f3097845dcc594d82192638",
     exchangeType: "UniswapV2Exchange",
     pathfinderKey: ParaswapOnlyDex.SpookySwap,
   } as Config,

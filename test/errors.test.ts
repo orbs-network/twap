@@ -194,7 +194,7 @@ describe("Errors", () => {
 
     it("insufficient amount out with excess fee", async () => {
       await ask(2000, 1000, 0.5);
-      await expectRevert(() => bid(0, 0.1), "min out");
+      await expectRevert(() => bid(0, 0.5), "min out");
     });
 
     it("fee underflow protection", async () => {

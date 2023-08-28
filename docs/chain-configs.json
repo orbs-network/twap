@@ -4831,9 +4831,9 @@
   "ftm": {
     "chainName": "ftm",
     "chainId": 250,
-    "twapVersion": 3,
-    "twapAddress": "0xBb9F828E34A1327607c3e4eA3dD35891398DD5EE",
-    "lensAddress": "0x042799657E971855eD619046aeDf7F30DB56d2D6",
+    "twapVersion": 4,
+    "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
+    "lensAddress": "0x6E78fA5d48aedF302e48ef3fbD97FD11b4e98d8B",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
@@ -5010,31 +5010,6 @@
           {
             "components": [
               {
-                "internalType": "uint32",
-                "name": "time",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint32",
-                "name": "deadline",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint32",
-                "name": "bidDelay",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint32",
-                "name": "fillDelay",
-                "type": "uint32"
-              },
-              {
-                "internalType": "address",
-                "name": "maker",
-                "type": "address"
-              },
-              {
                 "internalType": "address",
                 "name": "exchange",
                 "type": "address"
@@ -5063,6 +5038,26 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "deadline",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "bidDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "fillDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
               }
             ],
             "indexed": false,
@@ -5170,7 +5165,7 @@
       },
       {
         "inputs": [],
-        "name": "STALE_BID_DELAY_MUL",
+        "name": "STALE_BID_SECONDS",
         "outputs": [
           {
             "internalType": "uint32",
@@ -5223,49 +5218,61 @@
       {
         "inputs": [
           {
-            "internalType": "address",
-            "name": "exchange",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "srcToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "dstToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "srcBidAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "dstMinAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "deadline",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "bidDelay",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "fillDelay",
-            "type": "uint32"
+            "components": [
+              {
+                "internalType": "address",
+                "name": "exchange",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "srcToken",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "dstToken",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcBidAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstMinAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "deadline",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "bidDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "fillDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct OrderLib.Ask",
+            "name": "_ask",
+            "type": "tuple"
           }
         ],
         "name": "ask",
@@ -5334,6 +5341,11 @@
           },
           {
             "internalType": "uint32",
+            "name": "time",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
             "name": "filledTime",
             "type": "uint32"
           },
@@ -5343,32 +5355,12 @@
             "type": "uint256"
           },
           {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
             "components": [
-              {
-                "internalType": "uint32",
-                "name": "time",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint32",
-                "name": "deadline",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint32",
-                "name": "bidDelay",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint32",
-                "name": "fillDelay",
-                "type": "uint32"
-              },
-              {
-                "internalType": "address",
-                "name": "maker",
-                "type": "address"
-              },
               {
                 "internalType": "address",
                 "name": "exchange",
@@ -5398,6 +5390,26 @@
                 "internalType": "uint256",
                 "name": "dstMinAmount",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "deadline",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "bidDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "fillDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
               }
             ],
             "internalType": "struct OrderLib.Ask",
@@ -5545,6 +5557,11 @@
               },
               {
                 "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
                 "name": "filledTime",
                 "type": "uint32"
               },
@@ -5554,32 +5571,12 @@
                 "type": "uint256"
               },
               {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
                 "components": [
-                  {
-                    "internalType": "uint32",
-                    "name": "time",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "deadline",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "bidDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "fillDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "address",
-                    "name": "maker",
-                    "type": "address"
-                  },
                   {
                     "internalType": "address",
                     "name": "exchange",
@@ -5609,6 +5606,26 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
                   }
                 ],
                 "internalType": "struct OrderLib.Ask",
@@ -5766,6 +5783,11 @@
               },
               {
                 "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
                 "name": "filledTime",
                 "type": "uint32"
               },
@@ -5775,32 +5797,12 @@
                 "type": "uint256"
               },
               {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
                 "components": [
-                  {
-                    "internalType": "uint32",
-                    "name": "time",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "deadline",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "bidDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "fillDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "address",
-                    "name": "maker",
-                    "type": "address"
-                  },
                   {
                     "internalType": "address",
                     "name": "exchange",
@@ -5830,6 +5832,26 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
                   }
                 ],
                 "internalType": "struct OrderLib.Ask",
@@ -5916,6 +5938,11 @@
               },
               {
                 "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
                 "name": "filledTime",
                 "type": "uint32"
               },
@@ -5925,32 +5952,12 @@
                 "type": "uint256"
               },
               {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
                 "components": [
-                  {
-                    "internalType": "uint32",
-                    "name": "time",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "deadline",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "bidDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "fillDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "address",
-                    "name": "maker",
-                    "type": "address"
-                  },
                   {
                     "internalType": "address",
                     "name": "exchange",
@@ -5980,6 +5987,26 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
                   }
                 ],
                 "internalType": "struct OrderLib.Ask",
@@ -6066,6 +6093,11 @@
               },
               {
                 "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
                 "name": "filledTime",
                 "type": "uint32"
               },
@@ -6075,32 +6107,12 @@
                 "type": "uint256"
               },
               {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
                 "components": [
-                  {
-                    "internalType": "uint32",
-                    "name": "time",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "deadline",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "bidDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "uint32",
-                    "name": "fillDelay",
-                    "type": "uint32"
-                  },
-                  {
-                    "internalType": "address",
-                    "name": "maker",
-                    "type": "address"
-                  },
                   {
                     "internalType": "address",
                     "name": "exchange",
@@ -6130,6 +6142,26 @@
                     "internalType": "uint256",
                     "name": "dstMinAmount",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
                   }
                 ],
                 "internalType": "struct OrderLib.Ask",
@@ -6214,6 +6246,38 @@
         "type": "constructor"
       },
       {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "previousOwner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "inputs": [
           {
             "internalType": "uint64",
@@ -6275,6 +6339,19 @@
         "type": "function"
       },
       {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [
           {
             "internalType": "address",
@@ -6296,12 +6373,45 @@
       {
         "inputs": [
           {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "address",
             "name": "token",
             "type": "address"
           }
         ],
         "name": "rescue",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
