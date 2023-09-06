@@ -3,6 +3,7 @@ import _ from "lodash";
 import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
+import { lensAbiV3, takerAbiV3, twapAbiV3 } from "./legacy-abi";
 
 export { nativeTokenAddresses, zeroAddress } from "@defi.org/web3-candies";
 
@@ -145,6 +146,11 @@ export const Configs = {
   SpiritSwap: {
     ...ChainConfigs.ftm,
     twapVersion: 3,
+    twapAddress: "0xBb9F828E34A1327607c3e4eA3dD35891398DD5EE",
+    lensAddress: "0x042799657E971855eD619046aeDf7F30DB56d2D6",
+    twapAbi: twapAbiV3,
+    lensAbi: lensAbiV3,
+    takerAbi: takerAbiV3,
     name: "SpiritSwap",
     partner: "Orbs:TWAP:SpiritSwap",
     exchangeAddress: "0xAd19179201be5A51D1cBd3bB2fC651BB05822404",
