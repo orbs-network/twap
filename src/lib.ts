@@ -16,8 +16,6 @@ import {
   zero,
   zeroAddress,
 } from "@defi.org/web3-candies";
-import type { TWAP } from "../typechain-hardhat/contracts";
-import type { Lens } from "../typechain-hardhat/contracts/periphery";
 import { Paraswap } from "./paraswap";
 import _ from "lodash";
 import { Odos } from "./odos";
@@ -25,13 +23,13 @@ import { OpenOcean } from "./openocean";
 
 export class TWAPLib {
   public static VERSION = 4;
-  public twap: TWAP;
-  public lens: Lens;
+  public twap;
+  public lens;
 
   constructor(public config: Config, public maker: string, public provider?: any) {
     if (provider) setWeb3Instance(new Web3(provider));
-    this.twap = contract<TWAP>(config.twapAbi, config.twapAddress);
-    this.lens = contract<Lens>(config.lensAbi, config.lensAddress);
+    this.twap = contract(config.twapAbi, config.twapAddress);
+    this.lens = contract(config.lensAbi, config.lensAddress);
   }
 
   dstAmount = (
