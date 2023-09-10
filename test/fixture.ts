@@ -109,20 +109,20 @@ async function initTokens() {
       return;
 
     case networks.glmr.id:
-      srcToken = erc20FromData({
-        symbol: "USDC",
-        decimals: 6,
-        address: "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9",
-      });
-      dstToken = erc20FromData({
-        symbol: "WETH",
-        decimals: 18,
-        address: "0x30D2a9F5FDf90ACe8c17952cbb4eE48a55D916A7",
-      });
+      srcToken = erc20s.glmr.USDC();
+      dstToken = erc20s.glmr.WETH();
       srcTokenWhale = "0x02e9081DfadD37A852F9a73C4d7d69e615E61334";
       dstTokenWhale = "0xc3090f41Eb54A7f18587FD6651d4D3ab477b07a4";
       return;
 
+    case networks.base.id:
+      srcToken = erc20s.base.USDC();
+      dstToken = erc20s.base.WETH();
+      srcTokenWhale = "";
+      dstTokenWhale = "";
+      return;
+
+    // BaseSwap router 0x327Df1E6de05895d2ab08513aaDD9313Fe505d86
     default:
       throw new Error(`unhandled NETWORK ${process.env.NETWORK}`);
   }
