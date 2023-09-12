@@ -29,7 +29,7 @@ export enum ParaswapOnlyDex {
 
 export enum OdosOnlyDex {
   Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
-  BaseSwap = "BaseSwap",
+  BaseSwap = "BaseSwap,BaseSwapX",
 }
 
 export enum OpenOceanOnlyDex {
@@ -145,8 +145,8 @@ export const ChainConfigs = {
     chainName: "base",
     chainId: 8453,
     twapVersion: 4,
-    twapAddress: "",
-    lensAddress: "",
+    twapAddress: "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+    lensAddress: "0x3b7C090857a4068e16396550423ebadae502768F",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     nativeToken: networks.base.native,
@@ -216,14 +216,14 @@ export const Configs = {
     pathfinderKey: OdosOnlyDex.Chronos,
   } as Config,
 
-  // BaseSwap: {
-  //   ...ChainConfigs.base,
-  //   name: "BaseSwap",
-  //   partner: "Orbs:TWAP:BaseSwap",
-  //   exchangeAddress: "",
-  //   exchangeType: "OdosExchange",
-  //   pathfinderKey: OdosOnlyDex.BaseSwap,
-  // } as Config,
+  BaseSwap: {
+    ...ChainConfigs.base,
+    name: "BaseSwap",
+    partner: "Orbs:TWAP:BaseSwap",
+    exchangeAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    exchangeType: "OdosExchange",
+    pathfinderKey: OdosOnlyDex.BaseSwap,
+  } as Config,
 
   Thena: {
     ...ChainConfigs.bsc,

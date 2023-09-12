@@ -122,7 +122,6 @@ async function initTokens() {
       dstTokenWhale = "0xb4885bc63399bf5518b994c1d0c153334ee579d0";
       return;
 
-    // BaseSwap router 0x327Df1E6de05895d2ab08513aaDD9313Fe505d86
     default:
       throw new Error(`unhandled NETWORK ${process.env.NETWORK}`);
   }
