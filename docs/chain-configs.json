@@ -9664,8 +9664,8 @@
     "chainName": "base",
     "chainId": 8453,
     "twapVersion": 4,
-    "twapAddress": "",
-    "lensAddress": "",
+    "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+    "lensAddress": "0x3b7C090857a4068e16396550423ebadae502768F",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
@@ -11266,6 +11266,8 @@
         "type": "receive"
       }
     ],
-    "integrations": []
+    "integrations": [
+      "BaseSwap"
+    ]
   }
 }

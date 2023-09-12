@@ -9561,6 +9561,1618 @@
     "exchangeType": "OdosExchange",
     "pathfinderKey": "Chronos Stable,Chronos Volatile,Wrapped Ether"
   },
+  "BaseSwap": {
+    "chainName": "base",
+    "chainId": 8453,
+    "twapVersion": 4,
+    "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+    "lensAddress": "0x3b7C090857a4068e16396550423ebadae502768F",
+    "bidDelaySeconds": 60,
+    "minChunkSizeUsd": 10,
+    "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
+      "symbol": "ETH",
+      "decimals": 18,
+      "logoUrl": "https://app.1inch.io/assets/images/network-logos/ethereum.svg"
+    },
+    "wToken": {
+      "symbol": "WETH",
+      "address": "0x4200000000000000000000000000000000000006",
+      "decimals": 18,
+      "weth": true,
+      "logoUrl": "https://tokens-data.1inch.io/images/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png"
+    },
+    "twapAbi": [
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_iweth",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint32",
+            "name": "slippagePercent",
+            "type": "uint32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "address",
+                "name": "taker",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "exchange",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              }
+            ],
+            "indexed": false,
+            "internalType": "struct OrderLib.Bid",
+            "name": "bid",
+            "type": "tuple"
+          }
+        ],
+        "name": "OrderBid",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "sender",
+            "type": "address"
+          }
+        ],
+        "name": "OrderCanceled",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "taker",
+            "type": "address"
+          }
+        ],
+        "name": "OrderCompleted",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "exchange",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "srcToken",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "dstToken",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcBidAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstMinAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "deadline",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "bidDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "fillDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              }
+            ],
+            "indexed": false,
+            "internalType": "struct OrderLib.Ask",
+            "name": "ask",
+            "type": "tuple"
+          }
+        ],
+        "name": "OrderCreated",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "taker",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "srcAmountIn",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "dstAmountOut",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "dstFee",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "srcFilledAmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "OrderFilled",
+        "type": "event"
+      },
+      {
+        "inputs": [],
+        "name": "MIN_BID_DELAY_SECONDS",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "MIN_OUTBID_PERCENT",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "PERCENT_BASE",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "STALE_BID_SECONDS",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "STATUS_CANCELED",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "STATUS_COMPLETED",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "VERSION",
+        "outputs": [
+          {
+            "internalType": "uint8",
+            "name": "",
+            "type": "uint8"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "exchange",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "srcToken",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "dstToken",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcBidAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstMinAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "deadline",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "bidDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "fillDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct OrderLib.Ask",
+            "name": "_ask",
+            "type": "tuple"
+          }
+        ],
+        "name": "ask",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dstFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "slippagePercent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "bid",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "book",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint32",
+            "name": "status",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "time",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "filledTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcFilledAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "exchange",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "srcToken",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "dstToken",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcBidAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstMinAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint32",
+                "name": "deadline",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "bidDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "fillDelay",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct OrderLib.Ask",
+            "name": "ask",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "address",
+                "name": "taker",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "exchange",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dstFee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct OrderLib.Bid",
+            "name": "bid",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          }
+        ],
+        "name": "cancel",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          }
+        ],
+        "name": "fill",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "iweth",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "length",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "makerOrders",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          }
+        ],
+        "name": "order",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint64",
+                "name": "id",
+                "type": "uint64"
+              },
+              {
+                "internalType": "uint32",
+                "name": "status",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "filledTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcFilledAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "srcToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "dstToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcBidAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstMinAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Ask",
+                "name": "ask",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "taker",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Bid",
+                "name": "bid",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct OrderLib.Order",
+            "name": "",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          }
+        ],
+        "name": "orderIdsByMaker",
+        "outputs": [
+          {
+            "internalType": "uint64[]",
+            "name": "",
+            "type": "uint64[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          }
+        ],
+        "name": "prune",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "status",
+        "outputs": [
+          {
+            "internalType": "uint32",
+            "name": "",
+            "type": "uint32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
+      }
+    ],
+    "lensAbi": [
+      {
+        "inputs": [
+          {
+            "internalType": "contract TWAP",
+            "name": "_twap",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "inputs": [],
+        "name": "length",
+        "outputs": [
+          {
+            "internalType": "uint64",
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          }
+        ],
+        "name": "makerOrders",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint64",
+                "name": "id",
+                "type": "uint64"
+              },
+              {
+                "internalType": "uint32",
+                "name": "status",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "filledTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcFilledAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "srcToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "dstToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcBidAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstMinAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Ask",
+                "name": "ask",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "taker",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Bid",
+                "name": "bid",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct OrderLib.Order[]",
+            "name": "result",
+            "type": "tuple[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "taker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "lastIndex",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "pageSize",
+            "type": "uint64"
+          }
+        ],
+        "name": "takerBiddableOrders",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint64",
+                "name": "id",
+                "type": "uint64"
+              },
+              {
+                "internalType": "uint32",
+                "name": "status",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "filledTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcFilledAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "srcToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "dstToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcBidAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstMinAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Ask",
+                "name": "ask",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "taker",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Bid",
+                "name": "bid",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct OrderLib.Order[]",
+            "name": "result",
+            "type": "tuple[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "taker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "lastIndex",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "pageSize",
+            "type": "uint64"
+          }
+        ],
+        "name": "takerFillableOrders",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint64",
+                "name": "id",
+                "type": "uint64"
+              },
+              {
+                "internalType": "uint32",
+                "name": "status",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "time",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "filledTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "srcFilledAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "srcToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "dstToken",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "srcBidAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstMinAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "deadline",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "bidDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "fillDelay",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Ask",
+                "name": "ask",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "time",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "taker",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "exchange",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "dstFee",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  }
+                ],
+                "internalType": "struct OrderLib.Bid",
+                "name": "bid",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct OrderLib.Order[]",
+            "name": "result",
+            "type": "tuple[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "twap",
+        "outputs": [
+          {
+            "internalType": "contract TWAP",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ],
+    "takerAbi": [
+      {
+        "inputs": [
+          {
+            "internalType": "contract TWAP",
+            "name": "_twap",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "previousOwner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "addOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dstFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "slippagePercent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "name": "bid",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint64",
+            "name": "id",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "feeExchange",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feeMinAmountOut",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "feeData",
+            "type": "bytes"
+          }
+        ],
+        "name": "fill",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "owners",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_owners",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeOwners",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          }
+        ],
+        "name": "rescue",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "twap",
+        "outputs": [
+          {
+            "internalType": "contract TWAP",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
+      }
+    ],
+    "name": "BaseSwap",
+    "partner": "Orbs:TWAP:BaseSwap",
+    "exchangeAddress": "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    "exchangeType": "OdosExchange",
+    "pathfinderKey": "BaseSwap,BaseSwapX"
+  },
   "Thena": {
     "chainName": "bsc",
     "chainId": 56,
