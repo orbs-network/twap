@@ -22,7 +22,7 @@ export namespace Odos {
     onlyDex?: OdosOnlyDex,
     partner?: string
   ): Promise<Route> {
-    const response = await fetch(`${URL}/sor/quote`, {
+    const response = await fetch(`${URL}/sor/quote/v2`, {
       method: "POST",
       headers: { "Content-Type": "application/json", accept: "application/json" },
       body: JSON.stringify({

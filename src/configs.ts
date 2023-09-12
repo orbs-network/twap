@@ -29,6 +29,7 @@ export enum ParaswapOnlyDex {
 
 export enum OdosOnlyDex {
   Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
+  BaseSwap = "BaseSwap",
 }
 
 export enum OpenOceanOnlyDex {
@@ -140,6 +141,18 @@ export const ChainConfigs = {
     wToken: networks.avax.wToken,
     ...defaultAbis,
   },
+  base: {
+    chainName: "base",
+    chainId: 8453,
+    twapVersion: 4,
+    twapAddress: "",
+    lensAddress: "",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 10,
+    nativeToken: networks.base.native,
+    wToken: networks.base.wToken,
+    ...defaultAbis,
+  },
 };
 
 export const Configs = {
@@ -202,6 +215,15 @@ export const Configs = {
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.Chronos,
   } as Config,
+
+  // BaseSwap: {
+  //   ...ChainConfigs.base,
+  //   name: "BaseSwap",
+  //   partner: "Orbs:TWAP:BaseSwap",
+  //   exchangeAddress: "",
+  //   exchangeType: "OdosExchange",
+  //   pathfinderKey: OdosOnlyDex.BaseSwap,
+  // } as Config,
 
   Thena: {
     ...ChainConfigs.bsc,

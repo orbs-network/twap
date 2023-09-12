@@ -1,14 +1,14 @@
 import {
-  Token,
   account,
   chainId,
+  erc20FromData,
   erc20s,
   erc20sData,
   ether,
   network as cnet,
   networks,
+  Token,
   web3,
-  erc20FromData,
 } from "@defi.org/web3-candies";
 import {
   deployArtifact,
@@ -118,8 +118,8 @@ async function initTokens() {
     case networks.base.id:
       srcToken = erc20s.base.USDC();
       dstToken = erc20s.base.WETH();
-      srcTokenWhale = "";
-      dstTokenWhale = "";
+      srcTokenWhale = "0x20fe51a9229eef2cf8ad9e89d91cab9312cf3b7a";
+      dstTokenWhale = "0xb4885bc63399bf5518b994c1d0c153334ee579d0";
       return;
 
     // BaseSwap router 0x327Df1E6de05895d2ab08513aaDD9313Fe505d86
@@ -141,6 +141,7 @@ export async function withUniswapV2Exchange(uniswapAddress?: string) {
         arb: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", // Sushiswap
         bsc: "0x10ED43C718714eb63d5aA57B78B54704E256024E", // Pancakeswap
         glmr: "0x70085a09d30d6f8c4ecf6ee10120d1847383bb57", // StellaSwap V2
+        base: "0x327df1e6de05895d2ab08513aadd9313fe505d86", // BaseSwap
       },
       (impl, k) => k === network.shortname
     );
@@ -185,6 +186,7 @@ async function withUniswapV2Path() {
     arb: [srcToken.address, dstToken.address],
     bsc: [srcToken.address, erc20sData.bsc.WBNB.address, dstToken.address],
     glmr: [srcToken.address, erc20sData.glmr.WGLMR.address, dstToken.address],
+    base: [srcToken.address, dstToken.address],
   };
   const path = paths[network.shortname];
   if (!path) throw new Error(`no UniswapV2 path for ${network?.name}`);

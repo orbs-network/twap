@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { Configs, Paraswap, ParaswapOnlyDex, TokenData } from "../src";
-import { erc20s, erc20sData, network, zeroAddress } from "@defi.org/web3-candies";
+import { erc20s, erc20sData, network, networks, zeroAddress } from "@defi.org/web3-candies";
 import { expectRevert, useChaiBigNumber } from "@defi.org/web3-candies/dist/hardhat";
 import _ from "lodash";
 
@@ -14,6 +14,8 @@ describe("Paraswap", () => {
         let usdc: TokenData;
 
         before(async function () {
+          if(c.chainId === networks.base.id) return this.skip();
+
           usdc = erc20sData[c.chainName].USDC;
         });
 
