@@ -364,23 +364,17 @@ export class TWAPLib {
   async priceUsd(token: TokenData) {
     token = isNativeAddress(token.address) ? this.config.wToken : token;
     try {
-
       const r = await Paraswap.findRoute(
         this.config.chainId,
         token,
         { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "NATIVE", decimals: 18 },
         BN(10).pow(token.decimals)
-        );
-        return r.srcUsd.toNumber();
-      } catch(e) {
-        const r = await Odos.findRoute(
-          this.config.chainId,
-          token,
-          this.config.nativeToken,
-          BN(10).pow(token.decimals)
-        );
-        return r.srcUsd.toNumber();
-      }
+      );
+      return r.srcUsd.toNumber();
+    } catch (e) {
+      const r = await Odos.findRoute(this.config.chainId, token, this.config.nativeToken, BN(10).pow(token.decimals));
+      return r.srcUsd.toNumber();
+    }
   }
 
   async findRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {

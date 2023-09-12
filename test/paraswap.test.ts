@@ -14,7 +14,7 @@ describe("Paraswap", () => {
         let usdc: TokenData;
 
         before(async function () {
-          if(c.chainId === networks.base.id) return this.skip();
+          if (c.chainId === networks.base.id) return this.skip();
 
           usdc = erc20sData[c.chainName].USDC;
         });

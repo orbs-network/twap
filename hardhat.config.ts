@@ -1,4 +1,4 @@
-import { chainId, contract, findBlock, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
+import { chainId, contract, findBlock, networks, sendAndWaitForConfirmations } from "@defi.org/web3-candies";
 import {
   askAddress,
   askDeployer,
@@ -20,6 +20,8 @@ import _ from "lodash";
 task("deploy").setAction(async () => {
   if (isHardhatNetwork()) throw new Error("on hardhat network!");
   const config = require("./src/configs").chainConfig(await chainId());
+
+  await deploy({ contractName: "TWAP", args: [config.wToken.address] });
 });
 
 task("github-pages").setAction(async () => {
