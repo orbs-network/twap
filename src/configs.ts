@@ -30,6 +30,7 @@ export enum ParaswapOnlyDex {
 export enum OdosOnlyDex {
   Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
   BaseSwap = "BaseSwap,BaseSwapX",
+  Arbidex = "Arbidex Classic,Arbidex Quantum",
 }
 
 export enum OpenOceanOnlyDex {
@@ -223,6 +224,15 @@ export const Configs = {
     exchangeAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.BaseSwap,
+  } as Config,
+
+  Arbidex: {
+    ...ChainConfigs.arb,
+    name: "Arbidex",
+    partner: "Orbs:TWAP:Arbidex",
+    exchangeAddress: "0x7D73DEa3e1b8115fA2f0814B4960cBF3B38eF04a",
+    exchangeType: "OdosExchange",
+    pathfinderKey: OdosOnlyDex.Arbidex,
   } as Config,
 
   Thena: {
