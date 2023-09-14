@@ -157,7 +157,7 @@ export async function withParaswapExchange() {
 export async function withOdosExchange() {
   if ((await chainId()) !== networks.arb.id) throw new Error("only on Arbitrum");
   exchange = await deployArtifact<IExchange>("OdosExchange", { from: deployer }, [
-    "0xdd94018F54e565dbfc939F7C44a16e163FaAb331",
+    "0xa669e7A0d4b3e4Fa48af2dE86BD4CD7126Be4e13", // Odos v2 on arbitrum
   ]);
 }
 
