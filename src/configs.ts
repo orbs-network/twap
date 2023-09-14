@@ -28,7 +28,7 @@ export enum ParaswapOnlyDex {
 }
 
 export enum OdosOnlyDex {
-  Chronos = "Chronos Stable,Chronos Volatile,Wrapped Ether",
+  Chronos = "Chronos Stable,Chronos Volatile,Chronos V3",
   BaseSwap = "BaseSwap,BaseSwapX",
   Arbidex = "Arbidex Classic,Arbidex Quantum",
 }
@@ -212,7 +212,7 @@ export const Configs = {
     ...ChainConfigs.arb,
     name: "Chronos",
     partner: "Orbs:TWAP:Chronos",
-    exchangeAddress: "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
+    exchangeAddress: "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.Chronos,
   } as Config,
@@ -221,7 +221,7 @@ export const Configs = {
     ...ChainConfigs.base,
     name: "BaseSwap",
     partner: "Orbs:TWAP:BaseSwap",
-    exchangeAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    exchangeAddress: "0xeFE1B6096838949156e5130604434A2a13c68C68",
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.BaseSwap,
   } as Config,
@@ -230,7 +230,7 @@ export const Configs = {
     ...ChainConfigs.arb,
     name: "Arbidex",
     partner: "Orbs:TWAP:Arbidex",
-    exchangeAddress: "0x7D73DEa3e1b8115fA2f0814B4960cBF3B38eF04a",
+    exchangeAddress: "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
     exchangeType: "OdosExchange",
     pathfinderKey: OdosOnlyDex.Arbidex,
   } as Config,
