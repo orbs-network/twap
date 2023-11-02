@@ -10,7 +10,6 @@ import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
 
 contract DeployExchange is Base {
     function run() public returns (address) {
-        
         return address(0);
     }
 }
