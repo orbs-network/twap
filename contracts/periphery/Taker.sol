@@ -17,31 +17,20 @@ contract Taker is Ownable {
     using SafeERC20 for ERC20;
 
     TWAP public immutable twap;
-    mapping(address => bool) public owners;
+    ITreasury public immutable treasury;
 
-    constructor(TWAP _twap, address[] memory _owners) {
+    constructor(TWAP _twap, ITreasury _treasury) {
         twap = _twap;
-        addOwners(_owners);
-    }
-
-    function addOwners(address[] memory _owners) public onlyOwner {
-        for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = true;
-    }
-
-    function removeOwners(address[] memory _owners) external onlyOwner {
-        for (uint i = 0; i < _owners.length; i++) owners[_owners[i]] = false;
+        treasury = _treasury;
     }
 
     /**
      * Perform bid
      */
-    function bid(
-        uint64 id,
-        address exchange,
-        uint256 dstFee,
-        uint32 slippagePercent,
-        bytes calldata data
-    ) external onlyOwners {
+    function bid(uint64 id, address exchange, uint256 dstFee, uint32 slippagePercent, bytes calldata data)
+        external
+        onlyOwners
+    {
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
 
@@ -53,7 +42,10 @@ contract Taker is Ownable {
      * @param feeMinAmountOut optional native token minimum out, can be 0
      * @param feeData optional data to pass to feeExchange, can be empty
      */
-    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData) external onlyOwners {
+    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData)
+        external
+        onlyOwners
+    {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 
@@ -86,7 +78,11 @@ contract Taker is Ownable {
     receive() external payable {} // solhint-disable-line no-empty-blocks
 
     modifier onlyOwners() {
-        require(owners[msg.sender], "Taker:onlyOwners");
+        require(treasury.allowed(msg.sender), "Taker:onlyOwners");
         _;
     }
+}
+
+interface ITreasury {
+    function allowed(address) external view returns (bool);
 }
