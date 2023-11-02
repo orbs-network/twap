@@ -29,7 +29,7 @@ contract Taker is Ownable {
      */
     function bid(uint64 id, address exchange, uint256 dstFee, uint32 slippagePercent, bytes calldata data)
         external
-        onlyOwners
+        onlyAllowed
     {
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
@@ -44,7 +44,7 @@ contract Taker is Ownable {
      */
     function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData)
         external
-        onlyOwners
+        onlyAllowed
     {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
@@ -61,7 +61,7 @@ contract Taker is Ownable {
     /**
      * Send all balance of token, wrapped native and native to sender
      */
-    function rescue(address token) public onlyOwners {
+    function rescue(address token) public onlyAllowed {
         if (ERC20(twap.iweth()).balanceOf(address(this)) > 0) {
             IWETH(twap.iweth()).withdraw(ERC20(twap.iweth()).balanceOf(address(this)));
         }
@@ -77,8 +77,10 @@ contract Taker is Ownable {
 
     receive() external payable {} // solhint-disable-line no-empty-blocks
 
-    modifier onlyOwners() {
-        require(treasury.allowed(msg.sender), "Taker:onlyOwners");
+    error NotAllowed(address caller);
+
+    modifier onlyAllowed() {
+        if (!treasury.allowed(msg.sender)) revert NotAllowed(msg.sender);
         _;
     }
 }

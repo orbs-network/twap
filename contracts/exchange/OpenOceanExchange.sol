@@ -22,14 +22,12 @@ contract OpenOceanExchange is IExchange {
     /**
      * data = amountOut, swap data from OpenOcean api
      */
-    function getAmountOut(
-        address,
-        address,
-        uint256,
-        bytes calldata,
-        bytes calldata bidData
-    ) public pure returns (uint256 dstAmountOut) {
-        (dstAmountOut, ) = decode(bidData);
+    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData)
+        public
+        pure
+        returns (uint256 dstAmountOut)
+    {
+        (dstAmountOut,) = decode(bidData);
     }
 
     /**

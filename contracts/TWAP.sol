@@ -45,11 +45,7 @@ contract TWAP is ReentrancyGuard {
 
     event OrderCreated(uint64 indexed id, address indexed maker, address indexed exchange, OrderLib.Ask ask);
     event OrderBid(
-        uint64 indexed id,
-        address indexed maker,
-        address indexed exchange,
-        uint32 slippagePercent,
-        OrderLib.Bid bid
+        uint64 indexed id, address indexed maker, address indexed exchange, uint32 slippagePercent, OrderLib.Bid bid
     );
     event OrderFilled(
         uint64 indexed id,
@@ -112,15 +108,10 @@ contract TWAP is ReentrancyGuard {
      */
     function ask(OrderLib.Ask calldata _ask) external nonReentrant returns (uint64 id) {
         require(
-            _ask.srcToken != address(0) &&
-                _ask.srcToken != _ask.dstToken &&
-                (_ask.srcToken != iweth || _ask.dstToken != address(0)) &&
-                _ask.srcAmount > 0 &&
-                _ask.srcBidAmount > 0 &&
-                _ask.srcBidAmount <= _ask.srcAmount &&
-                _ask.dstMinAmount > 0 &&
-                _ask.deadline > block.timestamp &&
-                _ask.bidDelay >= MIN_BID_DELAY_SECONDS,
+            _ask.srcToken != address(0) && _ask.srcToken != _ask.dstToken
+                && (_ask.srcToken != iweth || _ask.dstToken != address(0)) && _ask.srcAmount > 0 && _ask.srcBidAmount > 0
+                && _ask.srcBidAmount <= _ask.srcAmount && _ask.dstMinAmount > 0 && _ask.deadline > block.timestamp
+                && _ask.bidDelay >= MIN_BID_DELAY_SECONDS,
             "params"
         );
 
@@ -144,13 +135,10 @@ contract TWAP is ReentrancyGuard {
      * data: swap data to pass to the exchange, for example the route path
      * emits OrderBid event
      */
-    function bid(
-        uint64 id,
-        address exchange,
-        uint256 dstFee,
-        uint32 slippagePercent,
-        bytes calldata data
-    ) external nonReentrant {
+    function bid(uint64 id, address exchange, uint256 dstFee, uint32 slippagePercent, bytes calldata data)
+        external
+        nonReentrant
+    {
         require(exchange != address(0) && slippagePercent < PERCENT_BASE, "params");
         OrderLib.Order memory o = order(id);
         uint256 dstAmountOut = verifyBid(o, exchange, dstFee, slippagePercent, data);
@@ -205,8 +193,8 @@ contract TWAP is ReentrancyGuard {
         require(block.timestamp < o.status, "status");
         require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
         require(
-            ERC20(o.ask.srcToken).allowance(o.maker, address(this)) < o.srcBidAmountNext() ||
-                ERC20(o.ask.srcToken).balanceOf(o.maker) < o.srcBidAmountNext(),
+            ERC20(o.ask.srcToken).allowance(o.maker, address(this)) < o.srcBidAmountNext()
+                || ERC20(o.ask.srcToken).balanceOf(o.maker) < o.srcBidAmountNext(),
             "valid"
         );
         status[id] = STATUS_CANCELED;
@@ -234,19 +222,14 @@ contract TWAP is ReentrancyGuard {
         require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
-        dstAmountOut = IExchange(exchange).getAmountOut(
-            o.ask.srcToken,
-            _dstToken(o),
-            o.srcBidAmountNext(),
-            o.ask.data,
-            data
-        );
+        dstAmountOut =
+            IExchange(exchange).getAmountOut(o.ask.srcToken, _dstToken(o), o.srcBidAmountNext(), o.ask.data, data);
         dstAmountOut -= (dstAmountOut * slippagePercent) / PERCENT_BASE;
         dstAmountOut -= dstFee;
 
         require(
-            dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE || // outbid by more than MIN_OUTBID_PERCENT
-                block.timestamp > o.bid.time + STALE_BID_SECONDS, // or stale bid
+            dstAmountOut > (o.bid.dstAmount * MIN_OUTBID_PERCENT) / PERCENT_BASE // outbid by more than MIN_OUTBID_PERCENT
+                || block.timestamp > o.bid.time + STALE_BID_SECONDS, // or stale bid
             "low bid"
         );
         require(dstAmountOut >= o.dstMinAmountNext(), "min out");
@@ -258,9 +241,10 @@ contract TWAP is ReentrancyGuard {
      * transfers next chunk srcToken amount from maker, swaps via bid exchange with bid data, transfers dstFee to taker (msg.sender) and
      * transfers all other dstToken amount to maker
      */
-    function performFill(
-        OrderLib.Order memory o
-    ) private returns (address exchange, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee) {
+    function performFill(OrderLib.Order memory o)
+        private
+        returns (address exchange, uint256 srcAmountIn, uint256 dstAmountOut, uint256 dstFee)
+    {
         require(msg.sender == o.bid.taker, "taker");
         require(block.timestamp < o.status, "status"); // deadline, canceled or completed
         require(block.timestamp > o.bid.time + o.ask.bidDelay, "bid delay");
