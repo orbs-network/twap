@@ -14,6 +14,7 @@ abstract contract Base is Script {
         uint256 chainId;
         string name;
         ITreasury treasury;
+        address twap;
         address weth;
     }
 
@@ -21,22 +22,12 @@ abstract contract Base is Script {
     Config public config;
 
     function setUp() public {
+        vm.createSelectFork(vm.envString("ETH_RPC_URL"));
         deployer = vm.rememberKey(vm.envUint("DEPLOYER_PK"));
-        vm.chainId(vm.envUint("CHAIN"));
         config = abi.decode(
             vm.parseJson(vm.readFile(string.concat("script/input/", vm.toString(block.chainid), "/config.json"))),
             (Config)
         );
         if (config.chainId != block.chainid) revert("chainId mismatch");
-    }
-
-    function twap() internal view returns (TWAP) {
-        return TWAP(
-            payable(
-                computeCreate2Address(
-                    0x00, hashInitCode(type(TWAP).creationCode, abi.encode(config.weth)), address(this)
-                )
-            )
-        );
     }
 }

@@ -9,6 +9,7 @@ import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
 
 contract DeployTWAP is Base {
     function run() public returns (address) {
+        vm.broadcast(deployer);
         TWAP result = new TWAP{salt:0x00}(config.weth);
         return address(result);
     }

@@ -10,7 +10,8 @@ import {Lens, TWAP} from "src/periphery/Lens.sol";
 
 contract DeployLens is Base {
     function run() public returns (address) {
-        Lens result = new Lens{salt: 0x00}(twap());
+        vm.broadcast(deployer);
+        Lens result = new Lens{salt: 0x00}(TWAP(payable(config.twap)));
         return address(result);
     }
 }

@@ -1,6 +1,7 @@
 {
   "chainId": 1284,
   "chainName": "Moonbeam",
-  "treasury": "0x0000000000000000000000000000000000000000",
+  "treasury": "0xf8105F11D917eB386Ddf7C447Aba1eC67Dd0684F",
+  "twap": "0x4CeAebD7e83ed1563aca2557f2c8b20CBF92E65f",
   "weth": "0xAcc15dC74880C9944775448304B263D191c6077F"
 }

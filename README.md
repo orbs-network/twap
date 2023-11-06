@@ -167,8 +167,6 @@ ETHERSCAN_POLY="9H***************************WY"
 COINMARKETCAP="81***************************36"
 ```
 - workflow:
-  - `npm install`
-  - `npm run build`
-  - `npm run test`
+  - `forge test`
 
 [see tests output](./TEST_OUTPUT.md)
