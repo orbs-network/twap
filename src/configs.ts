@@ -154,6 +154,18 @@ export const ChainConfigs = {
     wToken: networks.base.wToken,
     ...defaultAbis,
   },
+  linea: {
+    chainName: "linea",
+    chainId: 59144,
+    twapVersion: 4,
+    twapAddress: "0xc3a5eC450105a983CF9F45a90841469F82a99d6E",
+    lensAddress: "0xc54AB6a94A7A8307e67a9eda4595B9Ae7Df6cE25",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 10,
+    nativeToken: networks.linea.native,
+    wToken: networks.linea.wToken,
+    ...defaultAbis,
+  },
 };
 
 export const Configs = {

@@ -5,7 +5,8 @@ import "forge-std/Test.sol";
 
 import {Base} from "script/Base.sol";
 
-import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
+// import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
+import {TWAP} from "contracts/TWAP.sol";
 
 contract DeployTWAP is Base {
     function run() public returns (address) {
