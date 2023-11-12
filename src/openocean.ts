@@ -21,6 +21,7 @@ export namespace OpenOcean {
     [networks.poly.id]: "polygon",
     [networks.ftm.id]: "fantom",
     [networks.avax.id]: "avax",
+    [networks.linea.id]: "linea",
   };
 
   export async function findRoute(

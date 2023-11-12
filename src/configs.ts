@@ -35,6 +35,7 @@ export enum OdosOnlyDex {
 
 export enum OpenOceanOnlyDex {
   Thena = "43,47",
+  Lynex = "Lynex",
 }
 
 export interface Config {
@@ -264,6 +265,17 @@ export const Configs = {
     exchangeType: "ParaswapExchange",
     pathfinderKey: ParaswapOnlyDex.PancakeSwap,
   } as Config,
+
+  Lynex: {
+    ...ChainConfigs.linea,
+    name: "Lynex",
+    partner: "Orbs:TWAP:Lynex",
+    exchangeAddress: "0x72e3e1fD5D2Ee2F1C2Eb695206D490a1D45C3835",
+    exchangeType: "OpenOceanExchange",
+    pathfinderKey: OpenOceanOnlyDex.Lynex,
+  } as Config,
+
+
 };
 
 export const chainConfig = (chainId: number) => _.find(ChainConfigs, (c) => c.chainId === chainId)!;
