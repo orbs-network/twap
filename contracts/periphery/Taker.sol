@@ -27,10 +27,13 @@ contract Taker is Ownable {
     /**
      * Perform bid
      */
-    function bid(uint64 id, address exchange, uint256 dstFee, uint32 slippagePercent, bytes calldata data)
-        external
-        onlyAllowed
-    {
+    function bid(
+        uint64 id,
+        address exchange,
+        uint256 dstFee,
+        uint32 slippagePercent,
+        bytes calldata data
+    ) external onlyAllowed {
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
 
@@ -42,10 +45,12 @@ contract Taker is Ownable {
      * @param feeMinAmountOut optional native token minimum out, can be 0
      * @param feeData optional data to pass to feeExchange, can be empty
      */
-    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData)
-        external
-        onlyAllowed
-    {
+    function fill(
+        uint64 id,
+        address feeExchange,
+        uint256 feeMinAmountOut,
+        bytes calldata feeData
+    ) external onlyAllowed {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 

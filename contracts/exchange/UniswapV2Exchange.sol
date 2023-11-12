@@ -21,11 +21,13 @@ contract UniswapV2Exchange is IExchange {
     /**
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
-    function getAmountOut(address srcToken, address dstToken, uint256 amountIn, bytes calldata, bytes calldata bidData)
-        public
-        view
-        returns (uint256 amountOut)
-    {
+    function getAmountOut(
+        address srcToken,
+        address dstToken,
+        uint256 amountIn,
+        bytes calldata,
+        bytes calldata bidData
+    ) public view returns (uint256 amountOut) {
         (, address[] memory path) = decode(bidData);
         require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
         return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
@@ -52,7 +54,11 @@ contract UniswapV2Exchange is IExchange {
 
         if (fotTokens) {
             uniswap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                amountIn, amountOutMin, path, msg.sender, block.timestamp
+                amountIn,
+                amountOutMin,
+                path,
+                msg.sender,
+                block.timestamp
             );
         } else {
             uniswap.swapExactTokensForTokens(amountIn, amountOutMin, path, msg.sender, block.timestamp);
@@ -65,10 +71,7 @@ contract UniswapV2Exchange is IExchange {
 }
 
 interface IUniswapV2 {
-    function getAmountsOut(uint256 amountIn, address[] calldata path)
-        external
-        view
-        returns (uint256[] memory amounts);
+    function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);
 
     function swapExactTokensForTokens(
         uint256 amountIn,

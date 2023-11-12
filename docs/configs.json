@@ -2910,13 +2910,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -2936,19 +2947,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -3025,38 +3023,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -3087,6 +3053,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -4522,13 +4501,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -4548,19 +4538,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -4637,38 +4614,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -4699,6 +4644,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -6134,13 +6092,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -6160,19 +6129,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -6249,38 +6205,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -6311,6 +6235,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -7746,13 +7683,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -7772,19 +7720,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -7861,38 +7796,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -7923,6 +7826,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -9358,13 +9274,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -9384,19 +9311,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -9473,38 +9387,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -9535,6 +9417,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -10970,13 +10865,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -10996,19 +10902,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -11085,38 +10978,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -11147,6 +11008,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -12582,13 +12456,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -12608,19 +12493,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -12697,38 +12569,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -12759,6 +12599,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -14194,13 +14047,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -14220,19 +14084,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -14309,38 +14160,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -14371,6 +14190,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -15806,13 +15638,24 @@
             "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
+            "internalType": "contract ITreasury",
+            "name": "_treasury",
+            "type": "address"
           }
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotAllowed",
+        "type": "error"
       },
       {
         "anonymous": false,
@@ -15832,19 +15675,6 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "addOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "inputs": [
@@ -15921,38 +15751,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "owners",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeOwners",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -15983,6 +15781,19 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "treasury",
+        "outputs": [
+          {
+            "internalType": "contract ITreasury",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {

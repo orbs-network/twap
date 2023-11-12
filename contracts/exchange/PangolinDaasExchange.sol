@@ -29,11 +29,11 @@ contract PangolinDaasExchange is IExchange {
         bytes calldata askData,
         bytes calldata bidData
     ) public view returns (uint256 amountOut) {
-        (address partnerDaas,, address[] memory path) = decode(askData, bidData);
+        (address partnerDaas, , address[] memory path) = decode(askData, bidData);
         require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
         uint256 result = (pangolin.getAmountsOut(amountIn, path)[path.length - 1]);
 
-        (,, uint24 feeTotal,,) = pangolin.getFeeInfo(partnerDaas); // getAmountOut doesn't take the partner affiliate fee into account, which will be deducted when swapping
+        (, , uint24 feeTotal, , ) = pangolin.getFeeInfo(partnerDaas); // getAmountOut doesn't take the partner affiliate fee into account, which will be deducted when swapping
         return (result * (100_00 - feeTotal)) / 100_00;
     }
 
@@ -59,28 +59,29 @@ contract PangolinDaasExchange is IExchange {
 
         if (fotTokens) {
             pangolin.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                amountIn, amountOutMin, path, msg.sender, block.timestamp, partnerDaas
+                amountIn,
+                amountOutMin,
+                path,
+                msg.sender,
+                block.timestamp,
+                partnerDaas
             );
         } else {
             pangolin.swapExactTokensForTokens(amountIn, amountOutMin, path, msg.sender, block.timestamp, partnerDaas);
         }
     }
 
-    function decode(bytes calldata askData, bytes calldata bidData)
-        private
-        pure
-        returns (address partnerDaas, bool fotTokens, address[] memory path)
-    {
+    function decode(
+        bytes calldata askData,
+        bytes calldata bidData
+    ) private pure returns (address partnerDaas, bool fotTokens, address[] memory path) {
         (partnerDaas) = abi.decode(askData, (address));
         (fotTokens, path) = abi.decode(bidData, (bool, address[]));
     }
 }
 
 interface IPangolinDaas {
-    function getAmountsOut(uint256 amountIn, address[] calldata path)
-        external
-        view
-        returns (uint256[] memory amounts);
+    function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);
 
     function swapExactTokensForTokens(
         uint256 amountIn,
@@ -100,8 +101,7 @@ interface IPangolinDaas {
         address feeTo
     ) external;
 
-    function getFeeInfo(address feeTo)
-        external
-        view
-        returns (uint24 feePartner, uint24 feeProtocol, uint24 feeTotal, uint24 feeCut, bool initialized);
+    function getFeeInfo(
+        address feeTo
+    ) external view returns (uint24 feePartner, uint24 feeProtocol, uint24 feeTotal, uint24 feeCut, bool initialized);
 }

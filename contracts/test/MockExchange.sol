@@ -22,9 +22,14 @@ contract MockExchange is IExchange {
     /**
      * assumes holds balance of dstToken
      */
-    function swap(address _srcToken, address _dstToken, uint256 amountIn, uint256, bytes calldata, bytes calldata)
-        public
-    {
+    function swap(
+        address _srcToken,
+        address _dstToken,
+        uint256 amountIn,
+        uint256,
+        bytes calldata,
+        bytes calldata
+    ) public {
         ERC20 srcToken = ERC20(_srcToken);
         ERC20 dstToken = ERC20(_dstToken);
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
