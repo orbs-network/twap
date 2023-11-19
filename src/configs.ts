@@ -274,8 +274,6 @@ export const Configs = {
     exchangeType: "OpenOceanExchange",
     pathfinderKey: OpenOceanOnlyDex.Lynex,
   } as Config,
-
-
 };
 
 export const chainConfig = (chainId: number) => _.find(ChainConfigs, (c) => c.chainId === chainId)!;

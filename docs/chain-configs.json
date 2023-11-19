@@ -12709,6 +12709,8 @@
         "type": "receive"
       }
     ],
-    "integrations": []
+    "integrations": [
+      "Lynex"
+    ]
   }
 }
