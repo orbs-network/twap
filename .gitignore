@@ -3,6 +3,7 @@
 artifacts/
 cache/
 typechain-hardhat/
+broadcast/
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/zsh,node,macos,intellij+all,solidity,soliditytruffle,sublimetext
