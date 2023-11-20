@@ -372,8 +372,18 @@ export class TWAPLib {
       );
       return r.srcUsd.toNumber();
     } catch (e) {
-      const r = await Odos.findRoute(this.config.chainId, token, this.config.nativeToken, BN(10).pow(token.decimals));
-      return r.srcUsd.toNumber();
+      try {
+        const r = await Odos.findRoute(this.config.chainId, token, this.config.nativeToken, BN(10).pow(token.decimals));
+        return r.srcUsd.toNumber();
+      } catch (e) {
+        const r = await OpenOcean.findRoute(
+          this.config.chainId,
+          token,
+          this.config.nativeToken,
+          BN(10).pow(token.decimals)
+        );
+        return r.srcUsd.toNumber();
+      }
     }
   }
 

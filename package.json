@@ -34,7 +34,8 @@
     "test:arb": "NETWORK=ARB hardhat test",
     "test:bsc": "NETWORK=BSC hardhat test",
     "test:glmr": "NETWORK=GLMR hardhat test",
-    "test:base": "NETWORK=BASE hardhat test"
+    "test:base": "NETWORK=BASE hardhat test",
+    "test:linea": "NETWORK=LINEA hardhat test"
   },
   "prettier": {
     "printWidth": 120
