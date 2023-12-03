@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "clean": "rm -rf artifacts cache typechain-hardhat dist",
-    "prettier": "prettier --write '{test,src,contracts}/**/*.{ts,js,json,sol}'",
+    "prettier": "prettier --write '{test,src}/**/*.{ts,js,json}'",
     "typechain": "npm run clean && hardhat typechain",
     "prebuild": "npm run prettier && npm run typechain",
     "build": "hardhat compile && solhint 'contracts/**/*.sol' && tsc && hardhat github-pages",
