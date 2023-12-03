@@ -164,7 +164,7 @@ export const ChainConfigs = {
     twapAddress: lineaConfig.twap,
     lensAddress: lineaConfig.lens,
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minChunkSizeUsd: 100,
     nativeToken: networks.linea.native,
     wToken: networks.linea.wToken,
     ...abis,

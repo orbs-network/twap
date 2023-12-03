@@ -15359,7 +15359,7 @@
     "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
     "lensAddress": "0x740BAD3Cb737612110b6E7Fe0DAE040A3eec1597",
     "bidDelaySeconds": 60,
-    "minChunkSizeUsd": 10,
+    "minChunkSizeUsd": 100,
     "nativeToken": {
       "address": "0x0000000000000000000000000000000000000000",
       "symbol": "ETH",
