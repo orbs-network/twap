@@ -4,6 +4,8 @@ import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import * as legacyAbis from "./legacy-abi";
+import * as lineaConfig from "../script/input/59144/config.json";
+import * as moonbeamConfig from "../script/input/1284/config.json";
 
 export { nativeTokenAddresses, zeroAddress } from "@defi.org/web3-candies";
 
@@ -64,7 +66,7 @@ export interface Config {
   pathfinderKey: ParaswapOnlyDex | OdosOnlyDex | OpenOceanOnlyDex;
 }
 
-const defaultAbis = {
+const abis = {
   twapAbi: twapArtifact.abi,
   lensAbi: lensArtifact.abi,
   takerAbi: takerArtifact.abi,
@@ -81,7 +83,7 @@ export const ChainConfigs = {
     minChunkSizeUsd: 100,
     nativeToken: networks.eth.native,
     wToken: networks.eth.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   bsc: {
     chainName: "bsc",
@@ -93,7 +95,7 @@ export const ChainConfigs = {
     minChunkSizeUsd: 10,
     nativeToken: networks.bsc.native,
     wToken: networks.bsc.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   arb: {
     chainName: "arb",
@@ -105,7 +107,7 @@ export const ChainConfigs = {
     minChunkSizeUsd: 10,
     nativeToken: networks.arb.native,
     wToken: networks.arb.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   ftm: {
     chainName: "ftm",
@@ -117,7 +119,7 @@ export const ChainConfigs = {
     minChunkSizeUsd: 10,
     nativeToken: networks.ftm.native,
     wToken: networks.ftm.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   poly: {
     chainName: "poly",
@@ -129,7 +131,7 @@ export const ChainConfigs = {
     minChunkSizeUsd: 10,
     nativeToken: networks.poly.native,
     wToken: networks.poly.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   avax: {
     chainName: "avax",
@@ -141,7 +143,7 @@ export const ChainConfigs = {
     minChunkSizeUsd: 10,
     nativeToken: networks.avax.native,
     wToken: networks.avax.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   base: {
     chainName: "base",
@@ -153,19 +155,19 @@ export const ChainConfigs = {
     minChunkSizeUsd: 10,
     nativeToken: networks.base.native,
     wToken: networks.base.wToken,
-    ...defaultAbis,
+    ...abis,
   },
   linea: {
     chainName: "linea",
     chainId: 59144,
     twapVersion: 4,
-    twapAddress: "0xc3a5eC450105a983CF9F45a90841469F82a99d6E",
-    lensAddress: "0xbf81e5C7483EeD50532Fa21B7621527c4f764a22",
+    twapAddress: lineaConfig.twap,
+    lensAddress: lineaConfig.lens,
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     nativeToken: networks.linea.native,
     wToken: networks.linea.wToken,
-    ...defaultAbis,
+    ...abis,
   },
 };
 

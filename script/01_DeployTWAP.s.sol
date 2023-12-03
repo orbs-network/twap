@@ -5,13 +5,11 @@ import "forge-std/Test.sol";
 
 import {Base} from "script/Base.sol";
 
-// import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
 import {TWAP} from "contracts/TWAP.sol";
 
 contract DeployTWAP is Base {
-    function run() public returns (address) {
+    function run() public returns (TWAP) {
         vm.broadcast(deployer);
-        TWAP result = new TWAP{salt:0x00}(config.weth);
-        return address(result);
+        return new TWAP{salt:0x00}(config.weth);
     }
 }

@@ -8,9 +8,8 @@ import {Base} from "script/Base.sol";
 import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
 
 contract DeployTaker is Base {
-    function run() public returns (address) {
+    function run() public returns (Taker) {
         vm.broadcast(deployer);
-        Taker result = new Taker{salt: 0x00}(TWAP(payable(config.twap)), config.treasury);
-        return address(result);
+        return new Taker{salt: 0x00}(TWAP(payable(config.twap)), config.treasury);
     }
 }

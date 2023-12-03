@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
@@ -13,7 +12,7 @@ import "../TWAP.sol";
  * Helper contract for TWAP takers
  * optionally swaps fee to native token at fill
  */
-contract Taker is Ownable {
+contract Taker {
     using SafeERC20 for ERC20;
 
     TWAP public immutable twap;
@@ -27,13 +26,10 @@ contract Taker is Ownable {
     /**
      * Perform bid
      */
-    function bid(
-        uint64 id,
-        address exchange,
-        uint256 dstFee,
-        uint32 slippagePercent,
-        bytes calldata data
-    ) external onlyAllowed {
+    function bid(uint64 id, address exchange, uint256 dstFee, uint32 slippagePercent, bytes calldata data)
+        external
+        onlyAllowed
+    {
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
 
@@ -45,12 +41,10 @@ contract Taker is Ownable {
      * @param feeMinAmountOut optional native token minimum out, can be 0
      * @param feeData optional data to pass to feeExchange, can be empty
      */
-    function fill(
-        uint64 id,
-        address feeExchange,
-        uint256 feeMinAmountOut,
-        bytes calldata feeData
-    ) external onlyAllowed {
+    function fill(uint64 id, address feeExchange, uint256 feeMinAmountOut, bytes calldata feeData)
+        external
+        onlyAllowed
+    {
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 

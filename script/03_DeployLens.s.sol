@@ -9,9 +9,8 @@ import {Base} from "script/Base.sol";
 import {Lens, TWAP} from "src/periphery/Lens.sol";
 
 contract DeployLens is Base {
-    function run() public returns (address) {
+    function run() public returns (Lens) {
         vm.broadcast(deployer);
-        Lens result = new Lens{salt: 0x00}(TWAP(payable(config.twap)));
-        return address(result);
+        return new Lens{salt: 0x00}(TWAP(payable(config.twap)));
     }
 }
