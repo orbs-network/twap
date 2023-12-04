@@ -37,7 +37,7 @@ export enum OdosOnlyDex {
 
 export enum OpenOceanOnlyDex {
   Thena = "43,47",
-  Lynex = "Lynex",
+  Lynex = "10",
 }
 
 export interface Config {
