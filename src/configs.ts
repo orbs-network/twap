@@ -38,6 +38,7 @@ export enum OdosOnlyDex {
 export enum OpenOceanOnlyDex {
   Thena = "43,47",
   Lynex = "10",
+  SyncSwap = "2,3",
 }
 
 export interface Config {
@@ -169,6 +170,18 @@ export const ChainConfigs = {
     wToken: networks.linea.wToken,
     ...abis,
   },
+  zkSync: {
+    chainName: "zkSync",
+    chainId: 324,
+    twapVersion: 4,
+    twapAddress: "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
+    lensAddress: "0x3a661ACA20Cb9Ff8551D1F100cBCE4683fa31Af7",
+    bidDelaySeconds: 60,
+    minChunkSizeUsd: 100,
+    nativeToken: networks.zkSync.native,
+    wToken: networks.zkSync.wToken,
+    ...abis,
+  },
 };
 
 export const Configs = {
@@ -275,6 +288,15 @@ export const Configs = {
     exchangeAddress: "0x72e3e1fD5D2Ee2F1C2Eb695206D490a1D45C3835",
     exchangeType: "OpenOceanExchange",
     pathfinderKey: OpenOceanOnlyDex.Lynex,
+  } as Config,
+
+  SyncSwap: {
+    ...ChainConfigs.zkSync,
+    name: "SyncSwap",
+    partner: "Orbs:TWAP:SyncSwap",
+    exchangeAddress: "0x5D96A072B2854d9a9D56C68806b0Bbcf7Db60b6d",
+    exchangeType: "OpenOceanExchange",
+    pathfinderKey: OpenOceanOnlyDex.SyncSwap,
   } as Config,
 };
 
