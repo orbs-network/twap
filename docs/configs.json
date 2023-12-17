@@ -16900,14 +16900,14 @@
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 100,
     "nativeToken": {
-      "address": "0x000000000000000000000000000000000000800A",
+      "address": "0x0000000000000000000000000000000000000000",
       "symbol": "ETH",
       "decimals": 18,
       "logoUrl": "https://app.1inch.io/assets/images/network-logos/ethereum.svg"
     },
     "wToken": {
       "symbol": "WETH",
-      "address": "0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+      "address": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91",
       "decimals": 18,
       "weth": true,
       "logoUrl": "https://tokens-data.1inch.io/images/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png"
@@ -18429,5 +18429,5 @@
     "exchangeAddress": "0x5D96A072B2854d9a9D56C68806b0Bbcf7Db60b6d",
     "exchangeType": "OpenOceanExchange",
     "pathfinderKey": "2,3"
-  }  
+  }
 }
