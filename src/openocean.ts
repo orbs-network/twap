@@ -57,8 +57,8 @@ export namespace OpenOcean {
 
     const tokens = await fetchTokens(chainId);
     const j = await response.json();
-    const srcUsd = bn(tokens[web3().utils.toChecksumAddress(src.address)].usd);
-    const dstUsd = bn(tokens[web3().utils.toChecksumAddress(dst.address)].usd);
+    const srcUsd = bn(tokens[web3().utils.toChecksumAddress(src.address)]?.usd || 0);
+    const dstUsd = bn(tokens[web3().utils.toChecksumAddress(dst.address)]?.usd || 0);
     const dstAmount = bn(j.data.outAmount);
 
     const data = j.data.data || "0x";
