@@ -22,6 +22,10 @@ export namespace OpenOcean {
     [networks.ftm.id]: "fantom",
     [networks.avax.id]: "avax",
     [networks.linea.id]: "linea",
+    [networks.zkSync.id]: "zksync",
+    [networks.base.id]: "base",
+    [networks.glmr.id]: "moonbeam",
+    [networks.oeth.id]: "op",
   };
 
   export async function findRoute(
