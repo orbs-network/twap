@@ -363,64 +363,48 @@ export class TWAPLib {
 
   async priceUsd(token: TokenData) {
     token = isNativeAddress(token.address) ? this.config.wToken : token;
-    try {
-      const r = await Paraswap.findRoute(
-        this.config.chainId,
-        token,
-        { address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", symbol: "NATIVE", decimals: 18 },
-        BN(10).pow(token.decimals)
-      );
-      return r.srcUsd.toNumber();
-    } catch (e) {
-      try {
-        const r = await Odos.findRoute(this.config.chainId, token, this.config.nativeToken, BN(10).pow(token.decimals));
-        return r.srcUsd.toNumber();
-      } catch (e) {
-        const r = await OpenOcean.findRoute(
-          this.config.chainId,
-          token,
-          this.config.nativeToken,
-          BN(10).pow(token.decimals)
-        );
-        return r.srcUsd.toNumber();
-      }
-    }
+    const r = await this.solverRoute(token, this.config.nativeToken, BN(10).pow(token.decimals));
+    return r.srcUsd.toNumber();
   }
 
   async findRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
-    let route;
-    if (this.config.exchangeType === "OdosExchange") {
-      route = await Odos.findRoute(
-        this.config.chainId,
-        srcToken,
-        dstToken,
-        srcAmount,
-        this.config.exchangeAddress,
-        this.config.pathfinderKey as OdosOnlyDex,
-        this.config.partner
-      );
-    } else if (this.config.exchangeType === "OpenOceanExchange") {
-      route = await OpenOcean.findRoute(
-        this.config.chainId,
-        srcToken,
-        dstToken,
-        srcAmount,
-        this.config.exchangeAddress,
-        this.config.pathfinderKey as OpenOceanOnlyDex,
-        this.config.partner
-      );
-    } else {
-      route = await Paraswap.findRoute(
-        this.config.chainId,
-        srcToken,
-        dstToken,
-        srcAmount,
-        this.config.exchangeAddress,
-        this.config.pathfinderKey as ParaswapOnlyDex,
-        this.config.partner
-      );
-    }
+    const route = await this.solverRoute(srcToken, dstToken, srcAmount);
     return { ...route, data: this.encodeBidData(route), srcToken, dstToken, srcAmount };
+  }
+
+  private solverRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
+    switch (this.config.exchangeType) {
+      case "OdosExchange":
+        return Odos.findRoute(
+          this.config.chainId,
+          srcToken,
+          dstToken,
+          srcAmount,
+          this.config.exchangeAddress,
+          this.config.pathfinderKey as OdosOnlyDex,
+          this.config.partner
+        );
+      case "OpenOceanExchange":
+        return OpenOcean.findRoute(
+          this.config.chainId,
+          srcToken,
+          dstToken,
+          srcAmount,
+          this.config.exchangeAddress,
+          this.config.pathfinderKey as OpenOceanOnlyDex,
+          this.config.partner
+        );
+      default:
+        return Paraswap.findRoute(
+          this.config.chainId,
+          srcToken,
+          dstToken,
+          srcAmount,
+          this.config.exchangeAddress,
+          this.config.pathfinderKey as ParaswapOnlyDex,
+          this.config.partner
+        );
+    }
   }
 
   async findRouteForNextBid(order: Order) {
