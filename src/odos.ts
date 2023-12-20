@@ -38,7 +38,7 @@ export namespace Odos {
     });
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
 
-    const j = await response.json();
+    const j: any = await response.json();
     const srcUsd = bn(j.inValues[0]);
     const dstUsd = bn(j.outValues[0]);
     const dstAmount = bn(j.outAmounts[0]);
@@ -65,7 +65,7 @@ export namespace Odos {
       }),
     });
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    const swapData = (await response.json())?.transaction?.data;
+    const swapData = ((await response.json()) as any)?.transaction?.data;
     if (!swapData) throw new Error(`invalid swap data from Odos`);
     return swapData;
   }

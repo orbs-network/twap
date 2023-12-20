@@ -60,7 +60,7 @@ export namespace Paraswap {
     });
     const response = await fetch(`${URL}/prices/?${params}`);
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    const route = (await response.json()).priceRoute as ParaswapRoute;
+    const route = ((await response.json()) as any).priceRoute as ParaswapRoute;
     const path = getDirectPath(route, onlyDex);
 
     let data = "0x";
@@ -110,6 +110,6 @@ export namespace Paraswap {
       }),
     });
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    return (await response.json()).data;
+    return ((await response.json()) as any).data;
   }
 }

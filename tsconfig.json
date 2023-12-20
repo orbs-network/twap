@@ -3,12 +3,13 @@
     "target": "ES2015",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "lib": ["ES2019"]
   },
   "include": ["src"]
 }

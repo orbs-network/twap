@@ -22,7 +22,7 @@ export namespace OpenOcean {
     [networks.ftm.id]: "fantom",
     [networks.avax.id]: "avax",
     [networks.linea.id]: "linea",
-    [networks.zkSync.id]: "zksync",
+    [networks.zksync.id]: "zksync",
     [networks.base.id]: "base",
     [networks.glmr.id]: "moonbeam",
     [networks.oeth.id]: "op",
@@ -56,7 +56,7 @@ export namespace OpenOcean {
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
 
     const tokens = await fetchTokens(chainId);
-    const j = await response.json();
+    const j: any = await response.json();
     const srcUsd = bn(tokens[web3().utils.toChecksumAddress(src.address)]?.usd || 0);
     const dstUsd = bn(tokens[web3().utils.toChecksumAddress(dst.address)]?.usd || 0);
     const dstAmount = bn(j.data.outAmount);
@@ -79,7 +79,7 @@ export namespace OpenOcean {
 
     const response = await fetch(`${URL}/${chainNames[chainId]}/tokenList`);
     if (response.status < 200 || response.status >= 400) throw new Error(`${response.statusText}`);
-    const t = (await response.json()).data;
+    const t = ((await response.json()) as any).data;
     const parsed = _.map(t, (token) => ({
       token: {
         address: web3().utils.toChecksumAddress(token.address),
