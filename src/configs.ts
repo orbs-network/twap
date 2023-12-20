@@ -178,8 +178,8 @@ export const ChainConfigs = {
     lensAddress: "0x3a661ACA20Cb9Ff8551D1F100cBCE4683fa31Af7",
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
-    nativeToken: networks.zkSync.native,
-    wToken: networks.zkSync.wToken,
+    nativeToken: networks.zksync.native,
+    wToken: networks.zksync.wToken,
     ...abis,
   },
 };
