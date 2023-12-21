@@ -141,7 +141,7 @@ export const ChainConfigs = {
     twapAddress: "0xF2687e119B0A4aB00bED9c9F425403566D605020",
     lensAddress: "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minChunkSizeUsd: 100,
     nativeToken: networks.avax.native,
     wToken: networks.avax.wToken,
     ...abis,
