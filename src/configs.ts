@@ -177,7 +177,7 @@ export const ChainConfigs = {
     twapAddress: "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
     lensAddress: "0x3a661ACA20Cb9Ff8551D1F100cBCE4683fa31Af7",
     bidDelaySeconds: 60,
-    minChunkSizeUsd: 10,
+    minChunkSizeUsd: 100,
     nativeToken: networks.zksync.native,
     wToken: networks.zksync.wToken,
     ...abis,
