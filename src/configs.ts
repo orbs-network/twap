@@ -63,8 +63,9 @@ export interface Config {
     | "ParaswapExchange"
     | "PangolinDaasExchange"
     | "OdosExchange"
-    | "OpenOceanExchange";
-  pathfinderKey: ParaswapOnlyDex | OdosOnlyDex | OpenOceanOnlyDex;
+    | "OpenOceanExchange"
+    | "KyberExchange";
+  pathfinderKey: ParaswapOnlyDex | OdosOnlyDex | OpenOceanOnlyDex | string;
 }
 
 const abis = {
@@ -297,6 +298,15 @@ export const Configs = {
     exchangeAddress: "0x5D96A072B2854d9a9D56C68806b0Bbcf7Db60b6d",
     exchangeType: "OpenOceanExchange",
     pathfinderKey: OpenOceanOnlyDex.SyncSwap,
+  } as Config,
+
+  Retro: {
+    ...ChainConfigs.poly,
+    name: "Retro",
+    partner: "Orbs:TWAP:Retro",
+    exchangeAddress: "0xC454Abb5b0CA974a4397139764478C736327d2B0",
+    exchangeType: "KyberExchange",
+    pathfinderKey: "",
   } as Config,
 };
 
