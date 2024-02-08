@@ -306,7 +306,7 @@ export const Configs = {
     partner: "Orbs:TWAP:Retro",
     exchangeAddress: "0xC454Abb5b0CA974a4397139764478C736327d2B0",
     exchangeType: "KyberExchange",
-    pathfinderKey: "",
+    pathfinderKey: "retro,retro-v3",
   } as Config,
 };
 
