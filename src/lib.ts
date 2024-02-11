@@ -1,4 +1,4 @@
-import { Config, OdosOnlyDex, OpenOceanOnlyDex, ParaswapOnlyDex } from "./configs";
+import { Config } from "./configs";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import {
@@ -16,10 +16,7 @@ import {
   zero,
   zeroAddress,
 } from "@defi.org/web3-candies";
-import { Paraswap } from "./paraswap";
 import _ from "lodash";
-import { Odos } from "./odos";
-import { OpenOcean } from "./openocean";
 
 export class TWAPLib {
   public static VERSION = 4;
@@ -32,6 +29,7 @@ export class TWAPLib {
     this.lens = contract(config.lensAbi, config.lensAddress);
   }
 
+  // TODO: REMOVE
   dstAmount = (
     srcToken: TokenData,
     dstToken: TokenData,
@@ -96,6 +94,7 @@ export class TWAPLib {
           ).integerValue(BN.ROUND_FLOOR)
         );
 
+  // TODO: REMOVE
   dstPriceFor1Src = (
     srcToken: TokenData,
     dstToken: TokenData,
@@ -359,80 +358,6 @@ export class TWAPLib {
     const t = erc20(address, address);
     const [decimals, symbol] = await Promise.all([t.decimals(), t.methods.symbol().call()]);
     return { address, decimals, symbol };
-  }
-
-  async priceUsd(token: TokenData) {
-    token = isNativeAddress(token.address) ? this.config.wToken : token;
-    const r = await this.solverRoute(token, this.config.nativeToken, BN(10).pow(token.decimals));
-    return r.srcUsd.toNumber();
-  }
-
-  async findRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
-    const route = await this.solverRoute(srcToken, dstToken, srcAmount);
-    return { ...route, data: this.encodeBidData(route), srcToken, dstToken, srcAmount };
-  }
-
-  private solverRoute(srcToken: TokenData, dstToken: TokenData, srcAmount: BN.Value) {
-    switch (this.config.exchangeType) {
-      case "OdosExchange":
-        return Odos.findRoute(
-          this.config.chainId,
-          srcToken,
-          dstToken,
-          srcAmount,
-          this.config.exchangeAddress,
-          this.config.pathfinderKey as OdosOnlyDex,
-          this.config.partner
-        );
-      case "OpenOceanExchange":
-        return OpenOcean.findRoute(
-          this.config.chainId,
-          srcToken,
-          dstToken,
-          srcAmount,
-          this.config.exchangeAddress,
-          this.config.pathfinderKey as OpenOceanOnlyDex,
-          this.config.partner
-        );
-      default:
-        return Paraswap.findRoute(
-          this.config.chainId,
-          srcToken,
-          dstToken,
-          srcAmount,
-          this.config.exchangeAddress,
-          this.config.pathfinderKey as ParaswapOnlyDex,
-          this.config.partner
-        );
-    }
-  }
-
-  async findRouteForNextBid(order: Order) {
-    if (order.ask.exchange !== zeroAddress && !eqIgnoreCase(order.ask.exchange, this.config.exchangeAddress))
-      throw new Error(`mismatched exchange and config`);
-
-    const srcNextChunkAmountIn = BN.min(order.ask.srcBidAmount, order.ask.srcAmount.minus(order.srcFilledAmount));
-
-    const [srcToken, dstToken] = await Promise.all([
-      this.getToken(order.ask.srcToken),
-      this.getToken(order.ask.dstToken),
-    ]);
-
-    return await this.findRoute(srcToken, dstToken, srcNextChunkAmountIn);
-  }
-
-  encodeBidData(route: Paraswap.Route | Odos.Route | OpenOcean.Route) {
-    switch (this.config.exchangeType) {
-      case "UniswapV2Exchange":
-      case "PangolinDaasExchange":
-        return web3().eth.abi.encodeParameters(["bool", "address[]"], [true, route.path]);
-      case "ParaswapExchange":
-      case "OdosExchange":
-      case "OpenOceanExchange":
-        return web3().eth.abi.encodeParameters(["uint256", "bytes"], [route.dstAmount.toFixed(0), route.data]);
-      default:
-        throw new Error(`unknown exchange type ${this.config.exchangeType}`);
-    }
   }
 }
 
