@@ -1,6 +1,6 @@
 {
   "name": "@orbs-network/twap",
-  "version": "1.23.0-0",
+  "version": "1.23.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orbs-network/twap.git"
