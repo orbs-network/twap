@@ -34,6 +34,7 @@ export interface Config {
   partner: string;
   exchangeAddress: string;
   exchangeType:
+    | "RouterExchange"
     | "UniswapV2Exchange"
     | "ParaswapExchange"
     | "PangolinDaasExchange"
@@ -252,9 +253,9 @@ export const Configs = {
     ...ChainConfigs.bsc,
     name: "PancakeSwap",
     partner: "Orbs:TWAP:PancakeSwap",
-    exchangeAddress: "0x3dD428151c697Aa1a3E5d0ee6A52768E70D85daE",
-    exchangeType: "ParaswapExchange",
-    pathfinderKey: "PancakeSwap,PancakeSwapV2,PancakeswapV3",
+    exchangeAddress: "0xb2BAFe188faD927240038cC4FfF2d771d8A58905",
+    exchangeType: "RouterExchange",
+    pathfinderKey: "",
   } as Config,
 
   Lynex: {

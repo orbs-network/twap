@@ -6,11 +6,11 @@ import "forge-std/Script.sol";
 
 import {Base} from "script/Base.sol";
 
-import {KyberExchange} from "src/exchange/KyberExchange.sol";
+import {RouterExchange} from "src/exchange/RouterExchange.sol";
 
 contract DeployExchange is Base {
     function run() public returns (address) {
         vm.broadcast(deployer);
-        return address(new KyberExchange{salt:0}(0x6131B5fae19EA4f9D964eAc0408E4408b66337b5));
+        return address(new RouterExchange{salt:0}(0x13f4EA83D0bd40E75C8222255bc855a974568Dd4));
     }
 }

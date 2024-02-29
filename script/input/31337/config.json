@@ -2,7 +2,6 @@
   "chainId": 31337,
   "chainName": "anvil",
   "lens": "",
-  "taker": "",
   "treasury": "",
   "twap": "",
   "weth": "0x0000000000000000000000000000000000000000"
