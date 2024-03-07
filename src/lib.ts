@@ -29,22 +29,6 @@ export class TWAPLib {
     this.lens = contract(config.lensAbi, config.lensAddress);
   }
 
-  // TODO: REMOVE
-  dstAmount = (
-    srcToken: TokenData,
-    dstToken: TokenData,
-    srcAmount: BN.Value,
-    srcUsdMarket: BN.Value,
-    dstUsdMarket: BN.Value,
-    limitDstPriceFor1Src: BN.Value,
-    isMarketOrder: boolean
-  ) =>
-    convertDecimals(
-      isMarketOrder ? BN(srcAmount).times(srcUsdMarket).div(dstUsdMarket) : BN(srcAmount).times(limitDstPriceFor1Src),
-      srcToken.decimals,
-      dstToken.decimals
-    ).integerValue(BN.ROUND_FLOOR);
-
   isNativeToken = (token: TokenData) => isNativeAddress(token.address);
 
   isWrappedToken = (token: TokenData) => eqIgnoreCase(token.address, this.config.wToken.address);
@@ -232,7 +216,7 @@ export class TWAPLib {
     askDataParams: any[] = [],
     maxPriorityFeePerGas?: BN.Value,
     maxFeePerGas?: BN.Value
-  ): Promise<number> {
+  ): Promise<{ txHash: string; orderId: number }> {
     const validation = this.validateOrderInputs(
       srcToken,
       dstToken,
@@ -277,7 +261,7 @@ export class TWAPLib {
     });
 
     const events = parseEvents(tx, this.twap.options.jsonInterface);
-    return Number(events[0].returnValues.id);
+    return { txHash: tx.transactionHash, orderId: Number(events[0].returnValues.id) };
   }
 
   async getOrder(id: number): Promise<Order> {
