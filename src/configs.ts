@@ -264,7 +264,7 @@ export const Configs = {
     partner: "Orbs:TWAP:Lynex",
     exchangeAddress: "0x72e3e1fD5D2Ee2F1C2Eb695206D490a1D45C3835",
     exchangeType: "OpenOceanExchange",
-    pathfinderKey: "10",
+    pathfinderKey: "19,18",
   } as Config,
 
   SyncSwap: {
