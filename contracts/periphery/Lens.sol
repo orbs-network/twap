@@ -39,11 +39,11 @@ contract Lens {
      * lastIndex: last order id, start with length-1
      * pageSize: size of iteration restricted by block gas limit. 2500 is measured to be < 15m gas
      */
-    function takerBiddableOrders(
-        address taker,
-        uint64 lastIndex,
-        uint64 pageSize
-    ) external view returns (OrderLib.Order[] memory result) {
+    function takerBiddableOrders(address taker, uint64 lastIndex, uint64 pageSize)
+        external
+        view
+        returns (OrderLib.Order[] memory result)
+    {
         OrderLib.Order[] memory orders = paginated(lastIndex, pageSize);
         uint64 count = 0;
 
@@ -52,10 +52,10 @@ contract Lens {
             if (block.timestamp < twap.status(id)) {
                 OrderLib.Order memory o = twap.order(id);
                 if (
-                    block.timestamp > o.filledTime + o.ask.fillDelay && // after fill delay
-                    (o.bid.taker != taker || block.timestamp > o.bid.time + twap.STALE_BID_SECONDS()) && // other taker or stale bid
-                    ERC20(o.ask.srcToken).allowance(o.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
-                    ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext() // maker balance
+                    block.timestamp > o.filledTime + o.ask.fillDelay // after fill delay
+                        && (o.bid.taker != taker || block.timestamp > o.bid.time + twap.STALE_BID_SECONDS()) // other taker or stale bid
+                        && hasAllowance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker allowance
+                        && hasBalance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker balance
                 ) {
                     orders[count] = o;
                     count++;
@@ -75,11 +75,11 @@ contract Lens {
      * lastIndex: last order id, start with length-1
      * pageSize: size of iteration restricted by block gas limit. 2500 is measured to be < 15m gas
      */
-    function takerFillableOrders(
-        address taker,
-        uint64 lastIndex,
-        uint64 pageSize
-    ) external view returns (OrderLib.Order[] memory result) {
+    function takerFillableOrders(address taker, uint64 lastIndex, uint64 pageSize)
+        external
+        view
+        returns (OrderLib.Order[] memory result)
+    {
         OrderLib.Order[] memory orders = paginated(lastIndex, pageSize);
         uint64 count = 0;
 
@@ -88,10 +88,10 @@ contract Lens {
             if (block.timestamp < twap.status(id)) {
                 OrderLib.Order memory o = twap.order(id);
                 if (
-                    o.bid.taker == taker && // winning taker
-                    block.timestamp > o.bid.time + o.ask.bidDelay && // after bid delay
-                    ERC20(o.ask.srcToken).allowance(o.maker, address(twap)) >= o.srcBidAmountNext() && // maker allowance
-                    ERC20(o.ask.srcToken).balanceOf(o.maker) >= o.srcBidAmountNext() // maker balance
+                    o.bid.taker == taker // winning taker
+                        && block.timestamp > o.bid.time + o.ask.bidDelay // after bid delay
+                        && hasAllowance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker allowance
+                        && hasBalance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker balance
                 ) {
                     orders[count] = o;
                     count++;
@@ -108,5 +108,21 @@ contract Lens {
     function paginated(uint64 lastIndex, uint64 pageSize) private view returns (OrderLib.Order[] memory) {
         require(lastIndex < length(), "lastIndex");
         return new OrderLib.Order[](Math.min(lastIndex + 1, pageSize));
+    }
+
+    function hasAllowance(address token, address maker, uint256 srcBidAmountNext) private view returns (bool) {
+        try ERC20(token).allowance(maker, address(twap)) returns (uint256 allowance) {
+            return allowance >= srcBidAmountNext;
+        } catch {
+            return false;
+        }
+    }
+
+    function hasBalance(address token, address maker, uint256 srcBidAmountNext) private view returns (bool) {
+        try ERC20(token).balanceOf(maker) returns (uint256 balance) {
+            return balance >= srcBidAmountNext;
+        } catch {
+            return false;
+        }
     }
 }
