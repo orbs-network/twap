@@ -12,9 +12,8 @@ import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
 abstract contract Base is Script {
     struct Config {
         uint256 chainId;
-        string name;
+        string chainName;
         address lens;
-        address taker;
         ITreasury treasury;
         address twap;
         address weth;
@@ -32,6 +31,5 @@ abstract contract Base is Script {
             (Config)
         );
         require(config.chainId == block.chainid, "chainId mismatch");
-        require(IERC20(config.weth).totalSupply() > 0, "invalid weth");
     }
 }

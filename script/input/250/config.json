@@ -1,7 +1,7 @@
 {
   "chainId": 250,
   "chainName": "ftm",
-  "lens": "0x6E78fA5d48aedF302e48ef3fbD97FD11b4e98d8B",
+  "lens": "0x55A35fCa403E13E34891684bFc9E94c44F3a099e",
   "treasury": "",
   "twap": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
   "weth": ""
