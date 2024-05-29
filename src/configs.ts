@@ -6,13 +6,13 @@ import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json
 import * as legacyAbis from "./legacy-abi";
 import * as bnbConfig from "../script/input/56/config.json";
 import * as polyConfig from "../script/input/137/config.json";
-import * as arbConfig from "../script/input/42161/config.json";
 import * as ftmConfig from "../script/input/250/config.json";
-import * as avaxConfig from "../script/input/43114/config.json";
-import * as baseConfig from "../script/input/8453/config.json";
-
-import * as lineaConfig from "../script/input/59144/config.json";
+import * as zkSyncConfig from "../script/input/324/config.json";
 import * as moonbeamConfig from "../script/input/1284/config.json";
+import * as baseConfig from "../script/input/8453/config.json";
+import * as arbConfig from "../script/input/42161/config.json";
+import * as avaxConfig from "../script/input/43114/config.json";
+import * as lineaConfig from "../script/input/59144/config.json";
 
 export { nativeTokenAddresses, zeroAddress } from "@defi.org/web3-candies";
 
@@ -134,8 +134,8 @@ export const ChainConfigs = {
     chainName: "base",
     chainId: 8453,
     twapVersion: 4,
-    twapAddress: "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-    lensAddress: "0x3b7C090857a4068e16396550423ebadae502768F",
+    twapAddress: baseConfig.twap,
+    lensAddress: baseConfig.lens,
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     nativeToken: networks.base.native,
@@ -158,8 +158,8 @@ export const ChainConfigs = {
     chainName: "zkSync",
     chainId: 324,
     twapVersion: 4,
-    twapAddress: "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
-    lensAddress: "0x3a661ACA20Cb9Ff8551D1F100cBCE4683fa31Af7",
+    twapAddress: zkSyncConfig.twap,
+    lensAddress: zkSyncConfig.lens,
     bidDelaySeconds: 60,
     minChunkSizeUsd: 100,
     nativeToken: networks.zksync.native,
