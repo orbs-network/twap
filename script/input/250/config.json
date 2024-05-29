@@ -1,0 +1,8 @@
+{
+  "chainId": 250,
+  "chainName": "Fantom",
+  "lens": "0x6E78fA5d48aedF302e48ef3fbD97FD11b4e98d8B",
+  "treasury": "",
+  "twap": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
+  "weth": ""
+}

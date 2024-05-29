@@ -1,0 +1,8 @@
+{
+  "chainId": 42161,
+  "chainName": "Arbitrum",
+  "lens": "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+  "treasury": "",
+  "twap": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+  "weth": ""
+}

@@ -4,6 +4,13 @@ import twapArtifact from "../artifacts/contracts/TWAP.sol/TWAP.json";
 import lensArtifact from "../artifacts/contracts/periphery/Lens.sol/Lens.json";
 import takerArtifact from "../artifacts/contracts/periphery/Taker.sol/Taker.json";
 import * as legacyAbis from "./legacy-abi";
+import * as bnbConfig from "../script/input/56/config.json";
+import * as polyConfig from "../script/input/137/config.json";
+import * as arbConfig from "../script/input/42161/config.json";
+import * as ftmConfig from "../script/input/250/config.json";
+import * as avaxConfig from "../script/input/43114/config.json";
+import * as baseConfig from "../script/input/8453/config.json";
+
 import * as lineaConfig from "../script/input/59144/config.json";
 import * as moonbeamConfig from "../script/input/1284/config.json";
 
@@ -67,8 +74,8 @@ export const ChainConfigs = {
     chainName: "bsc",
     chainId: 56,
     twapVersion: 4,
-    twapAddress: "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-    lensAddress: "0x3b7C090857a4068e16396550423ebadae502768F",
+    twapAddress: bnbConfig.twap,
+    lensAddress: bnbConfig.lens,
     bidDelaySeconds: 60,
     minChunkSizeUsd: 50,
     nativeToken: networks.bsc.native,
@@ -79,8 +86,8 @@ export const ChainConfigs = {
     chainName: "arb",
     chainId: 42161,
     twapVersion: 4,
-    twapAddress: "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    lensAddress: "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    twapAddress: arbConfig.twap,
+    lensAddress: arbConfig.lens,
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     nativeToken: networks.arb.native,
@@ -91,8 +98,8 @@ export const ChainConfigs = {
     chainName: "ftm",
     chainId: 250,
     twapVersion: 4,
-    twapAddress: "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
-    lensAddress: "0x6E78fA5d48aedF302e48ef3fbD97FD11b4e98d8B",
+    twapAddress: ftmConfig.twap,
+    lensAddress: ftmConfig.lens,
     bidDelaySeconds: 60,
     minChunkSizeUsd: 10,
     nativeToken: networks.ftm.native,
