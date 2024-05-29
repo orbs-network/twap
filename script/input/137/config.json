@@ -1,6 +1,6 @@
 {
   "chainId": 137,
-  "chainName": "Polygon",
+  "chainName": "matic",
   "lens": "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
   "treasury": "",
   "twap": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
