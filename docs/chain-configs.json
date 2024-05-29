@@ -918,6 +918,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -1539,7 +1597,7 @@
     "chainId": 56,
     "twapVersion": 4,
     "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-    "lensAddress": "0x3b7C090857a4068e16396550423ebadae502768F",
+    "lensAddress": "0x2872c71e5A72CbBd1C81334824d8ff7B7c37357f",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 50,
     "nativeToken": {
@@ -2453,6 +2511,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -3077,7 +3193,7 @@
     "chainId": 42161,
     "twapVersion": 4,
     "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-    "lensAddress": "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+    "lensAddress": "0x044D636781d3d767E7f60316E76eF705fCF44e2E",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
@@ -3991,6 +4107,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -4615,7 +4789,7 @@
     "chainId": 250,
     "twapVersion": 4,
     "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
-    "lensAddress": "0x6E78fA5d48aedF302e48ef3fbD97FD11b4e98d8B",
+    "lensAddress": "0x55A35fCa403E13E34891684bFc9E94c44F3a099e",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
@@ -5529,6 +5703,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -6153,7 +6385,7 @@
     "chainId": 137,
     "twapVersion": 4,
     "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
-    "lensAddress": "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
+    "lensAddress": "0xaC2eCaDBCF1C58a645361DA97Bc5726975aE2EF3",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
@@ -7067,6 +7299,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -7691,7 +7981,7 @@
     "chainId": 43114,
     "twapVersion": 4,
     "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
-    "lensAddress": "0xfA1e5Da0Cbb780b891Cd635264354a9F4d3A726E",
+    "lensAddress": "0xFa977dbDAc6B0d15B6C066221f0d6b4A6488dCaE",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 100,
     "nativeToken": {
@@ -8605,6 +8895,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -9229,7 +9577,7 @@
     "chainId": 8453,
     "twapVersion": 4,
     "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-    "lensAddress": "0x3b7C090857a4068e16396550423ebadae502768F",
+    "lensAddress": "0x2872c71e5A72CbBd1C81334824d8ff7B7c37357f",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "nativeToken": {
@@ -10143,6 +10491,64 @@
         "type": "constructor"
       },
       {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "length",
         "outputs": [
@@ -10766,7 +11172,7 @@
     "chainId": 59144,
     "twapVersion": 4,
     "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
-    "lensAddress": "0x740BAD3Cb737612110b6E7Fe0DAE040A3eec1597",
+    "lensAddress": "0x507c0097896750Ce04a9F3b857d1BB37BBCCb47B",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 100,
     "nativeToken": {
@@ -11678,6 +12084,64 @@
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
         "inputs": [],
@@ -13215,6 +13679,64 @@
         ],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasAllowance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "srcBidAmountNext",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasBalance",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
         "inputs": [],
