@@ -110,7 +110,7 @@ contract Lens {
         return new OrderLib.Order[](Math.min(lastIndex + 1, pageSize));
     }
 
-    function hasAllowance(address token, address maker, uint256 srcBidAmountNext) private view returns (bool) {
+    function hasAllowance(address token, address maker, uint256 srcBidAmountNext) public view returns (bool) {
         try ERC20(token).allowance(maker, address(twap)) returns (uint256 allowance) {
             return allowance >= srcBidAmountNext;
         } catch {
@@ -118,7 +118,7 @@ contract Lens {
         }
     }
 
-    function hasBalance(address token, address maker, uint256 srcBidAmountNext) private view returns (bool) {
+    function hasBalance(address token, address maker, uint256 srcBidAmountNext) public view returns (bool) {
         try ERC20(token).balanceOf(maker) returns (uint256 balance) {
             return balance >= srcBidAmountNext;
         } catch {
