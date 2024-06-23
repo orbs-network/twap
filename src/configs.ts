@@ -291,6 +291,24 @@ export const Configs = {
     exchangeType: "KyberExchange",
     pathfinderKey: "retro,retro-v3",
   } as Config,
+  
+  SushiArb: {
+    ...ChainConfigs.arb,
+    name: "SushiArb",
+    partner: "Orbs:TWAP:Sushi",
+    exchangeAddress: "0x10695E3C265639e46D45C7bB427A4a4Fd449Af1E",
+    exchangeType: "RouterExchange",
+    pathfinderKey: "",
+  } as Config,
+
+  SushiBase: {
+    ...ChainConfigs.base,
+    name: "SushiBase",
+    partner: "Orbs:TWAP:Sushi",
+    exchangeAddress: "0x10695E3C265639e46D45C7bB427A4a4Fd449Af1E",
+    exchangeType: "RouterExchange",
+    pathfinderKey: "",
+  } as Config,
 };
 
 export const chainConfig = (chainId: number) => _.find(ChainConfigs, (c) => c.chainId === chainId)!;
