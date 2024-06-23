@@ -4781,7 +4781,8 @@
     ],
     "integrations": [
       "Chronos",
-      "Arbidex"
+      "Arbidex",
+      "SushiArb"
     ]
   },
   "ftm": {
@@ -11164,7 +11165,8 @@
       }
     ],
     "integrations": [
-      "BaseSwap"
+      "BaseSwap",
+      "SushiBase"
     ]
   },
   "linea": {

@@ -291,7 +291,7 @@ export const Configs = {
     exchangeType: "KyberExchange",
     pathfinderKey: "retro,retro-v3",
   } as Config,
-  
+
   SushiArb: {
     ...ChainConfigs.arb,
     name: "SushiArb",
