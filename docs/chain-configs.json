@@ -6,7 +6,7 @@
     "twapAddress": "",
     "lensAddress": "",
     "bidDelaySeconds": 60,
-    "minChunkSizeUsd": 100,
+    "minChunkSizeUsd": 500,
     "nativeToken": {
       "address": "0x0000000000000000000000000000000000000000",
       "symbol": "ETH",
@@ -3195,7 +3195,7 @@
     "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
     "lensAddress": "0x044D636781d3d767E7f60316E76eF705fCF44e2E",
     "bidDelaySeconds": 60,
-    "minChunkSizeUsd": 10,
+    "minChunkSizeUsd": 50,
     "nativeToken": {
       "address": "0x0000000000000000000000000000000000000000",
       "symbol": "ETH",
@@ -9580,7 +9580,7 @@
     "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
     "lensAddress": "0x2872c71e5A72CbBd1C81334824d8ff7B7c37357f",
     "bidDelaySeconds": 60,
-    "minChunkSizeUsd": 10,
+    "minChunkSizeUsd": 50,
     "nativeToken": {
       "address": "0x0000000000000000000000000000000000000000",
       "symbol": "ETH",
