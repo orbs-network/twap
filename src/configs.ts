@@ -305,7 +305,7 @@ export const Configs = {
     ...ChainConfigs.base,
     name: "SushiBase",
     partner: "Orbs:TWAP:Sushi",
-    exchangeAddress: "0x10695E3C265639e46D45C7bB427A4a4Fd449Af1E",
+    exchangeAddress: "0xF6875cEE4098e24B068254D94062e6701904968d",
     exchangeType: "RouterExchange",
     pathfinderKey: "",
   } as Config,
