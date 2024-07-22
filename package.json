@@ -1,6 +1,6 @@
 {
   "name": "@orbs-network/twap",
-  "version": "2.0.0",
+  "version": "1.25.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orbs-network/twap.git"
@@ -10,12 +10,14 @@
   "dependencies": {},
   "files": [
     "configs.json",
+    "twap.abi.json",
+    "lens.abi.json",
     "LICENSE",
     "TOS.md",
     "README.md"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "",
     "build": "npm run clean",
     "prepublishOnly": "npm run build",
     "test": ""
