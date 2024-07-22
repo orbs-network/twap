@@ -1,8 +1,0 @@
-{
-  "chainId": 42161,
-  "chainName": "arb",
-  "lens": "0x044D636781d3d767E7f60316E76eF705fCF44e2E",
-  "treasury": "",
-  "twap": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
-  "weth": "0x0000000000000000000000000000000000000000"
-}

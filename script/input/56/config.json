@@ -1,8 +1,0 @@
-{
-  "chainId": 56,
-  "chainName": "bnb",
-  "lens": "0x2872c71e5A72CbBd1C81334824d8ff7B7c37357f",
-  "treasury": "0xb1BaF397B3946a81c7f5C54807474ECF194dc446",
-  "twap": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-  "weth": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
-}

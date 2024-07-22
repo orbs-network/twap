@@ -1,8 +1,0 @@
-{
-  "chainId": 43114,
-  "chainName": "avax",
-  "lens": "0xFa977dbDAc6B0d15B6C066221f0d6b4A6488dCaE",
-  "treasury": "",
-  "twap": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
-  "weth": "0x0000000000000000000000000000000000000000"
-}

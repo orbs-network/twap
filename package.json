@@ -7,37 +7,17 @@
   },
   "author": "Orbs",
   "license": "MIT",
-  "dependencies": {
-    "@defi.org/web3-candies": "^4.20.11"
-  },
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "dependencies": {},
   "files": [
-    "./dist",
+    "configs.json",
     "LICENSE",
     "TOS.md",
     "README.md"
   ],
   "scripts": {
-    "clean": "rm -rf artifacts cache typechain-hardhat dist",
-    "prettier": "prettier --write '{test,src}/**/*.{ts,js,json}'",
-    "typechain": "npm run clean && hardhat typechain",
-    "prebuild": "npm run prettier && npm run typechain",
-    "build": "hardhat compile && solhint 'contracts/**/*.sol' && tsc && hardhat github-pages",
+    "clean": "rm -rf dist",
+    "build": "npm run clean",
     "prepublishOnly": "npm run build",
-    "test:logs": "for t in eth ftm poly avax arb; do DEBUG=web3-candies npm run test:$t -- --logs; done",
-    "test": "for t in eth ftm poly avax arb; do npm run test:$t; done",
-    "test:eth": "NETWORK=ETH BLOCK=14905987 hardhat test",
-    "test:ftm": "NETWORK=FTM hardhat test",
-    "test:poly": "NETWORK=POLY hardhat test",
-    "test:avax": "NETWORK=AVAX hardhat test",
-    "test:arb": "NETWORK=ARB hardhat test",
-    "test:bsc": "NETWORK=BSC hardhat test",
-    "test:glmr": "NETWORK=GLMR hardhat test",
-    "test:base": "NETWORK=BASE hardhat test",
-    "test:linea": "NETWORK=LINEA hardhat test"
-  },
-  "prettier": {
-    "printWidth": 120
+    "test": ""
   }
 }
