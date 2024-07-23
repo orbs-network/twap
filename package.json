@@ -20,9 +20,9 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "",
-    "build": "npm run clean",
+    "clean": "forge clean",
+    "build": "npm run clean && forge build",
     "prepublishOnly": "npm run build",
-    "test": ""
+    "test": "forge test"
   }
 }
