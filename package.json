@@ -8,10 +8,13 @@
   "author": "Orbs",
   "license": "MIT",
   "dependencies": {},
+  "main": "index.js",
   "files": [
+    "index.js",
     "configs.json",
     "twap.abi.json",
     "lens.abi.json",
+    "taker.abi.json",
     "LICENSE",
     "TOS.md",
     "README.md"
