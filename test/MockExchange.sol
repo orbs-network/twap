@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../IExchange.sol";
+import "src/IExchange.sol";
 
 contract MockExchange is IExchange {
     using SafeERC20 for ERC20;
@@ -22,14 +22,9 @@ contract MockExchange is IExchange {
     /**
      * assumes holds balance of dstToken
      */
-    function swap(
-        address _srcToken,
-        address _dstToken,
-        uint256 amountIn,
-        uint256,
-        bytes calldata,
-        bytes calldata
-    ) public {
+    function swap(address _srcToken, address _dstToken, uint256 amountIn, uint256, bytes calldata, bytes calldata)
+        public
+    {
         ERC20 srcToken = ERC20(_srcToken);
         ERC20 dstToken = ERC20(_dstToken);
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);

@@ -23,6 +23,8 @@ contract TakerAccessTest is Test {
     function test_SafeAllowanceBalance() public {
         assertFalse(lens.hasAllowance(address(token), maker, 100));
         assertFalse(lens.hasBalance(address(token), maker, 100));
+        vm.expectRevert(MockERC20.ThrowsError.selector);
+        token.balanceOf(maker);
     }
 }
 
@@ -33,11 +35,11 @@ contract MockERC20 is ERC20 {
 
     error ThrowsError();
 
-    function allowance(address, address) public view override returns (uint256) {
+    function allowance(address, address) public pure override returns (uint256) {
         revert ThrowsError();
     }
 
-    function balanceOf(address) public view override returns (uint256) {
+    function balanceOf(address) public pure override returns (uint256) {
         revert ThrowsError();
     }
 }
