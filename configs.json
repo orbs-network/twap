@@ -154,7 +154,7 @@
     "chainId": 324,
     "twapVersion": 4,
     "twapAddress": "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
-    "lensAddress": "0x3a661ACA20Cb9Ff8551D1F100cBCE4683fa31Af7",
+    "lensAddress": "0x1157A4A2517Aa3471B08FE076eE3a2DF49EA449D",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 100,
     "name": "SyncSwap",
