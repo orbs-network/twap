@@ -139,7 +139,7 @@
     "chainId": 59144,
     "twapVersion": 4,
     "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
-    "lensAddress": "0x507c0097896750Ce04a9F3b857d1BB37BBCCb47B",
+    "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 100,
     "name": "Lynex",
