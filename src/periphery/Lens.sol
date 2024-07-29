@@ -30,7 +30,7 @@ contract Lens {
         for (uint64 i = 0; i < result.length; i++) {
             uint64 id = orderIds[i];
             result[i] = twap.order(id);
-            // delete result[i].bid.data;
+            delete result[i].bid.data;
         }
     }
 
@@ -58,7 +58,7 @@ contract Lens {
                         && hasAllowance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker allowance
                         && hasBalance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker balance
                 ) {
-                    // delete o.bid.data;
+                    delete o.bid.data;
                     orders[count] = o;
                     count++;
                 }
@@ -95,7 +95,7 @@ contract Lens {
                         && hasAllowance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker allowance
                         && hasBalance(o.ask.srcToken, o.maker, o.srcBidAmountNext()) // maker balance
                 ) {
-                    // delete o.bid.data;
+                    delete o.bid.data;
                     orders[count] = o;
                     count++;
                 }

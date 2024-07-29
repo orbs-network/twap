@@ -2,7 +2,6 @@
 .idea
 artifacts/
 cache/
-typechain-hardhat/
 broadcast/
 
 
