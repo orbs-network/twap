@@ -4,7 +4,7 @@
     "chainId": 250,
     "twapVersion": 4,
     "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
-    "lensAddress": "0x55A35fCa403E13E34891684bFc9E94c44F3a099e",
+    "lensAddress": "0x0628DC34b758AC652bf64fFe924e6B62F136dE3c",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "name": "SpookySwap",
