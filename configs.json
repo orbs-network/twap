@@ -3,7 +3,7 @@
     "chainName": "ftm",
     "chainId": 250,
     "twapVersion": 4,
-    "twapAddres": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
+    "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
     "lensAddress": "0x0628DC34b758AC652bf64fFe924e6B62F136dE3c",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
