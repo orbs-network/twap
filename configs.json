@@ -3,15 +3,15 @@
     "chainName": "ftm",
     "chainId": 250,
     "twapVersion": 4,
-    "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
+    "twapAddres": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
     "lensAddress": "0x0628DC34b758AC652bf64fFe924e6B62F136dE3c",
     "bidDelaySeconds": 60,
     "minChunkSizeUsd": 10,
     "name": "SpookySwap",
     "partner": "Orbs:TWAP:SpookySwap",
-    "exchangeAddress": "0x704b9764cb36B8856f3097845dcc594d82192638",
-    "exchangeType": "UniswapV2Exchange",
-    "pathfinderKey": "SpookySwap"
+    "exchangeAddress": "0xD54B17197F17e058f4A0859cFfC8C9De42d87560",
+    "exchangeType": "ParaswapExchange",
+    "pathfinderKey": "SpookySwap,SpookySwapV3"
   },
 
   "Pangolin": {
