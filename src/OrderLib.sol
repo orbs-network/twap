@@ -42,42 +42,36 @@ library OrderLib {
      */
     function newOrder(uint64 id, Ask calldata ask) internal view returns (Order memory) {
         require(
-            block.timestamp < type(uint32).max &&
-                ask.deadline < type(uint32).max &&
-                ask.bidDelay < type(uint32).max &&
-                ask.fillDelay < type(uint32).max,
+            block.timestamp < type(uint32).max && ask.deadline < type(uint32).max && ask.bidDelay < type(uint32).max
+                && ask.fillDelay < type(uint32).max,
             "uint32"
         );
-        return
-            Order(
-                id,
-                ask.deadline, // status
-                uint32(block.timestamp), // time
-                0, // filledTime
-                0, // srcFilledAmount
-                msg.sender, // maker
-                ask,
-                Bid(
-                    0, // time
-                    address(0), // taker
-                    address(0), // exchange
-                    0, // dstAmount
-                    0, // dstFee
-                    new bytes(0) // data
-                )
-            );
+        return Order(
+            id,
+            ask.deadline, // status
+            uint32(block.timestamp), // time
+            0, // filledTime
+            0, // srcFilledAmount
+            msg.sender, // maker
+            ask,
+            Bid(
+                0, // time
+                address(0), // taker
+                address(0), // exchange
+                0, // dstAmount
+                0, // dstFee
+                new bytes(0) // data
+            )
+        );
     }
 
     /**
      * new Bid
      */
-    function newBid(
-        Order memory self,
-        address exchange,
-        uint256 dstAmountOut,
-        uint256 dstFee,
-        bytes memory data
-    ) internal view {
+    function newBid(Order memory self, address exchange, uint256 dstAmountOut, uint256 dstFee, bytes memory data)
+        internal
+        view
+    {
         require(block.timestamp < type(uint32).max, "uint32");
         self.bid = OrderLib.Bid(uint32(block.timestamp), msg.sender, exchange, dstAmountOut, dstFee, data);
     }
