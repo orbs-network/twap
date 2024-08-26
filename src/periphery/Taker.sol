@@ -16,11 +16,11 @@ contract Taker {
     using SafeERC20 for ERC20;
 
     TWAP public immutable twap;
-    ITreasury public immutable treasury;
+    IAllowed public immutable allowed;
 
-    constructor(TWAP _twap, ITreasury _treasury) {
+    constructor(TWAP _twap, IAllowed _allowed) {
         twap = _twap;
-        treasury = _treasury;
+        allowed = _allowed;
     }
 
     /**
@@ -79,11 +79,11 @@ contract Taker {
     error NotAllowed(address caller);
 
     modifier onlyAllowed() {
-        if (!treasury.allowed(msg.sender)) revert NotAllowed(msg.sender);
+        if (!allowed.allowed(msg.sender)) revert NotAllowed(msg.sender);
         _;
     }
 }
 
-interface ITreasury {
+interface IAllowed {
     function allowed(address) external view returns (bool);
 }
