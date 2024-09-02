@@ -202,7 +202,7 @@
         "twapAddress": "0x037E2bda7B1f03411ba5E96ACb7F36a7D19c3D83",
         "lensAddress": "0xD5Dc89eb7fc256b407A0Cd166e9d20bcF8FbCf98",
         "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 1000,
+        "minChunkSizeUsd": 200,
         "name": "SushiEth",
         "partner": "Orbs:TWAP:Sushi",
         "exchangeAddress": "0xc55943Fa6509004B2903ED8F8ab7347BfC47D0bA",

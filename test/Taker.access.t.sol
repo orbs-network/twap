@@ -6,24 +6,24 @@ import "forge-std/Test.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {Taker, ITreasury, TWAP} from "src/periphery/Taker.sol";
+import {Taker, IAllowed, TWAP} from "src/periphery/Taker.sol";
 
 contract TakerAccessTest is Test {
-    ITreasury public treasury;
+    IAllowed public admin;
     TWAP public twap;
     Taker public taker;
 
     function setUp() public {
-        treasury = new MockTreasury();
+        admin = new MockAdmin();
         twap = new TWAP(address(new ERC20("weth", "WETH")));
-        taker = new Taker(twap, treasury);
+        taker = new Taker(twap, admin);
     }
 
     function test_Allowed() public {
         taker.rescue(address(0));
-        assertEq(address(taker.treasury()), address(treasury));
-        assertEq(Ownable(address(treasury)).owner(), address(this));
-        assertTrue(treasury.allowed(address(this)));
+        assertEq(address(taker.allowed()), address(admin));
+        assertEq(Ownable(address(admin)).owner(), address(this));
+        assertTrue(admin.allowed(address(this)));
     }
 
     function testRevert_NotAllowed() public {
@@ -34,7 +34,7 @@ contract TakerAccessTest is Test {
     }
 }
 
-contract MockTreasury is ITreasury, Ownable {
+contract MockAdmin is IAllowed, Ownable {
     function allowed(address addr) public view returns (bool) {
         return addr == owner();
     }
