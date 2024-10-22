@@ -208,5 +208,19 @@
         "exchangeAddress": "0xc55943Fa6509004B2903ED8F8ab7347BfC47D0bA",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
+    },
+    "DragonSwap": {
+        "chainName": "sei",
+        "chainId": 1329,
+        "twapVersion": 4,
+        "twapAddress": "0x18C3cEFb4b90bc854b1F7b1852b9862374a43778",
+        "lensAddress": "0xebDB65Bd47b303D82cb64012aE7b402CA877E2A3",
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "DragonSwap",
+        "partner": "Orbs:TWAP:DragonSwap",
+        "exchangeAddress": "0x101e1B65Bb516FB5f4547C80BAe0b51f1b8D7a22",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
     }
 }

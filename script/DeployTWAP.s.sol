@@ -8,8 +8,8 @@ import {TWAP} from "src/TWAP.sol";
 
 contract DeployTWAP is Script {
     function run() public returns (TWAP) {
-        address iweth = vm.envAddress("IWETH");
+        address weth = vm.envAddress("WETH");
         vm.broadcast();
-        return new TWAP{salt: 0}(iweth);
+        return new TWAP{salt: 0}(weth);
     }
 }
