@@ -16,7 +16,8 @@ contract TakerAccessTest is Test {
     function setUp() public {
         admin = new MockAdmin();
         twap = new TWAP(address(new ERC20("weth", "WETH")));
-        taker = new Taker(twap, admin);
+        taker = new Taker();
+        taker.init(twap, admin);
     }
 
     function test_Allowed() public {

@@ -15,10 +15,13 @@ import "../TWAP.sol";
 contract Taker {
     using SafeERC20 for ERC20;
 
-    TWAP public immutable twap;
-    IAllowed public immutable allowed;
+    TWAP public twap;
+    IAllowed public allowed;
 
-    constructor(TWAP _twap, IAllowed _allowed) {
+    constructor() {}
+
+    function init(TWAP _twap, IAllowed _allowed) external {
+        if (address(twap) != address(0) || address(allowed) != address(0)) revert();
         twap = _twap;
         allowed = _allowed;
     }
