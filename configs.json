@@ -186,8 +186,8 @@
         "twapAddress": "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
         "lensAddress": "0x1157A4A2517Aa3471B08FE076eE3a2DF49EA449D",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xFf16354FC5Be56B9435c16d7D5058f865262839A",
+            "0xFf16354FC5Be56B9435c16d7D5058f865262839A"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
