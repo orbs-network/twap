@@ -179,6 +179,42 @@
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
+    "PancakeSwapBase": {
+        "chainName": "base",
+        "chainId": 8453,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "takers": [
+            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
+            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "PancakeSwapLinea": {
+        "chainName": "linea",
+        "chainId": 59144,
+        "twapVersion": 4,
+        "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
+        "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
+        "takers": [
+            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
+            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 100,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "",
+        "exchangeType": "",
+        "pathfinderKey": ""
+    },
     "Lynex": {
         "chainName": "linea",
         "chainId": 59144,
