@@ -161,6 +161,24 @@
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
+    "PancakeSwapArbitrum": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
+            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "0xb5d1525620F801Bed4645EE8a5D22F4f774D5139",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
     "Lynex": {
         "chainName": "linea",
         "chainId": 59144,
