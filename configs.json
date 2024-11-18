@@ -211,8 +211,8 @@
         "minChunkSizeUsd": 100,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "",
-        "exchangeType": "",
+        "exchangeAddress": "0x10ed1F36e4eBE76E161c9AADDa20BE841bc0082c",
+        "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
     "Lynex": {
