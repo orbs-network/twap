@@ -193,7 +193,7 @@
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x10ed1F36e4eBE76E161c9AADDa20BE841bc0082c",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
