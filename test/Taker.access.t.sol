@@ -21,7 +21,7 @@ contract TakerAccessTest is Test {
     }
 
     function test_Allowed() public {
-        taker.rescue(address(0));
+        taker.rescue(address(0), address(this), 0);
         assertEq(address(taker.allowed()), address(admin));
         assertEq(Ownable(address(admin)).owner(), address(this));
         assertTrue(admin.allowed(address(this)));
@@ -31,7 +31,7 @@ contract TakerAccessTest is Test {
         address other = makeAddr("other");
         hoax(other);
         vm.expectRevert(abi.encodeWithSelector(Taker.NotAllowed.selector, other));
-        taker.rescue(address(0));
+        taker.rescue(address(0), address(other), 0);
     }
 }
 

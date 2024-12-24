@@ -1,3 +1,3 @@
-TakerAccessTest:testRevert_NotAllowed() (gas: 18606)
-TakerAccessTest:test_Allowed() (gas: 32154)
+TakerAccessTest:testRevert_NotAllowed() (gas: 18796)
+TakerAccessTest:test_Allowed() (gas: 21579)
 TakerAccessTest:test_SafeAllowanceBalance() (gas: 19624)
