@@ -8,8 +8,8 @@ import {Taker, TWAP, IAllowed} from "src/periphery/Taker.sol";
 import {RouterExchange} from "src/exchange/RouterExchange.sol";
 
 contract DeployTakers is Script {
-    bytes32 constant SALT0 = 0x15f1c43aeb27f46f344846db8cd43cc355ceef71562c18b0e1e2b78b7f1a21bf;
-    bytes32 constant SALT1 = 0xdb8cb4d00d8df88cc17593fcdf17ac1ba5e363160bcee3824e0b77886bcfe657;
+    bytes32 constant SALT0 = 0xbfb1327afb65b29f1ef907d624f74f852b9f25a908336204e48fba6733c53d1d;
+    bytes32 constant SALT1 = 0xcc42be215c2b9e0db61b91d5efdafc5449686e00250ffa072a5f4501fbe0f05a;
 
     function run() public returns (address taker, address taker2) {
         TWAP twap = TWAP(payable(vm.envAddress("TWAP")));
@@ -20,6 +20,7 @@ contract DeployTakers is Script {
 
     function _taker(TWAP twap, IAllowed admin, bytes32 salt) private returns (address taker) {
         bytes32 initCodeHash = hashInitCode(type(Taker).creationCode, abi.encode());
+        console.logBytes32(initCodeHash);
         taker = vm.computeCreate2Address(salt, initCodeHash);
 
         if (taker.code.length > 0) {
