@@ -62,7 +62,7 @@ contract Taker {
 
     function rescue(address token, address to, uint256 amount) public onlyAllowed {
         if (token != address(0)) ERC20(token).safeTransfer(to, amount);
-        else if (address(this).balance > 0) Address.sendValue(payable(to), amount);
+        else Address.sendValue(payable(to), amount);
     }
 
     receive() external payable {} // solhint-disable-line no-empty-blocks

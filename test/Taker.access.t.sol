@@ -33,6 +33,8 @@ contract TakerAccessTest is Test {
         vm.expectRevert(abi.encodeWithSelector(Taker.NotAllowed.selector, other));
         taker.rescue(address(0), address(other), 0);
     }
+
+    receive() external payable {}
 }
 
 contract MockAdmin is IAllowed, Ownable {
