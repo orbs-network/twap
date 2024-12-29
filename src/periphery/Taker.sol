@@ -26,9 +26,6 @@ contract Taker {
         allowed = _allowed;
     }
 
-    /**
-     * Perform bid
-     */
     function bid(uint64 id, address exchange, uint256 dstFee, uint32 slippagePercent, bytes calldata data)
         external
         onlyAllowed
@@ -36,33 +33,39 @@ contract Taker {
         twap.bid(id, exchange, dstFee, slippagePercent, data);
     }
 
-    function fill(uint64 id, address ref, uint256 dstSenderAmount, address feeSwapExchange, bytes calldata feeSwapData)
+    function fill(uint64 id, address fee, uint256 dstSenderAmount, address feeSwapExchange, bytes calldata feeSwapData)
         external
         onlyAllowed
     {
+        // fill
         twap.fill(id);
         OrderLib.Order memory o = twap.order(id);
 
-        if (o.ask.dstToken != twap.iweth() && o.ask.dstToken != address(0) && feeSwapExchange != address(0)) {
-            ERC20(o.ask.dstToken).safeIncreaseAllowance(feeSwapExchange, dstSenderAmount);
+        // swap to gas
+        bool swapGas = feeSwapExchange != address(0) && o.ask.dstToken != twap.iweth() && o.ask.dstToken != address(0);
+        if (swapGas) {
+            ERC20(o.ask.dstToken).safeApprove(feeSwapExchange, dstSenderAmount);
             IExchange(feeSwapExchange).swap(o.ask.dstToken, twap.iweth(), dstSenderAmount, 0, o.ask.data, feeSwapData);
         }
 
-        if (ERC20(twap.iweth()).balanceOf(address(this)) > 0) {
-            IWETH(twap.iweth()).withdraw(ERC20(twap.iweth()).balanceOf(address(this)));
-        }
+        // unwrap
+        uint256 wethBalance = ERC20(twap.iweth()).balanceOf(address(this));
+        if (wethBalance > 0) IWETH(twap.iweth()).withdraw(wethBalance);
 
-        rescue(o.ask.dstToken, msg.sender, dstSenderAmount);
-        rescue(
-            o.ask.dstToken,
-            ref,
-            o.ask.dstToken == address(0) ? ERC20(o.ask.dstToken).balanceOf(address(this)) : address(this).balance
-        );
+        // gas
+        rescue(address(0), msg.sender, swapGas ? 0 : dstSenderAmount);
+
+        // fee
+        rescue(address(0), fee, 0);
+        rescue(o.ask.dstToken, fee, 0);
     }
 
     function rescue(address token, address to, uint256 amount) public onlyAllowed {
-        if (token != address(0)) ERC20(token).safeTransfer(to, amount);
-        else Address.sendValue(payable(to), amount);
+        if (token != address(0)) {
+            ERC20(token).safeTransfer(to, amount == 0 ? ERC20(token).balanceOf(address(this)) : amount);
+        } else {
+            Address.sendValue(payable(to), amount == 0 ? address(this).balance : amount);
+        }
     }
 
     receive() external payable {} // solhint-disable-line no-empty-blocks
