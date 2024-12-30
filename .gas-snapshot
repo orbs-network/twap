@@ -1,4 +1,4 @@
 TakerAccessTest:testRevert_NotAllowed() (gas: 18796)
 TakerAccessTest:test_Allowed() (gas: 21920)
 TakerAccessTest:test_SafeAllowanceBalance() (gas: 19624)
-TakerFillTest:test_erc20s() (gas: 186)
+TakerFillTest:test_erc20s() (gas: 5847)
