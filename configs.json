@@ -6,8 +6,8 @@
         "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
         "lensAddress": "0x0628DC34b758AC652bf64fFe924e6B62F136dE3c",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
@@ -24,8 +24,8 @@
         "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
         "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
@@ -42,8 +42,8 @@
         "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
         "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
@@ -60,8 +60,8 @@
         "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
         "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
@@ -78,8 +78,8 @@
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -96,8 +96,8 @@
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -114,8 +114,8 @@
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -132,8 +132,8 @@
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -150,8 +150,8 @@
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -168,8 +168,8 @@
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -186,8 +186,8 @@
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -204,8 +204,8 @@
         "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
         "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
@@ -222,8 +222,8 @@
         "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
         "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
@@ -240,8 +240,8 @@
         "twapAddress": "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
         "lensAddress": "0x1157A4A2517Aa3471B08FE076eE3a2DF49EA449D",
         "takers": [
-            "0xFf16354FC5Be56B9435c16d7D5058f865262839A",
-            "0xFf16354FC5Be56B9435c16d7D5058f865262839A"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
@@ -258,8 +258,8 @@
         "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
         "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
@@ -276,8 +276,8 @@
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -294,8 +294,8 @@
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
@@ -312,8 +312,8 @@
         "twapAddress": "0x037E2bda7B1f03411ba5E96ACb7F36a7D19c3D83",
         "lensAddress": "0xD5Dc89eb7fc256b407A0Cd166e9d20bcF8FbCf98",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 200,
@@ -330,8 +330,8 @@
         "twapAddress": "0x18C3cEFb4b90bc854b1F7b1852b9862374a43778",
         "lensAddress": "0xebDB65Bd47b303D82cb64012aE7b402CA877E2A3",
         "takers": [
-            "0xDEdDEE0019045D044B3430e3c8879cf8815BF2C9",
-            "0x333333005aBdc77adef780aae216fdd364E3Cf12"
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,

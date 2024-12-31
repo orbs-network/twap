@@ -13,6 +13,6 @@ echo $chains | parallel --keep-order "
     export TWAP=\$(jq -r 'map(select(.chainId == {})) | unique_by(.twapAddress) | .[].twapAddress' $config);
     export ADMIN=\$(a admin);
 
-    forge script DeployTakers #--broadcast --verify \$([[ -n \$VERIFIER ]] && echo --verifier \$VERIFIER);
+    forge script DeployTakers --broadcast #--verify \$([[ -n \$VERIFIER ]] && echo --verifier \$VERIFIER);
     "
 
