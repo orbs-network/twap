@@ -62,9 +62,11 @@ contract Taker {
 
     function rescue(address token, address to, uint256 amount) public onlyAllowed {
         if (token != address(0)) {
-            ERC20(token).safeTransfer(to, amount == 0 ? ERC20(token).balanceOf(address(this)) : amount);
+            amount = amount != 0 ? amount : ERC20(token).balanceOf(address(this));
+            if (amount != 0) ERC20(token).safeTransfer(to, amount);
         } else {
-            Address.sendValue(payable(to), amount == 0 ? address(this).balance : amount);
+            amount = amount != 0 ? amount : address(this).balance;
+            if (amount != 0) Address.sendValue(payable(to), amount);
         }
     }
 

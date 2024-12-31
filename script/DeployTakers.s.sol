@@ -8,8 +8,8 @@ import {Taker, TWAP, IAllowed} from "src/periphery/Taker.sol";
 import {RouterExchange} from "src/exchange/RouterExchange.sol";
 
 contract DeployTakers is Script {
-    bytes32 constant SALT0 = 0xeebfadf7c7976424d97712099e237f577e0e42d717893722b6993a7582256be3;
-    bytes32 constant SALT1 = 0x22957517978ea07e66e4180ae8bc51ecf212f0dbadb6de6c18933d242ea5a073;
+    bytes32 constant SALT0 = 0x2c727ad42be2d03d21aaf12954ec8a1b1c89f5636eaa4b6147750b7210a4b459;
+    bytes32 constant SALT1 = 0x661183b6cf3d3c08e70cebdfbee5dcb0cd7282b29914b072c0e5e6c968529d64;
 
     function run() public returns (address taker, address taker2) {
         TWAP twap = TWAP(payable(vm.envAddress("TWAP")));
