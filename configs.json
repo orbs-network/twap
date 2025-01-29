@@ -358,5 +358,19 @@
         "exchangeAddress": "0x4e2000DC371704c9CbcAeb8e7baff6813fb83063",
         "exchangeType": "ParaswapExchange",
         "pathfinderKey": ""
+    },
+    "H2Finance": {
+        "chainName": "cronos-zkevm",
+        "chainId": 388,
+        "twapVersion": 4,
+        "twapAddress": "0xc3945b7A39De6518Ed852f6355706F46F672c096",
+        "lensAddress": "0xc30Fb187D68Bc032B68769425B8f9Ad7EFC663Fc",
+        "takers": [],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "H2Finance",
+        "partner": "Orbs:TWAP:H2Finance",
+        "exchangeAddress": "",
+        "exchangeType": ""
     }
 }

@@ -10,9 +10,8 @@ import {Lens} from "src/periphery/Lens.sol";
 contract DeployTWAP is Script {
     function run() public returns (TWAP twap, Lens lens) {
         address weth = vm.envAddress("WETH");
-        address twapAddress = vm.computeCreate2Address(0, hashInitCode(type(TWAP).creationCode, abi.encode(weth)));
-        address lensAddress =
-            vm.computeCreate2Address(0, hashInitCode(type(Lens).creationCode, abi.encode(twapAddress)));
+        address twapAddress = vm.envOr("TWAP", address(1000000));
+        address lensAddress = vm.envOr("Lens", address(1000000));
 
         if (twapAddress.code.length > 0) {
             console.log("TWAP already deployed");
