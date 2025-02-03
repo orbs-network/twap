@@ -372,5 +372,18 @@
         "partner": "Orbs:TWAP:H2Finance",
         "exchangeAddress": "",
         "exchangeType": ""
+    },
+    "Ocelex": {
+        "chainName": "zircuit",
+        "chainId": 48900,
+        "twapVersion": 4,
+        "twapAddress": "0x647413e85A5D38B08A19c3765F12C6A5A64E6051",
+        "lensAddress": "0xAbaea785f5a9C61190209A0Ae32F6C7F73A43d4E",
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Ocelex",
+        "partner": "Orbs:TWAP:Ocelex",
+        "exchangeAddress": "",
+        "exchangeType": ""
     }
 }
