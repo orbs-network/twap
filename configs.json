@@ -357,7 +357,7 @@
         "partner": "Orbs:TWAP:TeaFi",
         "exchangeAddress": "0x4e2000DC371704c9CbcAeb8e7baff6813fb83063",
         "exchangeType": "ParaswapExchange",
-        "pathfinderKey": ""
+        "pathfinderKey": "AaveV2,AaveV3,AaveV3Stata,AngleStakedStableEUR,AngleStakedStableUSD,ApeSwap,AugustusRFQ,BalancerV2,ComethSwap,CurveV1,CurveV1Factory,CurveV1StableNg,CurveV2,Dfyn,DODOV2,Dystopia,Hashflow,IronV2,JarvisV6,KyberDmm,QuickSwap,QuickSwapV3,Retro,SushiSwap,SushiSwapV3,SwaapV2,Synapse,UniswapV2,UniswapV3,WaultFinance,Wmatic,WooFiV2,wUSDM"
     },
     "H2Finance": {
         "chainName": "cronos-zkevm",
