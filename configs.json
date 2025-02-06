@@ -385,5 +385,18 @@
         "partner": "Orbs:TWAP:Ocelex",
         "exchangeAddress": "",
         "exchangeType": ""
+    },
+    "SparkDEX": {
+        "chainName": "flare",
+        "chainId": 14,
+        "twapVersion": 4,
+        "twapAddress": "0xac9d2216369A6339465Ee2D6a32306dd4884E299",
+        "lensAddress": "0xAFfd7D0128aaFd325AC4685fB7b807885e180758",
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "SparkDEX",
+        "partner": "Orbs:TWAP:SparkDEX",
+        "exchangeAddress": "",
+        "exchangeType": ""
     }
 }
