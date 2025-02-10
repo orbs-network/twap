@@ -398,5 +398,41 @@
         "partner": "Orbs:TWAP:SparkDEX",
         "exchangeAddress": "",
         "exchangeType": ""
+    },
+    "Ramses": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "Ramses",
+        "partner": "Orbs:TWAP:Ramses",
+        "exchangeAddress": "",
+        "exchangeType": "",
+        "pathfinderKey": ""
+    },
+    "Fenix": {
+        "chainName": "blast",
+        "chainId": 81457,
+        "twapVersion": 4,
+        "twapAddress": "0x3ad4f4c2e4d9B928aE6ACaeF465152DC3208Db50",
+        "lensAddress": "0x54D41aAC6e02325b7c83825843936F1A8b8bB47A",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Fenix",
+        "partner": "Orbs:TWAP:Fenix",
+        "exchangeAddress": "",
+        "exchangeType": "",
+        "pathfinderKey": ""
     }
 }
