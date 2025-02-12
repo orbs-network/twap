@@ -12,6 +12,6 @@ contract DeployExchange is Script {
     function run() public returns (IExchange) {
         address router = vm.envAddress("ROUTER");
         vm.broadcast();
-        return new ParaswapExchange{salt: 0}(router);
+        return new RouterExchange{salt: 0}(router);
     }
 }

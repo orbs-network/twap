@@ -392,12 +392,16 @@
         "twapVersion": 4,
         "twapAddress": "0xac9d2216369A6339465Ee2D6a32306dd4884E299",
         "lensAddress": "0xAFfd7D0128aaFd325AC4685fB7b807885e180758",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "SparkDEX",
         "partner": "Orbs:TWAP:SparkDEX",
-        "exchangeAddress": "",
-        "exchangeType": ""
+        "exchangeAddress": "0xf5CCFE12878623f15F5B377052a06F20975A0B60",
+        "exchangeType": "RouterExchange"
     },
     "Ramses": {
         "chainName": "arb",
