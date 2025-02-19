@@ -283,7 +283,7 @@
         "minChunkSizeUsd": 50,
         "name": "SushiArb",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "0x824790D0338452c9085d52b67D1ADdE519A24e38",
+        "exchangeAddress": "0x08c41f5D1C844061f6D952E25827eeAA576c6536",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
@@ -301,7 +301,7 @@
         "minChunkSizeUsd": 50,
         "name": "SushiBase",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "0x824790D0338452c9085d52b67D1ADdE519A24e38",
+        "exchangeAddress": "0x08c41f5D1C844061f6D952E25827eeAA576c6536",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
@@ -319,7 +319,7 @@
         "minChunkSizeUsd": 200,
         "name": "SushiEth",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "0x824790D0338452c9085d52b67D1ADdE519A24e38",
+        "exchangeAddress": "0x08c41f5D1C844061f6D952E25827eeAA576c6536",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
