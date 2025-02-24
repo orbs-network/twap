@@ -17,6 +17,24 @@
         "exchangeType": "ParaswapExchange",
         "pathfinderKey": "SpookySwap,SpookySwapV3"
     },
+    "SpookySwapSonic": {
+        "chainName": "sonic",
+        "chainId": 146,
+        "twapVersion": 4,
+        "twapAddress": "0xe94E30ebe3d438dD1e7FE686503E392b1A601566",
+        "lensAddress": "0x4bd562529fbda83196d8D1d79cc8404c75Ff5A3A",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "SpookySwapSonic",
+        "partner": "Orbs:TWAP:SpookySwap",
+        "exchangeAddress": "",
+        "exchangeType": "",
+        "pathfinderKey": ""
+    },
     "Pangolin": {
         "chainName": "avax",
         "chainId": 43114,
