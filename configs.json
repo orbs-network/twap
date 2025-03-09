@@ -31,8 +31,8 @@
         "minChunkSizeUsd": 10,
         "name": "SpookySwapSonic",
         "partner": "Orbs:TWAP:SpookySwap",
-        "exchangeAddress": "",
-        "exchangeType": "",
+        "exchangeAddress": "0xAd97B770ad64aE47fc7d64B3bD820dCDbF9ff7DA",
+        "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
     "Pangolin": {
