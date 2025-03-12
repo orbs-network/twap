@@ -13,9 +13,9 @@
         "minChunkSizeUsd": 10,
         "name": "SpookySwap",
         "partner": "Orbs:TWAP:SpookySwap",
-        "exchangeAddress": "0xD54B17197F17e058f4A0859cFfC8C9De42d87560",
-        "exchangeType": "ParaswapExchange",
-        "pathfinderKey": "SpookySwap,SpookySwapV3"
+        "exchangeAddress": "0x3924d62219483015f982b160d48c0fa5Fd436Cba",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
     },
     "SpookySwapSonic": {
         "chainName": "sonic",
