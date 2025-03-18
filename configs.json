@@ -471,8 +471,8 @@
         "minChunkSizeUsd": 10,
         "name": "SwapX",
         "partner": "Orbs:TWAP:SwapX",
-        "exchangeAddress": "",
-        "exchangeType": "",
+        "exchangeAddress": "0xE5012eBDe5e26EE3Ea41992154731a03023CF274",
+        "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     }
 }
