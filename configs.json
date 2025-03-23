@@ -435,8 +435,8 @@
         "minChunkSizeUsd": 50,
         "name": "Ramses",
         "partner": "Orbs:TWAP:Ramses",
-        "exchangeAddress": "",
-        "exchangeType": "",
+        "exchangeAddress": "0x02dfBec67664E343F5F1F41Ba59F3E4Ba273A2F7",
+        "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
     "Fenix": {
