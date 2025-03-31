@@ -14,6 +14,11 @@ contract RouterExchange is IExchange {
     using SafeERC20 for ERC20;
 
     address public immutable router;
+    uint256 public feeBasisPoints;
+    uint256 public constant BPS = 10000;
+    address public feeRecipient;
+    
+    error InsufficientOutputAmount(uint256 actual, uint256 minimum);
 
     constructor(address _router) {
         router = _router;
@@ -37,23 +42,31 @@ contract RouterExchange is IExchange {
         address _srcToken,
         address _dstToken,
         uint256 amountIn,
-        uint256 amountOutMin,
+        uint256 minOut,
         bytes calldata,
         bytes calldata bidData
     ) public {
-        (, bytes memory swapdata) = decode(bidData);
-        ERC20 srcToken = ERC20(_srcToken);
-        ERC20 dstToken = ERC20(_dstToken);
+        (, bytes memory swapData) = decode(bidData);
+        ERC20 src = ERC20(_srcToken);
+        ERC20 dst = ERC20(_dstToken);
 
-        srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
-        amountIn = srcToken.balanceOf(address(this)); // support FoT tokens
+        src.safeTransferFrom(msg.sender, address(this), amountIn);
+        amountIn = src.balanceOf(address(this)); // support FoT tokens
 
-        srcToken.safeIncreaseAllowance(router, amountIn);
-        Address.functionCall(router, swapdata);
+        src.safeIncreaseAllowance(router, amountIn);
+        Address.functionCall(router, swapData);
 
-        uint256 balance = dstToken.balanceOf(address(this));
-        require(balance >= amountOutMin, "RouterExchange:swap:amountOutMin");
-        dstToken.safeTransfer(msg.sender, balance);
+        uint256 balance = dst.balanceOf(address(this));
+        if (balance < minOut) revert InsufficientOutputAmount(balance, minOut);
+        
+        // Calculate fee and transfer in one check
+        uint256 feeAmt = (balance * feeBasisPoints) / BPS;
+        if (feeAmt > 0 && feeRecipient != address(0)) {
+            dst.safeTransfer(feeRecipient, feeAmt);
+        }
+        
+        // Transfer remaining balance to caller
+        dst.safeTransfer(msg.sender, dst.balanceOf(address(this)));
     }
 
     function decode(bytes calldata data) private pure returns (uint256 amountOut, bytes memory swapdata) {
