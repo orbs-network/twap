@@ -21,11 +21,14 @@ contract UniswapV2Exchange is IExchange {
     /**
      * data = abi encoded: feeOnTransfer(bool), path(address[])
      */
-    function getAmountOut(address srcToken, address dstToken, uint256 amountIn, bytes calldata, bytes calldata bidData)
-        public
-        view
-        returns (uint256 amountOut)
-    {
+    function getAmountOut(
+        address srcToken,
+        address dstToken,
+        uint256 amountIn,
+        bytes calldata,
+        bytes calldata bidData,
+        address
+    ) public view returns (uint256 amountOut) {
         (, address[] memory path) = decode(bidData);
         require(path[0] == srcToken && path[path.length - 1] == dstToken, "UE1");
         return uniswap.getAmountsOut(amountIn, path)[path.length - 1];
@@ -40,7 +43,8 @@ contract UniswapV2Exchange is IExchange {
         uint256 amountIn,
         uint256 amountOutMin,
         bytes calldata,
-        bytes calldata bidData
+        bytes calldata bidData,
+        address
     ) public {
         (bool fotTokens, address[] memory path) = decode(bidData);
         ERC20 srcToken = ERC20(_srcToken);

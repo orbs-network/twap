@@ -3,32 +3,34 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../IExchange.sol";
 
 /**
  * Adapter between swap routers and TWAP's IExchange interface
  */
-contract ExchangeV2 is IExchange, Ownable {
+contract ExchangeV2 is IExchange {
     using SafeERC20 for IERC20;
 
     address public immutable router;
+    mapping(address => bool) private allowed;
 
     error InsufficientOutputAmount(uint256 actual, uint256 minimum);
     error TakerNotAllowed(address taker);
 
-    constructor(address _router, address _admin) Ownable() {
+    constructor(address _router, address[] memory _allowed) {
         router = _router;
-        transferOwnership(_admin);
+        for (uint256 i = 0; i < _allowed.length; i++) {
+            allowed[_allowed[i]] = true;
+        }
     }
 
-    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData)
+    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData, address taker)
         public
         view
         returns (uint256 dstAmountOut)
     {
-        if (!IAllowed(owner()).allowed(tx.origin)) revert TakerNotAllowed(tx.origin);
+        if (!allowed[taker]) revert TakerNotAllowed(taker);
         (dstAmountOut,) = decode(bidData);
     }
 
@@ -37,10 +39,11 @@ contract ExchangeV2 is IExchange, Ownable {
         address _dstToken,
         uint256 amountIn,
         uint256 minOut,
-        bytes calldata askData,
-        bytes calldata bidData
+        bytes calldata,
+        bytes calldata bidData,
+        address taker
     ) public {
-        onlyAllowed(askData);
+        if (!allowed[taker]) revert TakerNotAllowed(taker);
 
         (, bytes memory swapData) = decode(bidData);
         IERC20 src = IERC20(_srcToken);
@@ -61,18 +64,4 @@ contract ExchangeV2 is IExchange, Ownable {
     function decode(bytes calldata data) private pure returns (uint256 amountOut, bytes memory swapdata) {
         return abi.decode(data, (uint256, bytes));
     }
-
-    function onlyAllowed(bytes calldata askData) private view {
-        uint64 id = abi.decode(askData, (uint64));
-        address taker = ITWAP(msg.sender).order(id).bid.taker;
-        if (!IAllowed(owner()).allowed(taker)) revert TakerNotAllowed(taker);
-    }
-}
-
-interface IAllowed {
-    function allowed(address) external view returns (bool);
-}
-
-interface ITWAP {
-    function order(uint64 id) external view returns (OrderLib.Order memory);
 }

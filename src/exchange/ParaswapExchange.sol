@@ -22,7 +22,7 @@ contract ParaswapExchange is IExchange {
     /**
      * data = amountOut, swap data from paraswap api
      */
-    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData)
+    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData, address)
         public
         pure
         returns (uint256 dstAmountOut)
@@ -39,7 +39,8 @@ contract ParaswapExchange is IExchange {
         uint256 amountIn,
         uint256 amountOutMin,
         bytes calldata,
-        bytes calldata bidData
+        bytes calldata bidData,
+        address
     ) public {
         (, bytes memory swapdata) = decode(bidData);
         ERC20 srcToken = ERC20(_srcToken);

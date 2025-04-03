@@ -222,8 +222,9 @@ contract TWAP is ReentrancyGuard {
         require(block.timestamp > o.filledTime + o.ask.fillDelay, "fill delay");
         require(o.ask.exchange == address(0) || o.ask.exchange == exchange, "exchange");
 
-        dstAmountOut =
-            IExchange(exchange).getAmountOut(o.ask.srcToken, _dstToken(o), o.srcBidAmountNext(), o.ask.data, data);
+        dstAmountOut = IExchange(exchange).getAmountOut(
+            o.ask.srcToken, _dstToken(o), o.srcBidAmountNext(), o.ask.data, data, msg.sender
+        );
         dstAmountOut -= (dstAmountOut * slippagePercent) / PERCENT_BASE;
         dstAmountOut -= dstFee;
 
@@ -258,7 +259,9 @@ contract TWAP is ReentrancyGuard {
         srcAmountIn = ERC20(o.ask.srcToken).balanceOf(address(this)); // support FoT tokens
         ERC20(o.ask.srcToken).safeIncreaseAllowance(exchange, srcAmountIn);
 
-        IExchange(exchange).swap(o.ask.srcToken, _dstToken(o), srcAmountIn, minOut + dstFee, o.ask.data, o.bid.data);
+        IExchange(exchange).swap(
+            o.ask.srcToken, _dstToken(o), srcAmountIn, minOut + dstFee, o.ask.data, o.bid.data, msg.sender
+        );
 
         dstAmountOut = ERC20(_dstToken(o)).balanceOf(address(this)); // support FoT tokens
         dstAmountOut -= dstFee;
