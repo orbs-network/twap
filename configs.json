@@ -165,17 +165,17 @@
         "chainName": "bsc",
         "chainId": 56,
         "twapVersion": 4,
-        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "twapAddress": "0xa6F7444D2b92Aa9F94a2165c77aAF2B671e63994",
+        "lensAddress": "0xEdB0c077fa87Fb21d050c619FF426798f8Fc1264",
         "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "0x596Cd063820A08D18a7705c44F0f69aefe8884E7",
+        "exchangeAddress": "0xE2a0c3b9aD19A18c4bBa7fffBe5bC1b0E58Db1CE",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
