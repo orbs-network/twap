@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/Script.sol";
 
 import {Taker, TWAP, IAllowed} from "src/periphery/Taker.sol";
-import {RouterExchange} from "src/exchange/RouterExchange.sol";
 
 contract DeployTakers is Script {
     bytes32 constant SALT0 = 0x2c727ad42be2d03d21aaf12954ec8a1b1c89f5636eaa4b6147750b7210a4b459;

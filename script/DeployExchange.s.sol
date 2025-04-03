@@ -11,7 +11,9 @@ import {ExchangeV2} from "src/exchange/ExchangeV2.sol";
 contract DeployExchange is Script {
     function run() public returns (IExchange) {
         address router = vm.envAddress("ROUTER");
+        address admin = vm.envAddress("ADMIN");
+
         vm.broadcast();
-        return new ExchangeV2{salt: 0}(router);
+        return new ExchangeV2{salt: 0}(router, admin);
     }
 }

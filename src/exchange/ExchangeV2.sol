@@ -1,31 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../IExchange.sol";
-import {OrderLib} from "../OrderLib.sol";
 
 /**
  * Adapter between swap routers and TWAP's IExchange interface
  */
-contract ExchangeV2 is IExchange {
-    using SafeERC20 for ERC20;
+contract ExchangeV2 is IExchange, Ownable {
+    using SafeERC20 for IERC20;
 
     address public immutable router;
-    uint256 public immutable feeBPS;
-    address public immutable feeRecipient;
-    uint256 public constant BPS = 10000;
 
     error InsufficientOutputAmount(uint256 actual, uint256 minimum);
     error TakerNotAllowed(address taker);
 
-    constructor(address _router, uint256 _feeBPS, address _feeRecipient) {
+    constructor(address _router, address _admin) Ownable() {
         router = _router;
-        feeBPS = _feeBPS;
-        feeRecipient = _feeRecipient;
+        transferOwnership(_admin);
     }
 
     function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData)
@@ -33,10 +28,8 @@ contract ExchangeV2 is IExchange {
         view
         returns (uint256 dstAmountOut)
     {
+        if (!IAllowed(owner()).allowed(tx.origin)) revert TakerNotAllowed(tx.origin);
         (dstAmountOut,) = decode(bidData);
-        // Apply the fee reduction
-        uint256 feeAmt = (dstAmountOut * feeBPS) / BPS;
-        dstAmountOut -= feeAmt;
     }
 
     function swap(
@@ -50,8 +43,8 @@ contract ExchangeV2 is IExchange {
         onlyAllowed(askData);
 
         (, bytes memory swapData) = decode(bidData);
-        ERC20 src = ERC20(_srcToken);
-        ERC20 dst = ERC20(_dstToken);
+        IERC20 src = IERC20(_srcToken);
+        IERC20 dst = IERC20(_dstToken);
 
         src.safeTransferFrom(msg.sender, address(this), amountIn);
         amountIn = src.balanceOf(address(this)); // support FoT tokens
@@ -62,14 +55,7 @@ contract ExchangeV2 is IExchange {
         uint256 balance = dst.balanceOf(address(this));
         if (balance < minOut) revert InsufficientOutputAmount(balance, minOut);
 
-        // Calculate fee and transfer in one check
-        uint256 feeAmt = (balance * feeBPS) / BPS;
-        if (feeAmt > 0 && feeRecipient != address(0)) {
-            dst.safeTransfer(feeRecipient, feeAmt);
-        }
-
-        // Transfer remaining balance to caller
-        dst.safeTransfer(msg.sender, dst.balanceOf(address(this)));
+        dst.safeTransfer(msg.sender, balance);
     }
 
     function decode(bytes calldata data) private pure returns (uint256 amountOut, bytes memory swapdata) {
@@ -77,14 +63,14 @@ contract ExchangeV2 is IExchange {
     }
 
     function onlyAllowed(bytes calldata askData) private view {
-        (uint64 id, address[] memory allowed) = abi.decode(askData, (uint64, address[]));
+        uint64 id = abi.decode(askData, (uint64));
         address taker = ITWAP(msg.sender).order(id).bid.taker;
-
-        for (uint256 i = 0; i < allowed.length; i++) {
-            if (allowed[i] == taker) return;
-        }
-        revert TakerNotAllowed(taker);
+        if (!IAllowed(owner()).allowed(taker)) revert TakerNotAllowed(taker);
     }
+}
+
+interface IAllowed {
+    function allowed(address) external view returns (bool);
 }
 
 interface ITWAP {
