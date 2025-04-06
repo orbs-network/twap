@@ -14,25 +14,27 @@ contract ParaswapExchange is IExchange {
     using SafeERC20 for ERC20;
 
     IParaswap public immutable paraswap;
+    mapping(address => bool) private allowed;
 
-    constructor(address _paraswap) {
-        paraswap = IParaswap(_paraswap);
+    error InsufficientOutputAmount(uint256 actual, uint256 minimum);
+    error TakerNotAllowed(address taker);
+
+    constructor(address _router, address[] memory _allowed) {
+        paraswap = IParaswap(_router);
+        for (uint256 i = 0; i < _allowed.length; i++) {
+            allowed[_allowed[i]] = true;
+        }
     }
 
-    /**
-     * data = amountOut, swap data from paraswap api
-     */
-    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData, address)
+    function getAmountOut(address, address, uint256, bytes calldata, bytes calldata bidData, address taker)
         public
-        pure
+        view
         returns (uint256 dstAmountOut)
     {
+        if (!allowed[taker]) revert TakerNotAllowed(taker);
         (dstAmountOut,) = decode(bidData);
     }
 
-    /**
-     * data = amountOut, swap data from paraswap api
-     */
     function swap(
         address _srcToken,
         address _dstToken,
@@ -40,8 +42,10 @@ contract ParaswapExchange is IExchange {
         uint256 amountOutMin,
         bytes calldata,
         bytes calldata bidData,
-        address
+        address taker
     ) public {
+        if (!allowed[taker]) revert TakerNotAllowed(taker);
+
         (, bytes memory swapdata) = decode(bidData);
         ERC20 srcToken = ERC20(_srcToken);
         ERC20 dstToken = ERC20(_dstToken);
@@ -53,7 +57,8 @@ contract ParaswapExchange is IExchange {
         Address.functionCall(address(paraswap), swapdata);
 
         uint256 balance = dstToken.balanceOf(address(this));
-        require(balance >= amountOutMin, "PE1");
+        if (balance < amountOutMin) revert InsufficientOutputAmount(balance, amountOutMin);
+
         dstToken.safeTransfer(msg.sender, balance);
     }
 
