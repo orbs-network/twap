@@ -3,17 +3,17 @@
         "chainName": "ftm",
         "chainId": 250,
         "twapVersion": 4,
-        "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
-        "lensAddress": "0x0628DC34b758AC652bf64fFe924e6B62F136dE3c",
+        "twapAddress": "0x0ff6A5F52366342dC4D6B3A29748cA3353F09098",
+        "lensAddress": "0xddbE1ED09ED67370eF360A0860A0d0A76d8833A2",
         "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "SpookySwap",
         "partner": "Orbs:TWAP:SpookySwap",
-        "exchangeAddress": "0x3924d62219483015f982b160d48c0fa5Fd436Cba",
+        "exchangeAddress": "0xb65f827ae17c7Ccfdd44CcEa72dc23C0E8D79a8c",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
@@ -21,17 +21,17 @@
         "chainName": "sonic",
         "chainId": 146,
         "twapVersion": 4,
-        "twapAddress": "0xe94E30ebe3d438dD1e7FE686503E392b1A601566",
-        "lensAddress": "0x4bd562529fbda83196d8D1d79cc8404c75Ff5A3A",
+        "twapAddress": "0x8E4EEC11D0d8824B9B1e4b29F11a1f03e6c29b6a",
+        "lensAddress": "0x3612e69C9F543377034211812094F5286a6eABCA",
         "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "SpookySwapSonic",
         "partner": "Orbs:TWAP:SpookySwap",
-        "exchangeAddress": "0xAd97B770ad64aE47fc7d64B3bD820dCDbF9ff7DA",
+        "exchangeAddress": "0x4C83c0fcf44365930b751B65e3BD0238efac684a",
         "exchangeType": "RouterExchange",
         "pathfinderKey": ""
     },
@@ -41,10 +41,7 @@
         "twapVersion": 4,
         "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
         "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "Pangolin",
@@ -59,10 +56,7 @@
         "twapVersion": 4,
         "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
         "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "PangolinDaas",
@@ -77,10 +71,7 @@
         "twapVersion": 4,
         "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
         "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "QuickSwap",
@@ -95,10 +86,7 @@
         "twapVersion": 4,
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "Chronos",
@@ -113,10 +101,7 @@
         "twapVersion": 4,
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "BaseSwap",
@@ -131,10 +116,7 @@
         "twapVersion": 4,
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "Arbidex",
@@ -149,10 +131,7 @@
         "twapVersion": 4,
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "Thena",
@@ -185,10 +164,7 @@
         "twapVersion": 4,
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
@@ -203,10 +179,7 @@
         "twapVersion": 4,
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
@@ -221,10 +194,7 @@
         "twapVersion": 4,
         "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
         "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "PancakeSwap",
@@ -239,10 +209,7 @@
         "twapVersion": 4,
         "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
         "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "Lynex",
@@ -257,10 +224,7 @@
         "twapVersion": 4,
         "twapAddress": "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
         "lensAddress": "0x1157A4A2517Aa3471B08FE076eE3a2DF49EA449D",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "SyncSwap",
@@ -275,10 +239,7 @@
         "twapVersion": 4,
         "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
         "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "Retro",
@@ -293,10 +254,7 @@
         "twapVersion": 4,
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "SushiArb",
@@ -311,10 +269,7 @@
         "twapVersion": 4,
         "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
         "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "SushiBase",
@@ -329,10 +284,7 @@
         "twapVersion": 4,
         "twapAddress": "0x037E2bda7B1f03411ba5E96ACb7F36a7D19c3D83",
         "lensAddress": "0xD5Dc89eb7fc256b407A0Cd166e9d20bcF8FbCf98",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 200,
         "name": "SushiEth",
@@ -347,10 +299,7 @@
         "twapVersion": 4,
         "twapAddress": "0x18C3cEFb4b90bc854b1F7b1852b9862374a43778",
         "lensAddress": "0xebDB65Bd47b303D82cb64012aE7b402CA877E2A3",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "DragonSwap",
@@ -365,10 +314,7 @@
         "twapVersion": 4,
         "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
         "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "TeaFi",
@@ -410,10 +356,7 @@
         "twapVersion": 4,
         "twapAddress": "0xac9d2216369A6339465Ee2D6a32306dd4884E299",
         "lensAddress": "0xAFfd7D0128aaFd325AC4685fB7b807885e180758",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "SparkDEX",
@@ -427,10 +370,7 @@
         "twapVersion": 4,
         "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
         "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "Ramses",
@@ -445,10 +385,7 @@
         "twapVersion": 4,
         "twapAddress": "0x3ad4f4c2e4d9B928aE6ACaeF465152DC3208Db50",
         "lensAddress": "0x54D41aAC6e02325b7c83825843936F1A8b8bB47A",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "Fenix",
@@ -463,10 +400,7 @@
         "twapVersion": 4,
         "twapAddress": "0xe94E30ebe3d438dD1e7FE686503E392b1A601566",
         "lensAddress": "0x4bd562529fbda83196d8D1d79cc8404c75Ff5A3A",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
+        "takers": [],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 10,
         "name": "SwapX",
