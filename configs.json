@@ -14,7 +14,7 @@
         "name": "SpookySwap",
         "partner": "Orbs:TWAP:SpookySwap",
         "exchangeAddress": "0xb65f827ae17c7Ccfdd44CcEa72dc23C0E8D79a8c",
-        "exchangeType": "RouterExchange",
+        "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
     "SpookySwapSonic": {
@@ -32,38 +32,8 @@
         "name": "SpookySwapSonic",
         "partner": "Orbs:TWAP:SpookySwap",
         "exchangeAddress": "0x4C83c0fcf44365930b751B65e3BD0238efac684a",
-        "exchangeType": "RouterExchange",
+        "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
-    },
-    "Pangolin": {
-        "chainName": "avax",
-        "chainId": 43114,
-        "twapVersion": 4,
-        "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
-        "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
-        "takers": [],
-        "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 100,
-        "name": "Pangolin",
-        "partner": "Orbs:TWAP:Pangolin",
-        "exchangeAddress": "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
-        "exchangeType": "UniswapV2Exchange",
-        "pathfinderKey": "PangolinSwap"
-    },
-    "PangolinDaas": {
-        "chainName": "avax",
-        "chainId": 43114,
-        "twapVersion": 4,
-        "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
-        "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
-        "takers": [],
-        "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 100,
-        "name": "PangolinDaas",
-        "partner": "Orbs:TWAP:PangolinDaas",
-        "exchangeAddress": "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
-        "exchangeType": "PangolinDaasExchange",
-        "pathfinderKey": "PangolinSwap"
     },
     "QuickSwap": {
         "chainName": "poly",
@@ -323,33 +293,6 @@
         "exchangeType": "ParaswapExchange",
         "pathfinderKey": "AaveV2,AaveV3,AaveV3Stata,AngleStakedStableEUR,AngleStakedStableUSD,ApeSwap,AugustusRFQ,BalancerV2,ComethSwap,CurveV1,CurveV1Factory,CurveV1StableNg,CurveV2,Dfyn,DODOV2,Dystopia,Hashflow,IronV2,JarvisV6,KyberDmm,QuickSwap,QuickSwapV3,Retro,SushiSwap,SushiSwapV3,SwaapV2,Synapse,UniswapV2,UniswapV3,WaultFinance,Wmatic,WooFiV2,wUSDM"
     },
-    "H2Finance": {
-        "chainName": "cronos-zkevm",
-        "chainId": 388,
-        "twapVersion": 4,
-        "twapAddress": "0xc3945b7A39De6518Ed852f6355706F46F672c096",
-        "lensAddress": "0xc30Fb187D68Bc032B68769425B8f9Ad7EFC663Fc",
-        "takers": [],
-        "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 10,
-        "name": "H2Finance",
-        "partner": "Orbs:TWAP:H2Finance",
-        "exchangeAddress": "",
-        "exchangeType": ""
-    },
-    "Ocelex": {
-        "chainName": "zircuit",
-        "chainId": 48900,
-        "twapVersion": 4,
-        "twapAddress": "0x647413e85A5D38B08A19c3765F12C6A5A64E6051",
-        "lensAddress": "0xAbaea785f5a9C61190209A0Ae32F6C7F73A43d4E",
-        "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 10,
-        "name": "Ocelex",
-        "partner": "Orbs:TWAP:Ocelex",
-        "exchangeAddress": "",
-        "exchangeType": ""
-    },
     "SparkDEX": {
         "chainName": "flare",
         "chainId": 14,
@@ -377,21 +320,6 @@
         "partner": "Orbs:TWAP:Ramses",
         "exchangeAddress": "0x02dfBec67664E343F5F1F41Ba59F3E4Ba273A2F7",
         "exchangeType": "RouterExchange",
-        "pathfinderKey": ""
-    },
-    "Fenix": {
-        "chainName": "blast",
-        "chainId": 81457,
-        "twapVersion": 4,
-        "twapAddress": "0x3ad4f4c2e4d9B928aE6ACaeF465152DC3208Db50",
-        "lensAddress": "0x54D41aAC6e02325b7c83825843936F1A8b8bB47A",
-        "takers": [],
-        "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 10,
-        "name": "Fenix",
-        "partner": "Orbs:TWAP:Fenix",
-        "exchangeAddress": "",
-        "exchangeType": "",
         "pathfinderKey": ""
     },
     "SwapX": {
