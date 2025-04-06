@@ -5,14 +5,15 @@ import "forge-std/Test.sol";
 import "forge-std/Script.sol";
 
 import {IExchange} from "src/IExchange.sol";
-import {ExchangeV2} from "src/exchange/ExchangeV2.sol";
+import {ParaswapExchange} from "src/exchange/ParaswapExchange.sol";
 
-contract DeployExchange is Script {
+contract DeployParaswap is Script {
+    address public constant router = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
+
     function run() public returns (IExchange) {
-        address router = vm.envAddress("ROUTER");
         address[] memory allowed = vm.envAddress("ALLOWED", ",");
 
         vm.broadcast();
-        return new ExchangeV2{salt: 0}(router, allowed);
+        return new ParaswapExchange{salt: 0}(router, allowed);
     }
 }
