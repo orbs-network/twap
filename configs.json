@@ -179,24 +179,6 @@
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
-    "OLD_PancakeSwap": {
-        "chainName": "bsc",
-        "chainId": 56,
-        "twapVersion": 4,
-        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
-        "takers": [
-            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
-            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
-        ],
-        "bidDelaySeconds": 60,
-        "minChunkSizeUsd": 50,
-        "name": "PancakeSwap",
-        "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "0xb2BAFe188faD927240038cC4FfF2d771d8A58905",
-        "exchangeType": "RouterExchange",
-        "pathfinderKey": ""
-    },
     "PancakeSwapArbitrum": {
         "chainName": "arb",
         "chainId": 42161,
