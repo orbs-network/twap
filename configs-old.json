@@ -1,0 +1,478 @@
+{
+    "SpookySwap": {
+        "chainName": "ftm",
+        "chainId": 250,
+        "twapVersion": 4,
+        "twapAddress": "0xdb55107c17Cb433D322052BFA36069fDf7Cb1031",
+        "lensAddress": "0x0628DC34b758AC652bf64fFe924e6B62F136dE3c",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "SpookySwap",
+        "partner": "Orbs:TWAP:SpookySwap",
+        "exchangeAddress": "0x3924d62219483015f982b160d48c0fa5Fd436Cba",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "SpookySwapSonic": {
+        "chainName": "sonic",
+        "chainId": 146,
+        "twapVersion": 4,
+        "twapAddress": "0xe94E30ebe3d438dD1e7FE686503E392b1A601566",
+        "lensAddress": "0x4bd562529fbda83196d8D1d79cc8404c75Ff5A3A",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "SpookySwapSonic",
+        "partner": "Orbs:TWAP:SpookySwap",
+        "exchangeAddress": "0xAd97B770ad64aE47fc7d64B3bD820dCDbF9ff7DA",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "Pangolin": {
+        "chainName": "avax",
+        "chainId": 43114,
+        "twapVersion": 4,
+        "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
+        "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 100,
+        "name": "Pangolin",
+        "partner": "Orbs:TWAP:Pangolin",
+        "exchangeAddress": "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
+        "exchangeType": "UniswapV2Exchange",
+        "pathfinderKey": "PangolinSwap"
+    },
+    "PangolinDaas": {
+        "chainName": "avax",
+        "chainId": 43114,
+        "twapVersion": 4,
+        "twapAddress": "0xF2687e119B0A4aB00bED9c9F425403566D605020",
+        "lensAddress": "0x2C5E9Aa3631106DaE1B7420347577974b162548f",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 100,
+        "name": "PangolinDaas",
+        "partner": "Orbs:TWAP:PangolinDaas",
+        "exchangeAddress": "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
+        "exchangeType": "PangolinDaasExchange",
+        "pathfinderKey": "PangolinSwap"
+    },
+    "QuickSwap": {
+        "chainName": "poly",
+        "chainId": 137,
+        "twapVersion": 4,
+        "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
+        "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "QuickSwap",
+        "partner": "Orbs:TWAP:QuickSwap",
+        "exchangeAddress": "0x26D0ec4Be402BCE03AAa8aAf0CF67e9428ba54eF",
+        "exchangeType": "ParaswapExchange",
+        "pathfinderKey": "QuickSwap,QuickSwapV3"
+    },
+    "Chronos": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "Chronos",
+        "partner": "Orbs:TWAP:Chronos",
+        "exchangeAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
+        "exchangeType": "OdosExchange",
+        "pathfinderKey": "Chronos Stable,Chronos Volatile,Chronos V3"
+    },
+    "BaseSwap": {
+        "chainName": "base",
+        "chainId": 8453,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "BaseSwap",
+        "partner": "Orbs:TWAP:BaseSwap",
+        "exchangeAddress": "0xeFE1B6096838949156e5130604434A2a13c68C68",
+        "exchangeType": "OdosExchange",
+        "pathfinderKey": "BaseSwap,BaseSwapX"
+    },
+    "Arbidex": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "Arbidex",
+        "partner": "Orbs:TWAP:Arbidex",
+        "exchangeAddress": "0x8ffde23Fba2d7Aea9C3CBf2d5B7B533BB46754a8",
+        "exchangeType": "OdosExchange",
+        "pathfinderKey": "Arbidex Classic,Arbidex Quantum"
+    },
+    "Thena": {
+        "chainName": "bsc",
+        "chainId": 56,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "Thena",
+        "partner": "Orbs:TWAP:Thena",
+        "exchangeAddress": "0xc2aBC02acd77Bb2407efA22348dA9afC8B375290",
+        "exchangeType": "OpenOceanExchange",
+        "pathfinderKey": "43,47"
+    },
+    "PancakeSwap": {
+        "chainName": "bsc",
+        "chainId": 56,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "0xb2BAFe188faD927240038cC4FfF2d771d8A58905",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "PancakeSwapArbitrum": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "0xE20167871dB616DdfFD0Fd870d9bC068C350DD1F",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "PancakeSwapBase": {
+        "chainName": "base",
+        "chainId": 8453,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "0x10ed1F36e4eBE76E161c9AADDa20BE841bc0082c",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "PancakeSwapLinea": {
+        "chainName": "linea",
+        "chainId": 59144,
+        "twapVersion": 4,
+        "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
+        "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 100,
+        "name": "PancakeSwap",
+        "partner": "Orbs:TWAP:PancakeSwap",
+        "exchangeAddress": "0x10ed1F36e4eBE76E161c9AADDa20BE841bc0082c",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "Lynex": {
+        "chainName": "linea",
+        "chainId": 59144,
+        "twapVersion": 4,
+        "twapAddress": "0xbE7984eb48E2102549338B533dcF68035e413F66",
+        "lensAddress": "0x7a2885a470a96995Fa99177e068fd554e3aCAbB3",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 100,
+        "name": "Lynex",
+        "partner": "Orbs:TWAP:Lynex",
+        "exchangeAddress": "0x72e3e1fD5D2Ee2F1C2Eb695206D490a1D45C3835",
+        "exchangeType": "OpenOceanExchange",
+        "pathfinderKey": "19,18"
+    },
+    "SyncSwap": {
+        "chainName": "zkSync",
+        "chainId": 324,
+        "twapVersion": 4,
+        "twapAddress": "0x971f855C98f45fcdD2782f03bD80Cf6C146Cf123",
+        "lensAddress": "0x1157A4A2517Aa3471B08FE076eE3a2DF49EA449D",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 100,
+        "name": "SyncSwap",
+        "partner": "Orbs:TWAP:SyncSwap",
+        "exchangeAddress": "0x5D96A072B2854d9a9D56C68806b0Bbcf7Db60b6d",
+        "exchangeType": "OpenOceanExchange",
+        "pathfinderKey": "2,3"
+    },
+    "Retro": {
+        "chainName": "poly",
+        "chainId": 137,
+        "twapVersion": 4,
+        "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
+        "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Retro",
+        "partner": "Orbs:TWAP:Retro",
+        "exchangeAddress": "0xC454Abb5b0CA974a4397139764478C736327d2B0",
+        "exchangeType": "KyberExchange",
+        "pathfinderKey": "retro,retro-v3"
+    },
+    "SushiArb": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "SushiArb",
+        "partner": "Orbs:TWAP:Sushi",
+        "exchangeAddress": "0x08c41f5D1C844061f6D952E25827eeAA576c6536",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "SushiBase": {
+        "chainName": "base",
+        "chainId": 8453,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0xFaB090A976c61FAfc2bAf91f04222fea42A42257",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "SushiBase",
+        "partner": "Orbs:TWAP:Sushi",
+        "exchangeAddress": "0x08c41f5D1C844061f6D952E25827eeAA576c6536",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "SushiEth": {
+        "chainName": "eth",
+        "chainId": 1,
+        "twapVersion": 4,
+        "twapAddress": "0x037E2bda7B1f03411ba5E96ACb7F36a7D19c3D83",
+        "lensAddress": "0xD5Dc89eb7fc256b407A0Cd166e9d20bcF8FbCf98",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 200,
+        "name": "SushiEth",
+        "partner": "Orbs:TWAP:Sushi",
+        "exchangeAddress": "0x08c41f5D1C844061f6D952E25827eeAA576c6536",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "DragonSwap": {
+        "chainName": "sei",
+        "chainId": 1329,
+        "twapVersion": 4,
+        "twapAddress": "0x18C3cEFb4b90bc854b1F7b1852b9862374a43778",
+        "lensAddress": "0xebDB65Bd47b303D82cb64012aE7b402CA877E2A3",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "DragonSwap",
+        "partner": "Orbs:TWAP:DragonSwap",
+        "exchangeAddress": "0x101e1B65Bb516FB5f4547C80BAe0b51f1b8D7a22",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "TeaFi": {
+        "chainName": "poly",
+        "chainId": 137,
+        "twapVersion": 4,
+        "twapAddress": "0xceFf098C9199c5d9cf24078dc14Eb8F787631cC0",
+        "lensAddress": "0xd68676ABd169bDcAE3CAF2D474A5C3759B140C0B",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "TeaFi",
+        "partner": "Orbs:TWAP:TeaFi",
+        "exchangeAddress": "0x4e2000DC371704c9CbcAeb8e7baff6813fb83063",
+        "exchangeType": "ParaswapExchange",
+        "pathfinderKey": "AaveV2,AaveV3,AaveV3Stata,AngleStakedStableEUR,AngleStakedStableUSD,ApeSwap,AugustusRFQ,BalancerV2,ComethSwap,CurveV1,CurveV1Factory,CurveV1StableNg,CurveV2,Dfyn,DODOV2,Dystopia,Hashflow,IronV2,JarvisV6,KyberDmm,QuickSwap,QuickSwapV3,Retro,SushiSwap,SushiSwapV3,SwaapV2,Synapse,UniswapV2,UniswapV3,WaultFinance,Wmatic,WooFiV2,wUSDM"
+    },
+    "H2Finance": {
+        "chainName": "cronos-zkevm",
+        "chainId": 388,
+        "twapVersion": 4,
+        "twapAddress": "0xc3945b7A39De6518Ed852f6355706F46F672c096",
+        "lensAddress": "0xc30Fb187D68Bc032B68769425B8f9Ad7EFC663Fc",
+        "takers": [],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "H2Finance",
+        "partner": "Orbs:TWAP:H2Finance",
+        "exchangeAddress": "",
+        "exchangeType": ""
+    },
+    "Ocelex": {
+        "chainName": "zircuit",
+        "chainId": 48900,
+        "twapVersion": 4,
+        "twapAddress": "0x647413e85A5D38B08A19c3765F12C6A5A64E6051",
+        "lensAddress": "0xAbaea785f5a9C61190209A0Ae32F6C7F73A43d4E",
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Ocelex",
+        "partner": "Orbs:TWAP:Ocelex",
+        "exchangeAddress": "",
+        "exchangeType": ""
+    },
+    "SparkDEX": {
+        "chainName": "flare",
+        "chainId": 14,
+        "twapVersion": 4,
+        "twapAddress": "0xac9d2216369A6339465Ee2D6a32306dd4884E299",
+        "lensAddress": "0xAFfd7D0128aaFd325AC4685fB7b807885e180758",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "SparkDEX",
+        "partner": "Orbs:TWAP:SparkDEX",
+        "exchangeAddress": "0xf5CCFE12878623f15F5B377052a06F20975A0B60",
+        "exchangeType": "RouterExchange"
+    },
+    "Ramses": {
+        "chainName": "arb",
+        "chainId": 42161,
+        "twapVersion": 4,
+        "twapAddress": "0xD63430c74C8E70D9dbdCA04C6a9E6E9E929028DA",
+        "lensAddress": "0x7eD30e55FF792816Ba88f42b43ee0c4512302152",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "Ramses",
+        "partner": "Orbs:TWAP:Ramses",
+        "exchangeAddress": "0x02dfBec67664E343F5F1F41Ba59F3E4Ba273A2F7",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    },
+    "Fenix": {
+        "chainName": "blast",
+        "chainId": 81457,
+        "twapVersion": 4,
+        "twapAddress": "0x3ad4f4c2e4d9B928aE6ACaeF465152DC3208Db50",
+        "lensAddress": "0x54D41aAC6e02325b7c83825843936F1A8b8bB47A",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Fenix",
+        "partner": "Orbs:TWAP:Fenix",
+        "exchangeAddress": "",
+        "exchangeType": "",
+        "pathfinderKey": ""
+    },
+    "SwapX": {
+        "chainName": "sonic",
+        "chainId": 146,
+        "twapVersion": 4,
+        "twapAddress": "0xe94E30ebe3d438dD1e7FE686503E392b1A601566",
+        "lensAddress": "0x4bd562529fbda83196d8D1d79cc8404c75Ff5A3A",
+        "takers": [
+            "0xbAC000A86039e669BF9D659ffBd474734c59a8b1",
+            "0x333000AC360964E949Fac4660E9508c9D50E14c9"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "SwapX",
+        "partner": "Orbs:TWAP:SwapX",
+        "exchangeAddress": "0xE5012eBDe5e26EE3Ea41992154731a03023CF274",
+        "exchangeType": "RouterExchange",
+        "pathfinderKey": ""
+    }
+}
