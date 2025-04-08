@@ -11,10 +11,9 @@ contract DeployTWAP is Script {
     function run() public returns (TWAP twap, Lens lens) {
         address weth = vm.envAddress("WETH");
 
-        vm.broadcast();
+        vm.startBroadcast();
         twap = new TWAP(weth);
-
-        vm.broadcast();
         lens = new Lens(twap);
+        vm.stopBroadcast();
     }
 }
