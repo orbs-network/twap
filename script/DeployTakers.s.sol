@@ -7,8 +7,8 @@ import "forge-std/Script.sol";
 import {Taker, TWAP, IAllowed} from "src/periphery/Taker.sol";
 
 contract DeployTakers is Script {
-    bytes32 constant SALT0 = 0x2c727ad42be2d03d21aaf12954ec8a1b1c89f5636eaa4b6147750b7210a4b450;
-    bytes32 constant SALT1 = 0x661183b6cf3d3c08e70cebdfbee5dcb0cd7282b29914b072c0e5e6c968529d65;
+    bytes32 constant SALT0 = 0x2c727ad42be2d03d21aaf12954ec8a1b1c89f5636eaa4b6147750b7210a4b459;
+    bytes32 constant SALT1 = 0x661183b6cf3d3c08e70cebdfbee5dcb0cd7282b29914b072c0e5e6c968529d64;
 
     function run() public returns (address taker, address taker2) {
         TWAP twap = TWAP(payable(vm.envAddress("TWAP")));

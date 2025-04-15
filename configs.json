@@ -67,7 +67,7 @@
         "minChunkSizeUsd": 50,
         "name": "Chronos",
         "partner": "Orbs:TWAP:Chronos",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x0178e50adAF3b925F27aC518FCd952CE7F9A3B36",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "Chronos Stable,Chronos Volatile,Chronos V3"
     },
