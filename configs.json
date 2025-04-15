@@ -77,12 +77,15 @@
         "twapVersion": 4,
         "twapAddress": "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
         "lensAddress": "0x6313188c1909b161074D62E43105faC9B756A23e",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "BaseSwap",
         "partner": "Orbs:TWAP:BaseSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0xAca3155c17530C4aA96746F226fcC049658490d2",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "BaseSwap,BaseSwapX"
     },
@@ -164,12 +167,15 @@
         "twapVersion": 4,
         "twapAddress": "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
         "lensAddress": "0x6313188c1909b161074D62E43105faC9B756A23e",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x3A9df3eE209b802D0337383f5abCe3204d623588",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
@@ -260,12 +266,15 @@
         "twapVersion": 4,
         "twapAddress": "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
         "lensAddress": "0x6313188c1909b161074D62E43105faC9B756A23e",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "SushiBase",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x1D1e69a706367e62a58CbC8C6924089eE379248F",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
