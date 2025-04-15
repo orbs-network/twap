@@ -185,12 +185,15 @@
         "twapVersion": 4,
         "twapAddress": "0x48423e62acbfEF7779b5b4a5E7d6Fbd39E623d78",
         "lensAddress": "0xe84CaEc86eCF3f0AB4267dC6130D9a5510e73DFb",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x3A9df3eE209b802D0337383f5abCe3204d623588",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
@@ -200,12 +203,15 @@
         "twapVersion": 4,
         "twapAddress": "0x48423e62acbfEF7779b5b4a5E7d6Fbd39E623d78",
         "lensAddress": "0xe84CaEc86eCF3f0AB4267dC6130D9a5510e73DFb",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "Lynex",
         "partner": "Orbs:TWAP:Lynex",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x2B2fABDbfa4a15da0d351F947C14F4520db0bDc1",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "19,18"
     },
