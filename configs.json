@@ -232,7 +232,7 @@
         "minChunkSizeUsd": 10,
         "name": "Retro",
         "partner": "Orbs:TWAP:Retro",
-        "exchangeAddress": "",
+        "exchangeAddress": "0xb7A3d74895bFD3Aff6780525e36D79FCf26a895F",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "retro,retro-v3"
     },
@@ -313,7 +313,7 @@
         "minChunkSizeUsd": 10,
         "name": "TeaFi",
         "partner": "Orbs:TWAP:TeaFi",
-        "exchangeAddress": "",
+        "exchangeAddress": "0xE9D3b4Cf5B0CC392e78C1a4DD9885D449EEF9793",
         "exchangeType": "ParaswapExchange",
         "pathfinderKey": "AaveV2,AaveV3,AaveV3Stata,AngleStakedStableEUR,AngleStakedStableUSD,ApeSwap,AugustusRFQ,BalancerV2,ComethSwap,CurveV1,CurveV1Factory,CurveV1StableNg,CurveV2,Dfyn,DODOV2,Dystopia,Hashflow,IronV2,JarvisV6,KyberDmm,QuickSwap,QuickSwapV3,Retro,SushiSwap,SushiSwapV3,SwaapV2,Synapse,UniswapV2,UniswapV3,WaultFinance,Wmatic,WooFiV2,wUSDM"
     },
