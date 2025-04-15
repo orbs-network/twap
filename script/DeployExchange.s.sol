@@ -13,6 +13,6 @@ contract DeployExchange is Script {
         address[] memory allowed = vm.envAddress("ALLOWED", ",");
 
         vm.broadcast();
-        return new ExchangeV2{salt: 0}(router, allowed);
+        return new ExchangeV2{salt: bytes32(uint256(0))}(router, allowed);
     }
 }

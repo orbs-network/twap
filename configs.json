@@ -100,7 +100,7 @@
         "minChunkSizeUsd": 50,
         "name": "Arbidex",
         "partner": "Orbs:TWAP:Arbidex",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x49d21052f4695d16C7cce6eF561301Aa4d840420",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "Arbidex Classic,Arbidex Quantum"
     },
@@ -154,7 +154,7 @@
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x807488ADAD033e95C438F998277bE654152594dc",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
@@ -250,7 +250,7 @@
         "minChunkSizeUsd": 50,
         "name": "SushiArb",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x1D1e69a706367e62a58CbC8C6924089eE379248F",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
@@ -348,7 +348,7 @@
         "minChunkSizeUsd": 50,
         "name": "Ramses",
         "partner": "Orbs:TWAP:Ramses",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x2898cC9a55A748ee0e276416Ea0D6d5252A276dA",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
