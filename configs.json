@@ -290,12 +290,15 @@
         "twapVersion": 4,
         "twapAddress": "0xb1ed8BCAD1EaC8a1DF0764700472391800D12946",
         "lensAddress": "0x0967f448c4d4dbd14c355E635AE9CbF68cc44A60",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 200,
         "name": "SushiEth",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x1D1e69a706367e62a58CbC8C6924089eE379248F",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
