@@ -346,7 +346,7 @@
         "minChunkSizeUsd": 10,
         "name": "SparkDEX",
         "partner": "Orbs:TWAP:SparkDEX",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x48817b1a0DFA11F07C9871Ba5AB7f7514e0653DE",
         "exchangeType": "ExchangeV2"
     },
     "Ramses": {
