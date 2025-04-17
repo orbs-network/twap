@@ -221,12 +221,15 @@
         "twapVersion": 4,
         "twapAddress": "0xc32cAA0F7AD9ED88e22Fc214fc24cCb5C0595D68",
         "lensAddress": "0x7daE5af3011c3bE9A5283F0368a3fdD757fc74F9",
-        "takers": [],
+        "takers": [
+            "0xB924C20c400575D2B73Baa16CF0Fa0EAA720aFBC",
+            "0xBE452F03Be354CAC397C3F0c8397672067D44531"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 100,
         "name": "SyncSwap",
         "partner": "Orbs:TWAP:SyncSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0x422623a40c42f026Ed33A9910078Aa843FD66e27",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "2,3"
     },
@@ -308,12 +311,15 @@
         "twapVersion": 4,
         "twapAddress": "0xde737dB24548F8d41A4a3Ca2Bac8aaaDc4DBA099",
         "lensAddress": "0xa1376f2Bb80D3cF6c2D8ebEf34b3d122e9af4020",
-        "takers": [],
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "DragonSwap",
         "partner": "Orbs:TWAP:DragonSwap",
-        "exchangeAddress": "",
+        "exchangeAddress": "0xf2F933FafbDB97062CfA3c447ff373e76A90Efd6",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
