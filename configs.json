@@ -211,7 +211,7 @@
         "minChunkSizeUsd": 100,
         "name": "Lynex",
         "partner": "Orbs:TWAP:Lynex",
-        "exchangeAddress": "0x2B2fABDbfa4a15da0d351F947C14F4520db0bDc1",
+        "exchangeAddress": "0x04C06C96d7D19977156016DD408B5992af0570a2",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": "19,18"
     },
