@@ -55,7 +55,7 @@ contract P2Exchange is IExchange {
         amountIn = src.balanceOf(address(this)); // support FoT tokens
 
         src.forceApprove(router, amountIn);
-        IPermit2(permit2).approve(address(src), router, type(uint160).max, uint48(block.timestamp));
+        IPermit2(permit2).approve(address(src), router, type(uint160).max, type(uint48).max);
         Address.functionCall(router, swapData);
 
         uint256 balance = dst.balanceOf(address(this));
