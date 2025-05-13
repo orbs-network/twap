@@ -157,8 +157,8 @@
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "0x807488ADAD033e95C438F998277bE654152594dc",
-        "exchangeType": "ExchangeV2",
+        "exchangeAddress": "0xb37cB9A058c03081Ae6EF934313588cD53d408e7",
+        "exchangeType": "P2Exchange",
         "pathfinderKey": ""
     },
     "PancakeSwapBase": {
@@ -175,8 +175,8 @@
         "minChunkSizeUsd": 50,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "0x3A9df3eE209b802D0337383f5abCe3204d623588",
-        "exchangeType": "ExchangeV2",
+        "exchangeAddress": "0xb37cB9A058c03081Ae6EF934313588cD53d408e7",
+        "exchangeType": "P2Exchange",
         "pathfinderKey": ""
     },
     "PancakeSwapLinea": {
@@ -193,8 +193,8 @@
         "minChunkSizeUsd": 100,
         "name": "PancakeSwap",
         "partner": "Orbs:TWAP:PancakeSwap",
-        "exchangeAddress": "0x3A9df3eE209b802D0337383f5abCe3204d623588",
-        "exchangeType": "ExchangeV2",
+        "exchangeAddress": "0xb37cB9A058c03081Ae6EF934313588cD53d408e7",
+        "exchangeType": "P2Exchange",
         "pathfinderKey": ""
     },
     "Lynex": {
