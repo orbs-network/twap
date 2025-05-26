@@ -410,5 +410,5 @@
         "partner": "Orbs:TWAP:H2Finance",
         "exchangeAddress": "0x2f1f10dc311722Be609e6B427bF3FBac6e44093B",
         "exchangeType": "ExchangeV2"
-    },
+    }
 }
