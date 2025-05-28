@@ -13,7 +13,7 @@
         "minChunkSizeUsd": 10,
         "name": "SpookySwap",
         "partner": "Orbs:TWAP:SpookySwap",
-        "exchangeAddress": "0x725EB4907dfb5266DFB43134c45c6b245a2Bf52C",
+        "exchangeAddress": "0xdF7CCd5fc7077E9de5f27a7b7bfDC837c82f8496",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
@@ -31,7 +31,7 @@
         "minChunkSizeUsd": 10,
         "name": "SpookySwapSonic",
         "partner": "Orbs:TWAP:SpookySwap",
-        "exchangeAddress": "0xc7AAb11B7Ee9cA89E6aeb975702e5BE6c14987c6",
+        "exchangeAddress": "0x6699bE3aF75e5c1B807b1031dBde6dA9A67739F3",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
