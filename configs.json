@@ -372,8 +372,8 @@
         "minChunkSizeUsd": 50,
         "name": "Ramses",
         "partner": "Orbs:TWAP:Ramses",
-        "exchangeAddress": "0x2898cC9a55A748ee0e276416Ea0D6d5252A276dA",
-        "exchangeType": "ExchangeV2",
+        "exchangeAddress": "0x8FCc245209bE85C49D738D0CE5613F74E5d91E86",
+        "exchangeType": "ParaswapExchange",
         "pathfinderKey": ""
     },
     "SwapX": {
