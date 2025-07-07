@@ -305,6 +305,24 @@
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
+    "SushiKatana": {
+        "chainName": "katana",
+        "chainId": 747474,
+        "twapVersion": 4,
+        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
+        "lensAddress": "0x3b7C090857a4068e16396550423ebadae502768F",
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "SushiKatana",
+        "partner": "Orbs:TWAP:Sushi",
+        "exchangeAddress": "0x04eB53119079FA779492720D1EfeAEBF0aF2e5ad",
+        "exchangeType": "ExchangeV2",
+        "pathfinderKey": ""
+    },
     "DragonSwap": {
         "chainName": "sei",
         "chainId": 1329,
