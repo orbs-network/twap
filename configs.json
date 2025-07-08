@@ -309,17 +309,17 @@
         "chainName": "katana",
         "chainId": 747474,
         "twapVersion": 4,
-        "twapAddress": "0x25a0A78f5ad07b2474D3D42F1c1432178465936d",
-        "lensAddress": "0x3b7C090857a4068e16396550423ebadae502768F",
+        "twapAddress": "0xf2d96E7BE676153d202e1453804E2749923C7c5b",
+        "lensAddress": "0x1579EED0527781B1A748043AA1f59a3858Ace4a7",
         "takers": [
-            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
-            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+            "0xF74437A3Fc45a518640828E5D6A3E8c9A9BbDC3a",
+            "0x07A6C715063e94c0D95e809efefFCbF4EBEdfD55"
         ],
         "bidDelaySeconds": 60,
         "minChunkSizeUsd": 50,
         "name": "SushiKatana",
         "partner": "Orbs:TWAP:Sushi",
-        "exchangeAddress": "0x04eB53119079FA779492720D1EfeAEBF0aF2e5ad",
+        "exchangeAddress": "0x92209481507e6B2d14C9b5b70Ed287024177220E",
         "exchangeType": "ExchangeV2",
         "pathfinderKey": ""
     },
