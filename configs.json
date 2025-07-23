@@ -443,7 +443,7 @@
         "minChunkSizeUsd": 10,
         "name": "Shadow",
         "partner": "Orbs:TWAP:Shadow",
-        "exchangeAddress": "0x5bE612238132B552E1cA79326278049D98077655",
+        "exchangeAddress": "0x69e3c891450161b7BF27f181eE85E7bAE69E5b07",
         "exchangeType": "ExchangeV2"
     }
 }
