@@ -428,5 +428,22 @@
         "partner": "Orbs:TWAP:H2Finance",
         "exchangeAddress": "0x2f1f10dc311722Be609e6B427bF3FBac6e44093B",
         "exchangeType": "ExchangeV2"
+    },
+    "Shadow": {
+        "chainName": "sonic",
+        "chainId": 146,
+        "twapVersion": 4,
+        "twapAddress": "0x8963992816b4EafE5a22b7DB2A99513c18be9afA",
+        "lensAddress": "0x67e631F71232D63AcA98a2D5E9B2Bce5FCc39d5D",
+        "takers": [
+            "0xDF406A27C58a8Cd6Fd43e143339bCE131216a913",
+            "0x504f6E10173249dD22491829D98862Cf81DeF79E"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Shadow",
+        "partner": "Orbs:TWAP:Shadow",
+        "exchangeAddress": "0x5bE612238132B552E1cA79326278049D98077655",
+        "exchangeType": "ExchangeV2"
     }
 }
