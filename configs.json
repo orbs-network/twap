@@ -373,8 +373,8 @@
         "minChunkSizeUsd": 10,
         "name": "SparkDEX",
         "partner": "Orbs:TWAP:SparkDEX",
-        "exchangeAddress": "0x48817b1a0DFA11F07C9871Ba5AB7f7514e0653DE",
-        "exchangeType": "ExchangeV2"
+        "exchangeAddress": "0xe59c53C76bB7EEc01401A18fA8215B94bC65Bf56",
+        "exchangeType": "P2Exchange"
     },
     "Ramses": {
         "chainName": "arb",
