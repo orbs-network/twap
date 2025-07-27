@@ -69,7 +69,7 @@
         "partner": "Orbs:TWAP:QuickSwap",
         "exchangeAddress": "0x8FCc245209bE85C49D738D0CE5613F74E5d91E86",
         "exchangeType": "ParaswapExchange",
-        "pathfinderKey": "QuickSwap,QuickSwapV3"
+        "pathfinderKey": "quickswap,quickswapv3,quickswapv3.1,quickperps"
     },
     "Chronos": {
         "chainName": "arb",
