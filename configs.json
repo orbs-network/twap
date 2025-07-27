@@ -53,6 +53,24 @@
         "exchangeType": "ParaswapExchange",
         "pathfinderKey": "QuickSwap,QuickSwapV3"
     },
+    "QuickSwapBase": {
+        "chainName": "base",
+        "chainId": 8453,
+        "twapVersion": 4,
+        "twapAddress": "0xc918bdC47264687796Cd54FE362FaC4f8b99Eb55",
+        "lensAddress": "0x6313188c1909b161074D62E43105faC9B756A23e",
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "QuickSwap",
+        "partner": "Orbs:TWAP:QuickSwap",
+        "exchangeAddress": "0x8FCc245209bE85C49D738D0CE5613F74E5d91E86",
+        "exchangeType": "ParaswapExchange",
+        "pathfinderKey": "QuickSwap,QuickSwapV3"
+    },
     "Chronos": {
         "chainName": "arb",
         "chainId": 42161,
