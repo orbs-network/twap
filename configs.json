@@ -67,8 +67,8 @@
         "minChunkSizeUsd": 10,
         "name": "QuickSwap",
         "partner": "Orbs:TWAP:QuickSwap",
-        "exchangeAddress": "0x8FCc245209bE85C49D738D0CE5613F74E5d91E86",
-        "exchangeType": "ParaswapExchange",
+        "exchangeAddress": "0x790aCFE9ddeEAb26f4b7878f4cb96778EE20f103",
+        "exchangeType": "ExchangeV2",
         "pathfinderKey": "quickswap,quickswapv3,quickswapv3.1,quickperps"
     },
     "Chronos": {
