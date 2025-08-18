@@ -12,8 +12,9 @@ contract DeployParaswap is Script {
 
     function run() public returns (IExchange) {
         address[] memory allowed = vm.envAddress("ALLOWED", ",");
+        address approve = vm.envAddress("APPROVE");
 
         vm.broadcast();
-        return new ParaswapExchange{salt: 0}(router, allowed);
+        return new ParaswapExchange{salt: 0}(router, approve, allowed);
     }
 }
