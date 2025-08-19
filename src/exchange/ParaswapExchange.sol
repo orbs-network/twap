@@ -14,15 +14,13 @@ contract ParaswapExchange is IExchange {
     using SafeERC20 for ERC20;
 
     address public immutable paraswap;
-    address public immutable approval;
     mapping(address => bool) private allowed;
 
     error InsufficientOutputAmount(uint256 actual, uint256 minimum);
     error TakerNotAllowed(address taker);
 
-    constructor(address _router, address _approval, address[] memory _allowed) {
+    constructor(address _router, address[] memory _allowed) {
         paraswap = _router;
-        approval = _approval;
         for (uint256 i = 0; i < _allowed.length; i++) {
             allowed[_allowed[i]] = true;
         }
@@ -55,7 +53,7 @@ contract ParaswapExchange is IExchange {
         srcToken.safeTransferFrom(msg.sender, address(this), amountIn);
         amountIn = srcToken.balanceOf(address(this)); // support FoT tokens
 
-        srcToken.safeIncreaseAllowance(approval, amountIn);
+        srcToken.safeIncreaseAllowance(IParaswap(paraswap).getTokenTransferProxy(), amountIn);
         Address.functionCall(address(paraswap), swapdata);
 
         uint256 balance = dstToken.balanceOf(address(this));
@@ -67,4 +65,8 @@ contract ParaswapExchange is IExchange {
     function decode(bytes calldata data) private pure returns (uint256 amountOut, bytes memory swapdata) {
         return abi.decode(data, (uint256, bytes));
     }
+}
+
+interface IParaswap {
+    function getTokenTransferProxy() external view returns (address);
 }
