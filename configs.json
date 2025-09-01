@@ -463,5 +463,22 @@
         "partner": "Orbs:TWAP:Shadow",
         "exchangeAddress": "0x69e3c891450161b7BF27f181eE85E7bAE69E5b07",
         "exchangeType": "ExchangeV2"
+    },
+    "Kodiak": {
+        "chainName": "berachain",
+        "chainId": 80094,
+        "twapVersion": 4,
+        "twapAddress": "0xD13609A8ace04D11Ea2FFE176B69dF77C6d9375E",
+        "lensAddress": "0xA0b07F9a11dFb01388149abBdbc5B4f2196600AB",
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 10,
+        "name": "Kodiak",
+        "partner": "Orbs:TWAP:Kodiak",
+        "exchangeAddress": "0x69B7aE1250B8d1309954CaD65b6607ae478Ec6eE",
+        "exchangeType": "ExchangeV2"
     }
 }
