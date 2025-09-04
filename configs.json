@@ -495,7 +495,7 @@
         "minChunkSizeUsd": 10,
         "name": "OmniBase",
         "partner": "Orbs:TWAP:OmniBase",
-        "exchangeAddress": "0xF0607785424d342Cceb33E708f4579CA97a3b392",
+        "exchangeAddress": "0x54435FcFDF3A08150Ed799b6EF472A20a432303F",
         "exchangeType": "ParaswapExchange"
     },
     "OmniArb": {

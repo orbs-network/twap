@@ -13,6 +13,6 @@ contract DeployParaswap is Script {
         address router = vm.envAddress("ROUTER");
 
         vm.broadcast();
-        return new ParaswapExchange{salt: 0}(router, allowed);
+        return new ParaswapExchange{salt: bytes32(uint256(1))}(router, allowed);
     }
 }
