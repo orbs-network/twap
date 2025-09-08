@@ -514,5 +514,22 @@
         "partner": "Orbs:TWAP:OmniArb",
         "exchangeAddress": "0xF0607785424d342Cceb33E708f4579CA97a3b392",
         "exchangeType": "ParaswapExchange"
+    },
+    "BlackholeAvax": {
+        "chainName": "avax",
+        "chainId": 43114,
+        "twapVersion": 4,
+        "twapAddress": "0xf77Ad005aBF7e31f669ce89a6568B2f39Ca92cDe",
+        "lensAddress": "0x48466B82Ce1575c5c9eCa168ac1090048dD47fA3",
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "BlackholeAvax",
+        "partner": "Orbs:TWAP:BlackholeAvax",
+        "exchangeAddress": "0xE9fBf0e5A67214D8659f5B53d28ce88b80a633f6",
+        "exchangeType": "ExchangeV2"
     }
 }
