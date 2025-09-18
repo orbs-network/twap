@@ -529,7 +529,7 @@
         "minChunkSizeUsd": 50,
         "name": "BlackholeAvax",
         "partner": "Orbs:TWAP:BlackholeAvax",
-        "exchangeAddress": "0xE9fBf0e5A67214D8659f5B53d28ce88b80a633f6",
+        "exchangeAddress": "0xb7A3d74895bFD3Aff6780525e36D79FCf26a895F",
         "exchangeType": "ExchangeV2"
     }
 }
