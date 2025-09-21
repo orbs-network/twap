@@ -531,5 +531,22 @@
         "partner": "Orbs:TWAP:BlackholeAvax",
         "exchangeAddress": "0xb7A3d74895bFD3Aff6780525e36D79FCf26a895F",
         "exchangeType": "ExchangeV2"
+    },
+    "NewEraBnb": {
+        "chainName": "bsc",
+        "chainId": 56,
+        "twapVersion": 4,
+        "twapAddress": "0xa6F7444D2b92Aa9F94a2165c77aAF2B671e63994",
+        "lensAddress": "0xEdB0c077fa87Fb21d050c619FF426798f8Fc1264",
+        "takers": [
+            "0xA05405b6340A7F43dC5835351BFC4f5b1F028359",
+            "0xE3Efef1563a5960ACc731F9e4d6f4cBf5bd87dcA"
+        ],
+        "bidDelaySeconds": 60,
+        "minChunkSizeUsd": 50,
+        "name": "NewEraBnb",
+        "partner": "Orbs:TWAP:NewEraBnb",
+        "exchangeAddress": "0xA22D7Df24d9Ea4D4EF6dC96b2204bd550430eC42",
+        "exchangeType": "ExchangeV2"
     }
 }
