@@ -461,7 +461,7 @@
         "minChunkSizeUsd": 10,
         "name": "Shadow",
         "partner": "Orbs:TWAP:Shadow",
-        "exchangeAddress": "0x69e3c891450161b7BF27f181eE85E7bAE69E5b07",
+        "exchangeAddress": "0xD1eC97684e7f34F7002654dC82cF5030D4efA0e1",
         "exchangeType": "ExchangeV2"
     },
     "Kodiak": {
